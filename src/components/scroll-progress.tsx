@@ -13,8 +13,11 @@ export function ScrollProgress() {
   return (
     <motion.div
       id="scroll-progress"
-      className="fixed top-0 left-0 h-[2px] bg-foreground z-[60] pointer-events-none origin-left"
+      className="fixed top-0 left-0 right-0 h-[2px] bg-accent z-[60] pointer-events-none origin-left"
       style={{ scaleX, opacity }}
+      role="progressbar"
+      aria-label="Page scroll progress"
+      aria-hidden="true"
     />
   );
 }

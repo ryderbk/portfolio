@@ -1,153 +1,194 @@
-import { useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 
 const technicalSkills = [
-  { name: "Python", level: 75 },
-  { name: "HTML / CSS / Web Dev", level: 80 },
-  { name: "C / C++", level: 65 },
-  { name: "Git & GitHub", level: 70 },
-  { name: "AI-Assisted Development", level: 85 },
-  { name: "MATLAB", level: 60 },
+  { name: "Python", category: "Languages" },
+  { name: "C / C++", category: "Languages" },
+  { name: "HTML / CSS", category: "Web" },
+  { name: "JavaScript", category: "Web" },
+  { name: "React", category: "Web" },
+  { name: "Git & GitHub", category: "Tools" },
+  { name: "AI-Assisted Dev", category: "Tools" },
+  { name: "MATLAB", category: "Tools" },
 ];
 
 const creativeSkills = [
-  { name: "Video Editing", level: 75 },
-  { name: "Graphic Design (Canva)", level: 70 },
-  { name: "Photoshop Basics", level: 55 },
-  { name: "Embedded Systems (Arduino)", level: 70 },
+  { name: "Video Editing" },
+  { name: "Graphic Design" },
+  { name: "Photoshop" },
+  { name: "UI/UX Design" },
+];
+
+const hardwareSkills = [
+  { name: "Arduino" },
+  { name: "Embedded Systems" },
+  { name: "Microcontrollers" },
+  { name: "Sensor Integration" },
+  { name: "Circuit Design" },
+  { name: "IoT Systems" },
 ];
 
 const softSkills = ["Problem Solving", "Communication", "Teamwork", "Adaptability", "Curiosity"];
+const languages = ["English", "Tamil"];
 
-function SkillBar({ name, level, delay = 0 }: { name: string; level: number; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 12 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="group"
-    >
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-sm font-medium">{name}</span>
-        <span className="text-xs font-mono text-muted-foreground">{level}%</span>
-      </div>
-      <div className="h-px bg-border relative overflow-hidden">
-        <motion.div
-          className="absolute inset-y-0 left-0 bg-foreground origin-left"
-          initial={{ scaleX: 0 }}
-          animate={inView ? { scaleX: level / 100 } : { scaleX: 0 }}
-          transition={{ duration: 1.2, delay: delay + 0.1, ease: [0.16, 1, 0.3, 1] }}
-        />
-      </div>
-    </motion.div>
-  );
+function fadeUp(delay = 0) {
+  return {
+    initial: { opacity: 0, y: 24 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-60px" },
+    transition: { duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] as const },
+  };
 }
 
 export function Skills() {
   return (
-    <section id="skills" className="py-24 md:py-36 bg-muted/20 border-t border-border">
+    <section id="skills" className="py-24 md:py-36 border-t border-border" aria-label="Skills and technologies">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          {...fadeUp()}
           className="mb-16 md:mb-24"
         >
           <div className="flex items-center gap-4 mb-4">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-[0.2em]">05 — Technical Arsenal</span>
+            <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em]">03 — Technical Arsenal</span>
           </div>
-          <h2 className="text-[clamp(2rem,5vw,4rem)] font-serif font-medium tracking-tight leading-tight">
-            Tools & technologies I master.
+          <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-semibold tracking-tight leading-tight">
+            Tools & technologies I work with.
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24">
-          {/* Technical skills */}
-          <div className="lg:col-span-5 space-y-8">
-            <h3 className="text-sm font-mono uppercase tracking-widest text-muted-foreground pb-4 border-b border-border">
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          {/* Technical Skills — Large tile */}
+          <motion.div
+            {...fadeUp(0.1)}
+            className="glass-card p-6 md:col-span-2 lg:col-span-2"
+          >
+            <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Technical
             </h3>
-            <div className="space-y-7">
+            <div className="flex flex-wrap gap-3">
               {technicalSkills.map((s, i) => (
-                <SkillBar key={s.name} {...s} delay={i * 0.06} />
+                <motion.span
+                  key={s.name}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.04, duration: 0.3 }}
+                  className="px-4 py-2.5 border border-border rounded-xl text-sm font-medium
+                    hover:border-accent hover:bg-accent/5 hover:text-accent
+                    transition-all duration-200 cursor-default select-none"
+                >
+                  {s.name}
+                </motion.span>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="lg:col-span-6 lg:col-start-7 space-y-16">
-            {/* Creative skills */}
-            <div className="space-y-8">
-              <h3 className="text-sm font-mono uppercase tracking-widest text-muted-foreground pb-4 border-b border-border">
-                Creative
-              </h3>
-              <div className="space-y-7">
-                {creativeSkills.map((s, i) => (
-                  <SkillBar key={s.name} {...s} delay={i * 0.06} />
-                ))}
-              </div>
+          {/* Hardware Skills */}
+          <motion.div
+            {...fadeUp(0.15)}
+            className="glass-card p-6"
+          >
+            <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
+              Hardware
+            </h3>
+            <div className="flex flex-wrap gap-2.5">
+              {hardwareSkills.map((s, i) => (
+                <motion.span
+                  key={s.name}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.04, duration: 0.3 }}
+                  className="px-3.5 py-2 border border-border rounded-xl text-sm
+                    hover:border-accent hover:bg-accent/5 hover:text-accent
+                    transition-all duration-200 cursor-default select-none"
+                >
+                  {s.name}
+                </motion.span>
+              ))}
             </div>
+          </motion.div>
 
-            {/* Soft skills */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="space-y-6"
-            >
-              <h3 className="text-sm font-mono uppercase tracking-widest text-muted-foreground pb-4 border-b border-border">
-                Soft Skills
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {softSkills.map((s, i) => (
-                  <motion.span
-                    key={s}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.07, duration: 0.4 }}
-                    className="px-4 py-2 border border-border text-sm hover:border-foreground hover:bg-foreground hover:text-background transition-all duration-300 cursor-default select-none"
-                  >
-                    {s}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
+          {/* Creative Skills */}
+          <motion.div
+            {...fadeUp(0.2)}
+            className="glass-card p-6"
+          >
+            <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
+              Creative
+            </h3>
+            <div className="flex flex-wrap gap-2.5">
+              {creativeSkills.map((s, i) => (
+                <motion.span
+                  key={s.name}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.04, duration: 0.3 }}
+                  className="px-3.5 py-2 border border-border rounded-xl text-sm
+                    hover:border-accent hover:bg-accent/5 hover:text-accent
+                    transition-all duration-200 cursor-default select-none"
+                >
+                  {s.name}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
 
-            {/* Languages */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-              className="space-y-6"
-            >
-              <h3 className="text-sm font-mono uppercase tracking-widest text-muted-foreground pb-4 border-b border-border">
-                Languages
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {["English", "Tamil"].map((lang, i) => (
-                  <motion.span
-                    key={lang}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.07, duration: 0.4 }}
-                    className="px-4 py-2 border border-border text-sm hover:border-foreground hover:bg-foreground hover:text-background transition-all duration-300 cursor-default select-none"
-                  >
-                    {lang}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
-          </div>
+          {/* Soft Skills */}
+          <motion.div
+            {...fadeUp(0.25)}
+            className="glass-card p-6"
+          >
+            <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
+              Soft Skills
+            </h3>
+            <div className="flex flex-wrap gap-2.5">
+              {softSkills.map((s, i) => (
+                <motion.span
+                  key={s}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.04, duration: 0.3 }}
+                  className="px-3.5 py-2 border border-border rounded-xl text-sm
+                    hover:border-accent hover:bg-accent/5 hover:text-accent
+                    transition-all duration-200 cursor-default select-none"
+                >
+                  {s}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Languages */}
+          <motion.div
+            {...fadeUp(0.3)}
+            className="glass-card p-6"
+          >
+            <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
+              Languages
+            </h3>
+            <div className="flex flex-wrap gap-2.5">
+              {languages.map((lang, i) => (
+                <motion.span
+                  key={lang}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.04, duration: 0.3 }}
+                  className="px-3.5 py-2 border border-border rounded-xl text-sm
+                    hover:border-accent hover:bg-accent/5 hover:text-accent
+                    transition-all duration-200 cursor-default select-none"
+                >
+                  {lang}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

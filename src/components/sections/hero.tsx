@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useMotionValue, useSpring, motion, AnimatePresence } from "framer-motion";
-import { ArrowDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { mouseManager } from "@/lib/mouse-manager";
 
 const words = ["experiences,", "products,", "solutions,"];
@@ -14,23 +14,20 @@ function WordCycle() {
   }, []);
 
   return (
-    <span className="relative inline-block">
-      <AnimateWord key={index} word={words[index]} />
+    <span className="relative inline-flex overflow-hidden h-[1.15em] align-bottom" aria-live="polite">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={index}
+          initial={{ y: 40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -40, opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="inline-block"
+        >
+          {words[index]}
+        </motion.span>
+      </AnimatePresence>
     </span>
-  );
-}
-
-function AnimateWord({ word }: { word: string }) {
-  return (
-    <motion.span
-      initial={{ y: 40, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: -40, opacity: 0 }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="inline-block"
-    >
-      {word}
-    </motion.span>
   );
 }
 
@@ -38,16 +35,16 @@ const container = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.15 },
+    transition: { staggerChildren: 0.12, delayChildren: 0.1 },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }
   },
 };
 
@@ -58,22 +55,12 @@ function scrollTo(href: string) {
 export function Hero() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const reRenderCount = useRef(0);
-
-  // Performance debugging: Log re-renders during mouse movement
-  useEffect(() => {
-    reRenderCount.current++;
-    if (reRenderCount.current % 10 === 0) {
-      console.log(`Hero re-render count: ${reRenderCount.current} (should stay low during mouse move)`);
-    }
-  });
 
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
 
   useEffect(() => {
     const unsubscribe = mouseManager.subscribe((x, y) => {
-      // Direct MotionValue updates bypass React's render loop entirely
       mouseX.set((x / window.innerWidth - 0.5) * 2);
       mouseY.set((y / window.innerHeight - 0.5) * 2);
     });
@@ -81,31 +68,32 @@ export function Hero() {
   }, [mouseX, mouseY]);
 
   return (
-    <section className="relative min-h-[100dvh] flex items-center overflow-hidden">
+    <section
+      id="hero"
+      className="relative min-h-[100dvh] flex items-center overflow-hidden"
+      aria-label="Introduction"
+    >
       {/* Subtle grid background */}
-      <motion.div className="absolute inset-0 pointer-events-none opacity-[0.035] dark:opacity-[0.06] will-change-transform"
+      <motion.div
+        className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05] will-change-transform"
         style={{
           backgroundImage: "linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+          backgroundSize: "64px 64px",
           x: springX,
           y: springY,
           scale: 1.1,
           translateZ: 0,
         }}
+        aria-hidden="true"
       />
 
-      {/* Floating blobs */}
-      <motion.div
-        className="absolute pointer-events-none will-change-transform"
+      {/* Accent glow */}
+      <div
+        className="absolute top-1/4 right-[10%] w-[400px] h-[400px] rounded-full pointer-events-none"
         style={{
-          top: "20%", right: "10%",
-          width: 400, height: 400,
-          background: "radial-gradient(circle, hsl(var(--muted)) 0%, transparent 70%)",
-          opacity: 0.5,
-          x: springX,
-          y: springY,
-          translateZ: 0,
+          background: "radial-gradient(circle, hsl(var(--accent) / 0.08) 0%, transparent 70%)",
         }}
+        aria-hidden="true"
       />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-24 pb-16 relative z-10 w-full">
@@ -114,67 +102,94 @@ export function Hero() {
           initial="hidden"
           animate="visible"
         >
-          {/* Eyebrow */}
-          <motion.div variants={item} className="flex items-center gap-4 mb-10">
-            <span className="w-8 h-px bg-muted-foreground" />
-            <span className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground">
+          {/* Status badge */}
+          <motion.div variants={item} className="flex items-center gap-3 mb-10">
+            <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
+              <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            </span>
+            <span className="text-xs font-sans uppercase tracking-[0.2em] text-muted-foreground font-medium">
               Available for opportunities
             </span>
           </motion.div>
 
-          {/* Main heading */}
+          {/* Main heading — LCP element */}
           <motion.h1
             variants={item}
-            className="text-[clamp(3rem,8vw,7rem)] font-serif font-medium leading-[1.05] tracking-tight mb-8"
+            className="text-[clamp(2.75rem,7vw,6.5rem)] font-display font-semibold leading-[1.05] tracking-tight mb-8"
           >
-            I build{" "}
-            <span className="italic font-light text-muted-foreground">
+            I craft{" "}
+            <span className="italic font-light text-accent">
               <WordCycle />
             </span>
             <br />
             not just code.
           </motion.h1>
 
-          {/* Sub */}
+          {/* Subline */}
           <motion.p
             variants={item}
-            className="text-lg md:text-xl font-light text-muted-foreground max-w-xl mb-12 leading-relaxed"
+            className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground max-w-xl mb-12 leading-relaxed"
           >
-            Bharath Kumar S — Electronics Engineer, Full-Stack Developer, and creative problem solver based in Chennai.
+            Bharath Kumar S — Full-stack developer and electronics engineer building at the intersection of hardware, software, and design.
           </motion.p>
 
-          {/* CTAs */}
+          {/* CTAs — Accent primary + Ghost secondary */}
           <motion.div variants={item} className="flex flex-wrap gap-4 items-center">
             <button
-              className="interactive glass-card group relative inline-flex items-center gap-3 px-8 py-4 text-foreground font-medium text-sm overflow-hidden"
+              className="btn-accent group"
               onClick={() => scrollTo("#work")}
               data-testid="btn-view-work"
+              aria-label="View my projects"
             >
-              <span className="relative z-10 transition-all duration-300 group-hover:translate-x-1">
-                View My Work
-              </span>
-              <span className="relative z-10 w-4 h-px bg-current transition-all duration-300 group-hover:w-6 group-hover:translate-x-2" />
+              <span>See My Work</span>
+              <ArrowRight
+                size={16}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+                aria-hidden="true"
+              />
             </button>
 
             <button
-              className="interactive glass-card group inline-flex items-center gap-3 px-8 py-4 text-foreground font-medium text-sm"
+              className="btn-ghost group"
               onClick={() => scrollTo("#contact")}
               data-testid="btn-contact"
+              aria-label="Go to contact section"
             >
-              <span>Get In Touch</span>
-              <span className="w-4 h-px bg-current transition-all duration-300 group-hover:w-6 group-hover:translate-x-1" />
+              <span>Let's Talk</span>
+              <span className="w-4 h-px bg-current transition-all duration-300 group-hover:w-6" aria-hidden="true" />
             </button>
+          </motion.div>
+
+          {/* Metrics bar */}
+          <motion.div
+            variants={item}
+            className="flex gap-12 mt-16 pt-8 border-t border-border"
+          >
+            <div>
+              <span className="block text-2xl font-display font-semibold">3+</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-widest">Projects</span>
+            </div>
+            <div>
+              <span className="block text-2xl font-display font-semibold">7.98</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-widest">CGPA</span>
+            </div>
+            <div>
+              <span className="block text-2xl font-display font-semibold">2+</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-widest">Domains</span>
+            </div>
           </motion.div>
         </motion.div>
 
-        {/* Scroll Indicator - Bottom Center */}
+        {/* Scroll indicator */}
         <motion.div
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.6, duration: 0.8 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+          aria-hidden="true"
         >
-          <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.3em]">Scroll</span>
+          <span className="font-sans text-[10px] text-muted-foreground uppercase tracking-[0.3em]">Scroll</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
@@ -182,15 +197,16 @@ export function Hero() {
           />
         </motion.div>
 
-        {/* Location Info - Bottom Right */}
+        {/* Location — Desktop only */}
         <motion.div
           className="absolute bottom-10 right-6 md:right-12 hidden md:flex flex-col items-end gap-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.4, duration: 0.8 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          aria-hidden="true"
         >
-          <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest font-medium">Chennai, India</span>
-          <span className="text-xs font-mono text-muted-foreground/60 uppercase tracking-widest text-[10px]">Current Batch: 2023–2027</span>
+          <span className="text-xs font-sans text-muted-foreground uppercase tracking-widest font-medium">Chennai, India</span>
+          <span className="text-[10px] font-sans text-muted-foreground/50 uppercase tracking-widest">Batch 2023–2027</span>
         </motion.div>
       </div>
     </section>

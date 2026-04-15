@@ -9,7 +9,7 @@ export function CustomCursor() {
 
   const dotSpring = { stiffness: 3000, damping: 80, mass: 0.1 };
   const ringSpring = { stiffness: 1800, damping: 60, mass: 0.2 };
-  
+
   const dotX = useSpring(cursorX, dotSpring);
   const dotY = useSpring(cursorY, dotSpring);
   const ringX = useSpring(cursorX, ringSpring);
@@ -22,7 +22,6 @@ export function CustomCursor() {
     isDesktop.current = !window.matchMedia("(pointer: coarse)").matches;
     if (!isDesktop.current) return;
 
-    // Single global mouse listener subscription
     const unsubscribe = mouseManager.subscribe((x, y) => {
       cursorX.set(x);
       cursorY.set(y);
@@ -31,16 +30,16 @@ export function CustomCursor() {
     const over = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
       if (!t) return;
-      
+
       const interactive = !!(
-        t.tagName === "A" || 
+        t.tagName === "A" ||
         t.tagName === "BUTTON" ||
-        t.classList.contains("interactive") || 
+        t.classList.contains("interactive") ||
         t.getAttribute("role") === "button" ||
-        t.closest("a") || 
+        t.closest("a") ||
         t.closest("button")
       );
-      
+
       if (interactive !== lastHoverMode.current) {
         lastHoverMode.current = interactive;
         setIsHoveringState(interactive);
@@ -59,12 +58,7 @@ export function CustomCursor() {
   }
 
   return (
-    <>
-      {/* 
-          Using motionValue with transform: translate3d(x, y, 0)
-          This is extremely efficient as Framer Motion applies this directly
-          to the style attribute outside of React render cycles.
-      */}
+    <div aria-hidden="true">
       <motion.div
         className="fixed rounded-full bg-foreground pointer-events-none z-[9999] will-change-transform"
         animate={{ scale: isHoveringState ? 0 : 1 }}
@@ -98,6 +92,6 @@ export function CustomCursor() {
           translateZ: 0,
         }}
       />
-    </>
+    </div>
   );
 }
