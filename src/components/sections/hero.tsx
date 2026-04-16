@@ -14,15 +14,19 @@ function WordCycle() {
   }, []);
 
   return (
-    <span className="relative inline-flex overflow-hidden h-[1.15em] align-bottom" aria-live="polite">
+    <span 
+      className="relative inline-flex items-baseline overflow-hidden"
+      style={{ minWidth: "12ch", height: "auto" }}
+    >
       <AnimatePresence mode="wait">
         <motion.span
           key={index}
-          initial={{ y: 40, opacity: 0 }}
+          initial={{ y: "100%", opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -40, opacity: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="inline-block"
+          exit={{ y: "-100%", opacity: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="inline-block whitespace-nowrap"
+          aria-live="polite"
         >
           {words[index]}
         </motion.span>
@@ -116,10 +120,10 @@ export function Hero() {
           {/* Main heading — LCP element */}
           <motion.h1
             variants={item}
-            className="text-[clamp(2.75rem,7vw,6.5rem)] font-display font-semibold leading-[1.05] tracking-tight mb-8"
+            className="text-[clamp(2.75rem,7vw,6.5rem)] font-display font-semibold leading-[1.1] tracking-tight mb-8"
           >
             I craft{" "}
-            <span className="italic font-light text-accent">
+            <span className="inline-block align-baseline italic font-light text-accent">
               <WordCycle />
             </span>
             <br />

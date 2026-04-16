@@ -52,6 +52,7 @@
   --glass-border: rgba(0, 0, 0, 0.06);
   --glass-shadow: rgba(0, 0, 0, 0.04);
   --glass-highlight: rgba(255, 255, 255, 0.9);
+  --background-scrim: rgba(255, 255, 255, 0.25);
 }
 
 .dark {
@@ -73,6 +74,7 @@
   --glass-border: rgba(255, 255, 255, 0.06);
   --glass-shadow: rgba(0, 0, 0, 0.5);
   --glass-highlight: rgba(255, 255, 255, 0.03);
+  --background-scrim: rgba(0, 0, 0, 0.5);
 }
 
 /* ============================================
@@ -88,17 +90,21 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: hsl(var(--background));
+    background: transparent;
     overflow-x: hidden;
     text-rendering: optimizeLegibility;
+    height: 100%;
   }
 
   body {
     @apply text-foreground font-sans;
     color: hsl(var(--foreground));
-    background-color: hsl(var(--background));
-    transition: background-color 0.3s ease, color 0.3s ease;
+    background: transparent;
+    transition: color 0.3s ease;
     line-height: 1.6;
+    height: 100%;
+    position: relative;
+    z-index: 1;
   }
 
   /* Skip Navigation — Accessibility */
@@ -126,6 +132,10 @@
     @apply font-display tracking-tight;
     font-weight: 600;
     line-height: 1.1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 
   /* Selection */
@@ -580,7 +590,8 @@ section {
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     border: 1px solid hsl(var(--border));
-    background: hsl(var(--card));
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
     border-radius: 16px;
     display: flex;
     flex-direction: column;
@@ -628,7 +639,7 @@ section {
     align-items: center;
     padding: 2rem;
     transition: opacity 0.3s ease;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    background: hsl(var(--card));
     z-index: 10;
   }
 
@@ -638,7 +649,7 @@ section {
   }
 
   .project-collapsed-label h4 {
-    color: white;
+    color: hsl(var(--foreground));
     font-size: 1.25rem;
     text-align: center;
     max-width: 80%;
@@ -654,7 +665,7 @@ section {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: hsl(var(--card));
+    background: transparent;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateY(10px);
   }

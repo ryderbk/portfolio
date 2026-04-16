@@ -75,7 +75,7 @@ export function Navbar() {
           </button>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center p-1.5 bg-background shadow-sm rounded-2xl gap-1">
+          <div className="hidden md:flex items-center p-1.5 shadow-sm rounded-2xl gap-1" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(16px) saturate(140%)' }}>
             {navLinks.map((link) => (
               <button
                 key={link.name}
@@ -142,7 +142,7 @@ export function Navbar() {
             animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
             exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[100] bg-background flex flex-col"
+            className="fixed inset-0 z-[100] flex flex-col" style={{ background: 'hsl(var(--background))' }}
           >
             <div className="flex justify-between items-center px-6 py-5 border-b border-border">
               <span className="font-display font-bold">BK</span>

@@ -28,7 +28,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.6.0",
     "tailwind-merge": "^2.6.0",
-    "three": "^0.183.2",
+    "three": "^0.167.1",
     "typegpu": "^0.10.2",
     "unplugin-typegpu": "^0.10.2",
     "wgpu-matrix": "^3.4.2",

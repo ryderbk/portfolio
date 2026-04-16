@@ -19,8 +19,8 @@ export function Contact() {
   return (
     <section id="contact" className="border-t border-border" aria-label="Contact">
 
-      {/* Top CTA banner — inverted colors */}
-      <div className="bg-foreground text-background py-16 md:py-24">
+      {/* Top CTA banner — Translucent Glass Effect */}
+      <div className="py-16 md:py-24 border-y border-border/20" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(20px) saturate(150%)' }}>
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -30,13 +30,13 @@ export function Contact() {
             className="flex flex-col md:flex-row md:items-end justify-between gap-10"
           >
             <div>
-              <span className="font-sans text-xs text-background/50 uppercase tracking-[0.2em] block mb-4">04 — Contact</span>
-              <h2 className="text-[clamp(2.25rem,5.5vw,4.5rem)] font-display font-semibold leading-tight tracking-tight text-background">
+              <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em] block mb-4">04 — Contact</span>
+              <h2 className="text-[clamp(2.25rem,5.5vw,4.5rem)] font-display font-semibold leading-tight tracking-tight text-foreground">
                 Let's build something<br />
-                <span className="italic font-light text-background/50">together.</span>
+                <span className="italic font-light text-accent">together.</span>
               </h2>
             </div>
-            <p className="text-base text-background/60 max-w-sm leading-relaxed">
+            <p className="text-base text-muted-foreground max-w-sm leading-relaxed">
               Whether it's a project, collaboration, or just a conversation — I respond within 24 hours.
             </p>
           </motion.div>

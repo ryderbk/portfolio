@@ -27,7 +27,7 @@ export function Preloader({ onComplete }: { onComplete: () => void }) {
       {!done && (
         <motion.div
           key="preloader"
-          className="fixed inset-0 z-[9999] bg-background flex flex-col items-center justify-center"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{ background: 'hsl(var(--background))' }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           role="progressbar"
