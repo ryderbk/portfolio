@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
+import { fadeUp } from "@/lib/animations";
 
 const technicalSkills = [
-  { name: "Python", category: "Languages" },
-  { name: "C / C++", category: "Languages" },
-  { name: "HTML / CSS", category: "Web" },
-  { name: "JavaScript", category: "Web" },
-  { name: "React", category: "Web" },
-  { name: "Git & GitHub", category: "Tools" },
-  { name: "AI-Assisted Dev", category: "Tools" },
-  { name: "MATLAB", category: "Tools" },
+  { name: "Python" },
+  { name: "C / C++" },
+  { name: "HTML / CSS" },
+  { name: "JavaScript" },
+  { name: "React" },
+  { name: "Git & GitHub" },
+  { name: "AI-Assisted Dev" },
+  { name: "MATLAB" },
 ];
 
 const creativeSkills = [
@@ -30,14 +31,7 @@ const hardwareSkills = [
 const softSkills = ["Problem Solving", "Communication", "Teamwork", "Adaptability", "Curiosity"];
 const languages = ["English", "Tamil"];
 
-function fadeUp(delay = 0) {
-  return {
-    initial: { opacity: 0, y: 24 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, margin: "-60px" },
-    transition: { duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] as const },
-  };
-}
+
 
 export function Skills() {
   return (

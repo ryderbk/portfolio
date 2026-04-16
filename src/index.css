@@ -9,6 +9,7 @@
 @theme inline {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-projects: 'Outfit', system-ui, sans-serif;
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -154,6 +155,13 @@
    ============================================ */
 
 @layer utilities {
+  /* Font Utilities */
+  .font-projects {
+    font-family: var(--font-projects);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
   /* Glass Card */
   .glass-card {
     background: var(--glass-bg);
@@ -315,21 +323,6 @@ section {
 
 .animate-pulse-dot {
   animation: pulse-dot 2s ease-in-out infinite;
-}
-
-/* ============================================
-   CUSTOM CURSOR (Desktop Enhancement)
-   ============================================ */
-
-.custom-cursor-dot, .custom-cursor-ring {
-  pointer-events: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  border-radius: 50%;
-  z-index: 9999;
-  mix-blend-mode: difference;
-  will-change: transform;
 }
 
 /* ============================================

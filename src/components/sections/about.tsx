@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { fadeUp } from "@/lib/animations";
 
 const brings = [
   { title: "AI-Assisted Development", desc: "Leverage modern AI tools to ship real, working products faster — not just prototypes or concepts." },
@@ -21,15 +22,6 @@ const education = {
   cgpa: "7.98",
   experience: "Interned at Brakes India Private Limited — precision automotive manufacturing and quality engineering.",
 };
-
-function fadeUp(delay = 0) {
-  return {
-    initial: { opacity: 0, y: 24 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, margin: "-80px" },
-    transition: { duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] as const },
-  };
-}
 
 export function About() {
   return (

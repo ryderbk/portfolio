@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { fadeUp } from "@/lib/animations";
 
 const projects = [
   {
@@ -8,7 +9,7 @@ const projects = [
     number: "01",
     title: "GPA Analytics",
     subtitle: "Web Application — Academic Analytics",
-    images: ["/images/gpa-2.png", "/images/gpa-1.png"],
+    images: ["/images/project-01.png"],
     description: "A production-ready academic analytics platform with real-time performance insights and predictive analytics engine.",
     problem: "Students lacked a unified tool to predict exam performance and understand their academic standing. Manual calculations were time-consuming and error-prone.",
     approach: "Built a full-stack web application leveraging modern development tools for rapid iteration. Engineered algorithms to calculate internal marks from assignments, CIE scores, and practicals.",
@@ -21,7 +22,7 @@ const projects = [
     number: "02",
     title: "Fire Detection Robot",
     subtitle: "Hardware — Robotics & Safety Systems",
-    images: ["/images/fire-robot.png"],
+    images: ["/images/project-02.png"],
     description: "Fully autonomous robot prototype for fire detection and suppression in hazardous environments.",
     problem: "Manual fire response is slow and dangerous in confined or complex environments. Early detection and response are critical for safety.",
     approach: "Engineered a fully autonomous robot using Arduino microcontroller, flame sensors, DC motors, servo mechanism for directional control, and automated water pump activation.",
@@ -34,7 +35,7 @@ const projects = [
     number: "03",
     title: "Sound-Activated Control",
     subtitle: "Hardware — Home Automation & IoT",
-    images: ["/images/iot-fan.png"],
+    images: ["/images/project-03.png"],
     description: "Hands-free home automation system using signal processing for clap detection and relay control.",
     problem: "Traditional physical switches require interaction and don't provide smart home integration. Accessibility is limited for users with mobility constraints.",
     approach: "Designed a microcontroller-based home automation system using sound recognition (clap detection) via microphone, signal processing, and relay circuit control.",
@@ -44,14 +45,7 @@ const projects = [
   },
 ];
 
-function fadeUp(delay = 0) {
-  return {
-    initial: { opacity: 0, y: 24 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, margin: "-60px" },
-    transition: { duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] as const },
-  };
-}
+
 
 export function Projects() {
   const [activeId, setActiveId] = useState(projects[0].id);
@@ -115,7 +109,7 @@ export function Projects() {
                   
                   {/* Collapsed view overlay */}
                   <div className="project-collapsed-label">
-                    <h4 className="font-display font-bold">{project.title}</h4>
+                    <h4 className="font-projects">{project.title}</h4>
                   </div>
                 </div>
 
@@ -125,7 +119,7 @@ export function Projects() {
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-[10px] font-sans text-accent uppercase tracking-widest font-bold">{project.subtitle}</span>
                     </div>
-                    <h3 className="text-2xl md:text-3xl font-display font-bold tracking-tight mb-3">
+                    <h3 className="text-2xl md:text-3xl font-projects tracking-tight mb-3">
                       {project.title}
                     </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-lg">
