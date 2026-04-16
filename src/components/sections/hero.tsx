@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useMotionValue, useSpring, motion, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { mouseManager } from "@/lib/mouse-manager";
+import { Button } from "@/components/ui/button";
 
 const words = ["experiences,", "products,", "solutions,"];
 
@@ -140,29 +141,23 @@ export function Hero() {
 
           {/* CTAs — Accent primary + Ghost secondary */}
           <motion.div variants={item} className="flex flex-wrap gap-4 items-center">
-            <button
-              className="btn-accent group"
+            <Button
+              variant="default"
               onClick={() => scrollTo("#work")}
               data-testid="btn-view-work"
               aria-label="View my projects"
             >
-              <span>See My Work</span>
-              <ArrowRight
-                size={16}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-                aria-hidden="true"
-              />
-            </button>
+              See My Work
+            </Button>
 
-            <button
-              className="btn-ghost group"
+            <Button
+              variant="default"
               onClick={() => scrollTo("#contact")}
               data-testid="btn-contact"
               aria-label="Go to contact section"
             >
-              <span>Let's Talk</span>
-              <span className="w-4 h-px bg-current transition-all duration-300 group-hover:w-6" aria-hidden="true" />
-            </button>
+              Let's Talk
+            </Button>
           </motion.div>
 
           {/* Metrics bar */}

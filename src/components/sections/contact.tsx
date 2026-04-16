@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaLinkedin } from "react-icons/fa";
 import { Mail, MapPin, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function Contact() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
@@ -20,7 +21,7 @@ export function Contact() {
     <section id="contact" className="border-t border-border" aria-label="Contact">
 
       {/* Top CTA banner — Translucent Glass Effect */}
-      <div className="py-16 md:py-24 border-y border-border/20" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(20px) saturate(150%)' }}>
+      <div className="py-16 md:py-24 border-y border-border/20" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(32px) saturate(200%)', WebkitBackdropFilter: 'blur(32px) saturate(200%)' }}>
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -128,7 +129,7 @@ export function Contact() {
                     required
                     value={formState.name}
                     onChange={e => setFormState(s => ({ ...s, name: e.target.value }))}
-                    className="w-full px-4 py-3 bg-transparent border border-border rounded-xl hover:border-muted-foreground focus:border-accent outline-none text-sm transition-colors duration-200 font-sans"
+                    className="w-full px-4 py-3 glass-input rounded-xl text-sm font-sans"
                     placeholder="Your name"
                     autoComplete="name"
                     data-testid="input-name"
@@ -144,7 +145,7 @@ export function Contact() {
                     required
                     value={formState.email}
                     onChange={e => setFormState(s => ({ ...s, email: e.target.value }))}
-                    className="w-full px-4 py-3 bg-transparent border border-border rounded-xl hover:border-muted-foreground focus:border-accent outline-none text-sm transition-colors duration-200 font-sans"
+                    className="w-full px-4 py-3 glass-input rounded-xl text-sm font-sans"
                     placeholder="your@email.com"
                     autoComplete="email"
                     data-testid="input-email"
@@ -162,31 +163,21 @@ export function Contact() {
                   rows={6}
                   value={formState.message}
                   onChange={e => setFormState(s => ({ ...s, message: e.target.value }))}
-                  className="w-full px-4 py-3 bg-transparent border border-border rounded-xl hover:border-muted-foreground focus:border-accent outline-none text-sm transition-colors duration-200 font-sans resize-none"
+                  className="w-full px-4 py-3 glass-input rounded-xl text-sm font-sans resize-none"
                   placeholder="Tell me about your project or idea..."
                   data-testid="input-message"
                 />
               </div>
 
-              <button
+              <Button
                 type="submit"
-                className="btn-accent group w-full flex items-center justify-center gap-3"
+                variant="default"
+                className="w-full"
                 data-testid="btn-send-message"
                 aria-label={sent ? "Message sent" : "Send message"}
               >
-                {sent ? (
-                  <span>Message sent! Check your email client.</span>
-                ) : (
-                  <>
-                    <span>Send Message</span>
-                    <Send
-                      size={14}
-                      className="group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform duration-200"
-                      aria-hidden="true"
-                    />
-                  </>
-                )}
-              </button>
+                {sent ? "Message sent! Check your email client." : "Send Message"}
+              </Button>
             </motion.form>
           </div>
         </div>

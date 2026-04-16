@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { fadeUp } from "@/lib/animations";
+import { Button } from "@/components/ui/button";
 
 const projects = [
   {
@@ -88,13 +89,17 @@ export function Projects() {
             
             return (
               <motion.article
+                layout
                 key={project.id}
                 {...fadeUp(i * 0.1)}
+                transition={{ duration: 0.5, ease: "easeOut" }}
                 className={`project-accordion-item group ${activeId === project.id ? 'active' : ''}`}
-                onMouseEnter={() => setActiveId(project.id)}
+                onMouseEnter={() => {
+                  if (activeId !== project.id) setActiveId(project.id);
+                }}
               >
                 {/* Image Section (Shows full on active, preview on collapsed) */}
-                <div className="project-image-wrapper bg-muted">
+                <motion.div layout className="project-image-wrapper">
                   {project.images.map((img, idx) => (
                     <img 
                       key={img}
@@ -111,18 +116,18 @@ export function Projects() {
                   <div className="project-collapsed-label">
                     <h4 className="font-projects">{project.title}</h4>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Expanded Content Section */}
                 <div className="project-content-wrapper">
                   <div className="project-content-inner">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-[10px] font-sans text-accent uppercase tracking-widest font-bold">{project.subtitle}</span>
+                      <span className="text-[10px] font-sans text-accent uppercase tracking-[0.2em] font-bold">{project.subtitle}</span>
                     </div>
-                    <h3 className="text-2xl md:text-3xl font-projects tracking-tight mb-3">
+                    <h3 className="text-2xl md:text-3xl font-projects mb-3 leading-none">
                       {project.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-lg">
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-xl">
                       {project.description}
                     </p>
                     
@@ -140,7 +145,7 @@ export function Projects() {
                 </div>
 
                 {/* External Link Indicator */}
-                <div className="absolute top-6 right-6 p-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute top-6 right-6 p-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                   <ArrowUpRight size={18} className="text-white" />
                 </div>
               </motion.article>
@@ -153,14 +158,14 @@ export function Projects() {
           {...fadeUp(0.3)}
           className="mt-12 text-center"
         >
-          <button
-            className="btn-ghost text-sm"
+          <Button
+            variant="default"
+            size="sm"
             onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
             aria-label="Go to contact to discuss a project"
           >
-            <span>Want to build something like this?</span>
-            <ArrowUpRight size={14} aria-hidden="true" />
-          </button>
+            Want to build something like this?
+          </Button>
         </motion.div>
       </div>
     </section>
