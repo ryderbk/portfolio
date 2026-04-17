@@ -188,9 +188,9 @@ export default function ChatWidget() {
                                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                             >
                                 <div
-                                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === "user"
-                                        ? "bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-br-none"
-                                        : "glass-card bg-white/5 border-white/10 text-foreground rounded-bl-none"
+                                    className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user"
+                                        ? "bg-accent/10 border border-accent/20 text-foreground"
+                                        : "glass-card bg-white/5 border-white/10 text-foreground"
                                         }`}
                                 >
                                     {formatMessage(msg.content)}
