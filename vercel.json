@@ -5,6 +5,9 @@
   "framework": "vite",
   "outputDirectory": "dist",
   "env": {},
+  "routes": [
+    { "src": "/(.*)", "dest": "/" }
+  ],
   "git": {
     "deploymentEnabled": {
       "main": true

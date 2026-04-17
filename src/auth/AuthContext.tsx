@@ -23,13 +23,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const auth = getFirebaseAuth();
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
-            setLoading(false);
-        });
+        console.log("🔐 AuthProvider: Setting up auth state listener");
+        
+        try {
+            const auth = getFirebaseAuth();
+            console.log("✅ Firebase Auth obtained successfully");
+            
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                console.log("👤 Auth state changed:", user ? "Logged in" : "Logged out");
+                setUser(user);
+                setLoading(false);
+            });
 
-        return () => unsubscribe();
+            return () => unsubscribe();
+        } catch (err) {
+            console.error("❌ AuthProvider: Firebase initialization failed:", err);
+            const errorMessage = err instanceof Error ? err.message : "Firebase initialization failed";
+            setError(errorMessage);
+            setLoading(false);
+            // Still render children so app doesn't crash completely
+        }
     }, []);
 
     const login = async (email: string, password: string) => {
@@ -40,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : "Login failed";
+            console.error("❌ Login error:", errorMessage);
             setError(errorMessage);
             throw err;
         } finally {
@@ -53,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await signOut(auth);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : "Logout failed";
+            console.error("❌ Logout error:", errorMessage);
             setError(errorMessage);
         }
     };

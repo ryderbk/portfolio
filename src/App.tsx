@@ -1,6 +1,7 @@
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ErrorBoundary } from "@/components/error-boundary";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 
@@ -10,6 +11,9 @@ import ChatWidget from "@/components/bkfiles/ChatWidget";
 import Admin from "@/pages/admin";
 import Login from "@/pages/login";
 import { ThemeProvider } from "@/components/theme-provider";
+
+// Debug: Log app component loaded
+console.log("📦 App component loading...");
 
 function Router() {
   return (
@@ -22,7 +26,7 @@ function Router() {
   );
 }
 
-function App() {
+function AppContent() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="portfolio-theme">
       <AuthProvider>
@@ -35,6 +39,16 @@ function App() {
         </TooltipProvider>
       </AuthProvider>
     </ThemeProvider>
+  );
+}
+
+function App() {
+  console.log("🚀 App rendering (wrapped with ErrorBoundary)");
+  
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
   );
 }
 
