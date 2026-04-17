@@ -140,26 +140,28 @@ export default function ChatWidget() {
     return (
         <>
             {isOpen && (
-                <div className="fixed bottom-24 right-6 w-96 h-96 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col z-40">
+                <div className="fixed bottom-24 right-6 w-96 h-[500px] glass-card flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
                     {/* Header */}
-                    <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                    <div className="p-5 border-b border-white/10 flex items-center justify-between bg-white/5">
                         <div>
-                            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Chat with me</h3>
-                            <p className="text-xs text-zinc-500">Ask about my work & skills</p>
+                            <h3 className="font-display font-semibold text-foreground">Chat with Bharath</h3>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">Developer & Portfolio Assistant</p>
                         </div>
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="text-zinc-500 hover:text-zinc-700"
+                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
                         >
                             ✕
                         </button>
                     </div>
 
                     {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
                         {messages.length === 0 && (
-                            <div className="text-center text-zinc-500 text-sm">
-                                👋 Hi! Ask me about my projects, skills, or experience.
+                            <div className="text-center py-10">
+                                <p className="text-sm text-muted-foreground">
+                                    👋 Hi! I'm Bharath. Ask me anything about my projects, skills, or experience.
+                                </p>
                             </div>
                         )}
                         {messages.map((msg, idx) => (
@@ -168,22 +170,22 @@ export default function ChatWidget() {
                                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                             >
                                 <div
-                                    className={`max-w-xs px-4 py-2 rounded-lg ${msg.role === "user"
-                                        ? "bg-violet-600 text-white"
-                                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === "user"
+                                        ? "bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-br-none"
+                                        : "glass-card bg-white/5 border-white/10 text-foreground rounded-bl-none"
                                         }`}
                                 >
-                                    <p className="text-sm">{formatMessage(msg.content)}</p>
+                                    {formatMessage(msg.content)}
                                 </div>
                             </div>
                         ))}
                         {isLoading && (
                             <div className="flex justify-start">
-                                <div className="bg-zinc-100 dark:bg-zinc-800 px-4 py-2 rounded-lg">
-                                    <div className="flex gap-1">
-                                        <div className="w-2 h-2 bg-zinc-500 rounded-full animate-bounce" />
-                                        <div className="w-2 h-2 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
-                                        <div className="w-2 h-2 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }} />
+                                <div className="glass-card bg-white/5 border-white/10 px-4 py-3 rounded-2xl rounded-bl-none">
+                                    <div className="flex gap-1.5 item-center h-4">
+                                        <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce" />
+                                        <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce [animation-delay:0.2s]" />
+                                        <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce [animation-delay:0.4s]" />
                                     </div>
                                 </div>
                             </div>
@@ -192,22 +194,24 @@ export default function ChatWidget() {
                     </div>
 
                     {/* Input */}
-                    <form onSubmit={handleSendMessage} className="p-4 border-t border-zinc-200 dark:border-zinc-800">
+                    <form onSubmit={handleSendMessage} className="p-5 bg-white/5 border-t border-white/10">
                         <div className="flex gap-2">
                             <input
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                placeholder="Type your message..."
-                                className="flex-1 px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
+                                placeholder="Ask me something..."
+                                className="flex-1 px-4 py-2.5 rounded-xl glass-input text-sm"
                                 disabled={isLoading}
                             />
                             <button
                                 type="submit"
                                 disabled={isLoading || !input.trim()}
-                                className="px-4 py-2 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-700 disabled:opacity-50 text-sm"
+                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-accent text-accent-foreground hover:opacity-90 disabled:opacity-50 transition-all active:scale-95 shadow-lg shadow-accent/20"
                             >
-                                Send
+                                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current rotate-45">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                                </svg>
                             </button>
                         </div>
                     </form>
@@ -217,10 +221,18 @@ export default function ChatWidget() {
             {/* Chat Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center z-40"
+                className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-accent text-accent-foreground shadow-2xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center z-50 group border border-white/10"
             >
-                {isOpen ? "✕" : "💬"}
+                <div className="absolute inset-0 rounded-full bg-accent/20 animate-ping group-hover:hidden" />
+                {isOpen ? (
+                    <span className="text-xl">✕</span>
+                ) : (
+                    <svg viewBox="0 0 24 24" className="w-7 h-7 fill-current">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+                    </svg>
+                )}
             </button>
         </>
     );
+
 }
