@@ -61,7 +61,29 @@ export default function ChatWidget() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [projects, setProjects] = useState<any[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // Fetch projects context on mount
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const { getFirestoreDb } = await import("@/lib/firebase");
+                const { collection, getDocs, query, orderBy, limit } = await import("firebase/firestore");
+                const db = getFirestoreDb();
+                const q = query(collection(db, "projects"), orderBy("displayOrder"), limit(10));
+                const snap = await getDocs(q);
+                setProjects(snap.docs.map(doc => ({
+                    title: doc.data().title,
+                    description: doc.data().description,
+                    technologies: doc.data().technologiesUsed || [],
+                })));
+            } catch (err) {
+                console.error("Error fetching projects for chat:", err);
+            }
+        };
+        fetchProjects();
+    }, []);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -81,22 +103,30 @@ export default function ChatWidget() {
         setIsLoading(true);
 
         try {
-            // Updated to point to local Express backend
-            const response = await fetch("http://localhost:5000/api/chat", {
+            const response = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    message: userMessage,
+                    projects: projects,
                     messages: [...messages, { role: "user", content: userMessage }],
                 }),
             });
 
             const data = await response.json();
 
-            if (data.content) {
+            if (data.reply) {
+                setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+            } else if (data.content) {
+                // Fallback for old API format
                 setMessages((prev) => [...prev, { role: "assistant", content: data.content }]);
             }
         } catch (error) {
             console.error("Chat error:", error);
+            setMessages((prev) => [...prev, { 
+                role: "assistant", 
+                content: "I'm sorry, I'm having trouble connecting to my brain. Please try again later!" 
+            }]);
         } finally {
             setIsLoading(false);
         }

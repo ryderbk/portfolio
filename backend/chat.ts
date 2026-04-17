@@ -1,9 +1,8 @@
-import openai from './openai';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { getFirestoreDb } from '../src/lib/firebase';
 
 interface Message {
-    role: 'user' | 'assistant';
+    role: 'user' | 'assistant' | 'system';
     content: string;
 }
 
@@ -14,7 +13,7 @@ async function getPortfolioContext() {
 
         // Fetch projects
         const projectsRef = collection(db, 'projects');
-        const projectsQuery = query(projectsRef, orderBy('displayOrder'), limit(10));
+        const projectsQuery = query(projectsRef, orderBy('displayOrder'), limit(15));
         const projectsSnap = await getDocs(projectsQuery);
         const projects = projectsSnap.docs.map(doc => ({
             title: doc.data().title,
@@ -26,61 +25,35 @@ async function getPortfolioContext() {
 
         // Fetch skills
         const skillsRef = collection(db, 'skills');
-        const skillsQuery = query(skillsRef, orderBy('displayOrder'), limit(20));
-        const skillsSnap = await getDocs(skillsQuery);
+        const skillsSnap = await getDocs(skillsRef);
         const skills = skillsSnap.docs.map(doc => ({
             name: doc.data().name,
             category: doc.data().category,
-            proficiencyLevel: doc.data().proficiencyLevel,
         }));
 
-        // Fetch experiences
-        const expRef = collection(db, 'experiences');
-        const expQuery = query(expRef, orderBy('displayOrder'), limit(10));
-        const expSnap = await getDocs(expQuery);
-        const experiences = expSnap.docs.map(doc => ({
-            title: doc.data().title,
-            company: doc.data().company,
-            type: doc.data().type,
-            description: doc.data().description,
-        }));
-
-        return { projects, skills, experiences };
+        return { projects, skills };
     } catch (error) {
         console.error('Error fetching portfolio context:', error);
-        return { projects: [], skills: [], experiences: [] };
+        return { projects: [], skills: [] };
     }
 }
 
 const createSystemPrompt = (context: Awaited<ReturnType<typeof getPortfolioContext>>) => {
-    return `You are an AI assistant for a portfolio website. You help visitors learn about the portfolio owner's skills, projects, and experience. Be friendly, professional, and helpful.
+    return `You are a helpful AI assistant for Bharath Kumar S's portfolio website. 
+Your task is to answer questions about his projects and skills based ONLY on the data provided below.
 
-## Portfolio Data
+DATA:
+Projects:
+${JSON.stringify(context.projects, null, 2)}
 
-### Projects (${context.projects.length} total)
-${context.projects.map(p => `- **${p.title}**: ${p.description}
-  Technologies: ${p.technologies.join(', ')}
-  ${p.liveDemoUrl ? `Live: ${p.liveDemoUrl}` : ''}${p.repositoryUrl ? ` | Code: ${p.repositoryUrl}` : ''}`).join('\n\n')}
+Skills:
+${JSON.stringify(context.skills, null, 2)}
 
-### Skills
-${Object.entries(
-        context.skills.reduce((acc, s) => {
-            acc[s.category] = acc[s.category] || [];
-            acc[s.category].push(`${s.name} (${s.proficiencyLevel})`);
-            return acc;
-        }, {} as Record<string, string[]>)
-    ).map(([category, skills]) => `**${category}**: ${skills.join(', ')}`).join('\n')}
-
-### Experience
-${context.experiences.map(e => `- **${e.title}** at ${e.company} (${e.type})
-  ${e.description}`).join('\n\n')}
-
-## Guidelines
-1. Answer questions about the portfolio owner's skills, projects, and experience
-2. Be concise but informative (max 150 words unless more detail requested)
-3. If asked about something not in the portfolio, politely say you don't have that information
-4. Encourage visitors to explore the portfolio
-5. Keep responses professional and helpful`;
+INSTRUCTIONS:
+1. Use ONLY the provided data. If information is missing, politely say you don't have that information.
+2. Be professional, concise, and friendly.
+3. Keep responses under 150 words.
+4. If asked about contact info, refer to the contact section of the website.`;
 };
 
 /**
@@ -88,40 +61,62 @@ ${context.experiences.map(e => `- **${e.title}** at ${e.company} (${e.type})
  */
 export async function chatHandler(req: any, res: any) {
     try {
-        const { messages } = req.body;
+        const { message, messages } = req.body;
+        
+        // Handle both single 'message' (new requirement) and 'messages' array (old support)
+        const userMessage = message || (messages && messages[messages.length - 1]?.content);
 
-        if (!messages || !Array.isArray(messages)) {
-            return res.status(400).json({ error: 'Messages array is required' });
+        if (!userMessage) {
+            return res.status(400).json({ error: 'Message is required' });
         }
+
+        console.log("🚀 Sending request to Groq...");
 
         // Get portfolio context
         const context = await getPortfolioContext();
         const systemPrompt = createSystemPrompt(context);
 
-        // Call OpenAI API
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
-            messages: [
-                { role: 'system', content: systemPrompt },
-                ...messages,
-            ],
-            temperature: 0.7,
-            max_tokens: 500,
+        // Prepare messages for Groq
+        const groqMessages = [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userMessage }
+        ];
+
+        // Call Groq API
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: 'llama3-8b-8192',
+                messages: groqMessages,
+                temperature: 0.7,
+                max_tokens: 1024
+            })
         });
 
-        const responseText = completion.choices[0]?.message?.content;
-
-        if (!responseText) {
-            return res.status(500).json({ error: 'No response from AI' });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Groq API error: ${JSON.stringify(errorData)}`);
         }
 
-        return res.json({
-            role: 'assistant',
-            content: responseText,
-            usage: completion.usage,
-        });
+        const data = await response.json();
+        console.log("✅ Received response from Groq");
+        
+        const reply = data.choices[0]?.message?.content;
+
+        if (!reply) {
+            throw new Error('No response content from Groq');
+        }
+
+        return res.json({ reply });
     } catch (error: any) {
         console.error('Chat error:', error);
-        return res.status(500).json({ error: error.message || 'Failed to process chat message' });
+        return res.status(500).json({ 
+            reply: "I'm sorry, I'm having trouble connecting to my brain right now. Please try again later!",
+            error: error.message 
+        });
     }
 }

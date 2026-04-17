@@ -1,5 +1,3 @@
-import openai from './openai';
-
 const SYSTEM_PROMPT = `You are an AI assistant that extracts project information from documentation files to create portfolio-ready project entries.
 
 Your task is to analyze the provided document content and extract/generate the following fields:
@@ -36,30 +34,42 @@ export async function generateProjectHandler(req: any, res: any) {
             return res.status(400).json({ error: 'Document content is required' });
         }
 
-        if (documentContent.length > 50000) {
-            return res.status(400).json({ error: 'Document is too large. Maximum 50,000 characters.' });
-        }
+        console.log("🚀 Sending generation request to Groq...");
 
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
-                { role: 'user', content: `Analyze this project documentation and extract the project details:\n\n${documentContent}` }
-            ],
-            temperature: 0.3,
-            max_tokens: 1000,
-            response_format: { type: 'json_object' },
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: 'llama3-8b-8192',
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'user', content: `Analyze this project documentation and extract the project details:\n\n${documentContent}` }
+                ],
+                temperature: 0.1,
+                max_tokens: 1024,
+                response_format: { type: 'json_object' }
+            })
         });
 
-        const responseText = completion.choices[0]?.message?.content;
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Groq API error: ${JSON.stringify(errorData)}`);
+        }
+
+        const data = await response.json();
+        console.log("✅ Received generation response from Groq");
+
+        const responseText = data.choices[0]?.message?.content;
 
         if (!responseText) {
-            return res.status(500).json({ error: 'AI did not return a response' });
+            throw new Error('AI did not return a response');
         }
 
         const projectData = JSON.parse(responseText);
 
-        // Validate the response structure
         return res.json({
             success: true,
             data: {
