@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 
 interface Message {
-    role: "user" | "bot";
-    text: string;
+    role: "user" | "assistant";
+    content: string;
 }
 
-// Helper updated to use text property
-function formatMessage(text: string): React.ReactNode {
-    const lines = text.split('\n');
+// Helper updated back to content property
+function formatMessage(content: string): React.ReactNode {
+    const lines = content.split('\n');
     const parts: React.ReactNode[] = [];
     let lineIndex = 0;
 
@@ -100,7 +100,7 @@ export default function ChatWidget() {
 
         const userMessage = input.trim();
         setInput("");
-        setMessages((prev) => [...prev, { role: "user", text: userMessage }]);
+        setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
         setIsLoading(true);
 
         console.log("💬 Sending message:", userMessage);
@@ -116,17 +116,22 @@ export default function ChatWidget() {
             });
 
             const data = await response.json();
-            console.log("📥 API response:", data);
+            console.log("API RESPONSE:", data);
 
-            if (data.reply) {
-                setMessages((prev) => [...prev, { role: "bot", text: data.reply }]);
+            if (!data || !data.reply) {
+                throw new Error("Invalid response");
             }
+
+            setMessages((prev) => [
+                ...prev, 
+                { role: "assistant", content: data.reply }
+            ]);
         } catch (error) {
-            console.error("❌ Chat error:", error);
-            setMessages((prev) => [...prev, { 
-                role: "bot", 
-                text: "Something went wrong. Please try again later!" 
-            }]);
+            console.error("Chat error:", error);
+            setMessages((prev) => [
+                ...prev, 
+                { role: "assistant", content: "AI is temporarily unavailable." }
+            ]);
         } finally {
             setIsLoading(false);
         }
@@ -168,7 +173,7 @@ export default function ChatWidget() {
                                         : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
                                         }`}
                                 >
-                                    <p className="text-sm">{formatMessage(msg.text)}</p>
+                                    <p className="text-sm">{formatMessage(msg.content)}</p>
                                 </div>
                             </div>
                         ))}
