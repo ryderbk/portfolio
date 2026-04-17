@@ -21,7 +21,7 @@ export function Contact() {
     <section id="contact" className="border-t border-border" aria-label="Contact">
 
       {/* Top CTA banner — Translucent Glass Effect */}
-      <div className="py-16 md:py-24 border-y border-border/20" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(32px) saturate(200%)', WebkitBackdropFilter: 'blur(32px) saturate(200%)' }}>
+      <div className="py-16 md:py-24 border-y border-border/20 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--glass-bg)' }}>
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
