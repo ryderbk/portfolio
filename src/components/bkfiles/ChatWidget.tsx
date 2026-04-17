@@ -64,6 +64,16 @@ export default function ChatWidget() {
     const [isLoading, setIsLoading] = useState(false);
     const [projects, setProjects] = useState<any[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Auto-focus input when opened
+    useEffect(() => {
+        if (isOpen) {
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 300); // Wait for open animation to finish
+        }
+    }, [isOpen]);
 
     // Fetch projects context on mount
     useEffect(() => {
@@ -197,6 +207,7 @@ export default function ChatWidget() {
                     <form onSubmit={handleSendMessage} className="p-5 bg-white/5 border-t border-white/10">
                         <div className="flex gap-2">
                             <input
+                                ref={inputRef}
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
