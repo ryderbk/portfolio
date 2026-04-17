@@ -9,6 +9,7 @@ import { CustomCursor } from "@/components/custom-cursor";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { Preloader } from "@/components/preloader";
 import { Background } from "@/components/background";
+import BackToTop from "@/components/bkfiles/BackToTop";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
@@ -39,6 +40,7 @@ export default function Home() {
             <About />
             <Skills />
             <Contact />
+            <BackToTop />
           </Suspense>
         </main>
       </div>
