@@ -44,6 +44,10 @@ GOAL:
 - Make it feel like real conversation with him
 `;
 
+    // Debug Log
+    console.log("SYSTEM PROMPT:", systemPrompt);
+    console.log("USER MESSAGE:", message);
+
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
