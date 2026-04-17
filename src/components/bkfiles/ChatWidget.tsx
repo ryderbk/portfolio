@@ -72,6 +72,14 @@ export default function ChatWidget() {
             setTimeout(() => {
                 inputRef.current?.focus();
             }, 300); // Wait for open animation to finish
+            
+            // Close on scroll outside
+            const handleScroll = () => {
+                setIsOpen(false);
+            };
+            
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            return () => window.removeEventListener('scroll', handleScroll);
         }
     }, [isOpen]);
 
