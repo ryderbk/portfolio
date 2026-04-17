@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&family=Outfit:wght@100..900&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -8,8 +9,8 @@
 
 @theme inline {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --font-projects: 'Bebas Neue', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-projects: 'Outfit', system-ui, sans-serif;
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -53,6 +54,10 @@
   --glass-shadow: rgba(0, 0, 0, 0.05);
   --glass-highlight: rgba(255, 255, 255, 0.1);
   --background-scrim: rgba(255, 255, 255, 0.4);
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-projects: 'Outfit', system-ui, sans-serif;
 }
 
 .dark {
