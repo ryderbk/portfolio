@@ -160,7 +160,7 @@ export default function ChatWidget() {
             {isOpen && (
                 <div className="fixed bottom-24 right-6 w-96 h-[500px] glass-card flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
                     {/* Header */}
-                    <div className="p-5 border-b border-white/10 flex items-center justify-between" style={{ background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
+                    <div className="p-5 border-b border-white/10 flex items-center justify-between bg-white/5 backdrop-blur-md">
                         <div>
                             <h3 className="font-display font-semibold text-foreground">Chat with Bharath</h3>
                             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">Developer & Portfolio Assistant</p>
@@ -243,8 +243,7 @@ export default function ChatWidget() {
             {/* Chat Button — Premium Glass Trigger */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`fixed bottom-6 right-6 h-14 rounded-full shadow-2xl transition-all duration-500 flex items-center justify-center z-50 group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'}`}
-                style={{ backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
+                className={`fixed bottom-6 right-6 h-14 rounded-full shadow-2xl transition-all duration-500 flex items-center justify-center z-50 group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'} backdrop-blur-xl`}
             >
                 {/* Glow Effect */}
                 <div className="absolute inset-0 rounded-full bg-accent/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />

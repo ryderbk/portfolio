@@ -181,9 +181,8 @@
 
   /* Glass Card */
   .glass-card {
+    @apply backdrop-blur-2xl backdrop-saturate-150;
     background-color: var(--glass-bg, rgba(255, 255, 255, 0.1));
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
     box-shadow: 0 8px 32px var(--glass-shadow, rgba(0, 0, 0, 0.1)), inset 0 1px 0 var(--glass-highlight, rgba(255, 255, 255, 0.1));
     border-radius: var(--radius, 1rem);
@@ -191,8 +190,7 @@
 
   /* Glassmorphism Navbar */
   nav.glass-nav {
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    @apply backdrop-blur-xl backdrop-saturate-150;
     background-color: var(--glass-bg, rgba(255, 255, 255, 0.1));
     border-color: var(--glass-border, rgba(255, 255, 255, 0.1));
     box-shadow: 0 4px 24px var(--glass-shadow, rgba(0, 0, 0, 0.1));
@@ -230,9 +228,8 @@
 
   /* Glass Input Utility */
   .glass-input {
+    @apply backdrop-blur-lg backdrop-saturate-150;
     background-color: var(--glass-bg, rgba(255, 255, 255, 0.08));
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
     border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     color: hsl(var(--foreground));
@@ -277,9 +274,8 @@
   justify-content: center;
   gap: 8px;
   padding: 14px 36px;
+  @apply backdrop-blur-lg backdrop-saturate-150;
   background-color: var(--glass-bg, rgba(255, 255, 255, 0.08));
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
   font-size: 0.9375rem;
   border-radius: 100px;
@@ -667,10 +663,9 @@ section {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     transform: translateZ(0);
     position: relative;
+    @apply backdrop-blur-2xl backdrop-saturate-200;
     border: 1px solid hsl(var(--border));
     background: var(--glass-bg);
-    backdrop-filter: blur(32px) saturate(200%);
-    -webkit-backdrop-filter: blur(32px) saturate(200%);
     border-radius: 16px;
     display: flex;
     flex-direction: column;
