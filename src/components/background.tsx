@@ -1,3 +1,4 @@
+// @ts-ignore
 import LiquidEther from "@/component/LiquidEther";
 
 export function Background() {

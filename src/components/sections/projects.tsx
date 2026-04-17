@@ -3,54 +3,25 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { fadeUp } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
-
-const projects = [
-  {
-    id: "gpa-analytics",
-    number: "01",
-    title: "GPA Analytics",
-    subtitle: "Web Application — Academic Analytics",
-    images: ["/images/project-01.png"],
-    description: "A production-ready academic analytics platform with real-time performance insights and predictive analytics engine.",
-    problem: "Students lacked a unified tool to predict exam performance and understand their academic standing. Manual calculations were time-consuming and error-prone.",
-    approach: "Built a full-stack web application leveraging modern development tools for rapid iteration. Engineered algorithms to calculate internal marks from assignments, CIE scores, and practicals.",
-    result: "Delivered a production-ready academic analytics platform with real-time performance insights and predictive analytics.",
-    tags: ["AI", "Web Development", "Academic Analytics", "Python", "Full-Stack"],
-    year: "2024",
-  },
-  {
-    id: "fire-robot",
-    number: "02",
-    title: "Fire Detection Robot",
-    subtitle: "Hardware — Robotics & Safety Systems",
-    images: ["/images/project-02.png"],
-    description: "Fully autonomous robot prototype for fire detection and suppression in hazardous environments.",
-    problem: "Manual fire response is slow and dangerous in confined or complex environments. Early detection and response are critical for safety.",
-    approach: "Engineered a fully autonomous robot using Arduino microcontroller, flame sensors, DC motors, servo mechanism for directional control, and automated water pump activation.",
-    result: "Successfully navigates toward fire sources and autonomously triggers suppression — ready for refinement into production safety systems.",
-    tags: ["Arduino", "Robotics", "Embedded Systems", "Sensors", "C++"],
-    year: "2024",
-  },
-  {
-    id: "sound-fan",
-    number: "03",
-    title: "Sound-Activated Control",
-    subtitle: "Hardware — Home Automation & IoT",
-    images: ["/images/project-03.png"],
-    description: "Hands-free home automation system using signal processing for clap detection and relay control.",
-    problem: "Traditional physical switches require interaction and don't provide smart home integration. Accessibility is limited for users with mobility constraints.",
-    approach: "Designed a microcontroller-based home automation system using sound recognition (clap detection) via microphone, signal processing, and relay circuit control.",
-    result: "Created a practical hands-free control system improving accessibility and convenience. Extensible to other smart home applications.",
-    tags: ["Microcontroller", "Home Automation", "IoT", "Relay Circuit", "Hardware"],
-    year: "2024",
-  },
-];
-
-
-
+import { subscribeToProjects } from "@/services/firestore";
 export function Projects() {
-  const [activeId, setActiveId] = useState(projects[0].id);
+  const [projectsList, setProjects] = useState<any[]>([]);
+  const [activeId, setActiveId] = useState<string>("");
   const [imgCycle, setImgCycle] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const unsub = subscribeToProjects((data) => {
+      console.log("Firestore Projects:", data);
+      setProjects(data);
+      setActiveId((currentId) => {
+        if (!currentId && data.length > 0) return data[0].id;
+        return currentId;
+      });
+      setIsLoading(false);
+    });
+    return () => unsub();
+  }, []);
 
   // Cycle images every 4 seconds for the active project
   useEffect(() => {
@@ -83,9 +54,19 @@ export function Projects() {
         </motion.div>
 
         {/* Project accordion — Interactive expanding list */}
-        <div className="projects-accordion">
-          {projects.map((project, i) => {
-            const currentImgIdx = imgCycle % project.images.length;
+        <div className="projects-accordion min-h-[400px]">
+          {isLoading ? (
+            <div className="flex items-center justify-center w-full py-12">
+               <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : projectsList.length === 0 ? (
+            <div className="flex items-center justify-center w-full py-12 text-muted-foreground">
+               No projects found.
+            </div>
+          ) : projectsList.map((project, i) => {
+            const projectImages = project.images || ["/images/project-01.png"];
+            const projectTags = project.tags || [];
+            const currentImgIdx = imgCycle % projectImages.length;
             
             return (
               <motion.article
@@ -100,9 +81,9 @@ export function Projects() {
               >
                 {/* Image Section (Shows full on active, preview on collapsed) */}
                 <motion.div layout className="project-image-wrapper">
-                  {project.images.map((img, idx) => (
+                  {projectImages.map((img: string, idx: number) => (
                     <img 
-                      key={img}
+                      key={img + idx}
                       src={img} 
                       alt={`${project.title} - Preview ${idx + 1}`} 
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
@@ -132,7 +113,7 @@ export function Projects() {
                     </p>
                     
                     <div className="flex flex-wrap gap-2">
-                      {project.tags.slice(0, 3).map(tag => (
+                      {projectTags.slice(0, 3).map((tag: string) => (
                         <span
                           key={tag}
                           className="text-[9px] font-sans px-2 py-1 border border-border/50 text-muted-foreground uppercase tracking-widest rounded-md bg-background/50"
