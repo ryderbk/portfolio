@@ -1,27 +1,19 @@
-export const config = {
-  runtime: 'edge',
-};
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export default async function handler(req: Request) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { message, projects, messages } = await req.json();
-    const userMessage = message || (messages && messages[messages.length - 1]?.content);
+    const { message, projects } = req.body;
+    
+    console.log("📥 Incoming request message:", message);
+    console.log("📥 Incoming request projects count:", projects?.length || 0);
 
-    if (!userMessage) {
-      return new Response(JSON.stringify({ error: 'Message is required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
     }
-
-    console.log("🚀 Sending request to Groq (Edge Runtime)");
 
     const systemPrompt = `You are a helpful AI assistant for Bharath Kumar S's portfolio website. 
 Your task is to answer questions about his projects based ONLY on the data provided below.
@@ -37,8 +29,10 @@ INSTRUCTIONS:
 
     const groqMessages = [
       { role: 'system', content: systemPrompt },
-      { role: 'user', content: userMessage }
+      { role: 'user', content: message }
     ];
+
+    console.log("🚀 Sending request to Groq...");
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: 'POST',
@@ -56,27 +50,27 @@ INSTRUCTIONS:
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`Groq API error: ${JSON.stringify(errorData)}`);
+      console.error("❌ Groq API error data:", errorData);
+      throw new Error(`Groq API error: ${response.status}`);
     }
 
     const data = await response.json();
     console.log("✅ Received response from Groq");
     
-    const reply = data.choices[0]?.message?.content;
+    const reply = data?.choices?.[0]?.message?.content;
 
-    return new Response(JSON.stringify({ reply }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    if (!reply) {
+      console.error("❌ No reply content in Groq response:", data);
+      return res.status(500).json({ reply: "I couldn't generate a response. Please try again." });
+    }
+
+    return res.status(200).json({ reply });
 
   } catch (error: any) {
-    console.error('Chat API Error:', error);
-    return new Response(JSON.stringify({ 
-      reply: "I'm sorry, I'm having trouble connecting to my brain right now. Please try again later!",
+    console.error('❌ Chat API Error:', error);
+    return res.status(500).json({ 
+      reply: "Something went wrong. Please try again later!",
       error: error.message 
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
     });
   }
 }

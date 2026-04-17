@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 
 interface Message {
-    role: "user" | "assistant";
-    content: string;
+    role: "user" | "bot";
+    text: string;
 }
 
-function formatMessage(content: string): React.ReactNode {
-    const lines = content.split('\n');
+// Helper updated to use text property
+function formatMessage(text: string): React.ReactNode {
+    const lines = text.split('\n');
     const parts: React.ReactNode[] = [];
     let lineIndex = 0;
 
@@ -99,8 +100,10 @@ export default function ChatWidget() {
 
         const userMessage = input.trim();
         setInput("");
-        setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+        setMessages((prev) => [...prev, { role: "user", text: userMessage }]);
         setIsLoading(true);
+
+        console.log("💬 Sending message:", userMessage);
 
         try {
             const response = await fetch("/api/chat", {
@@ -108,24 +111,21 @@ export default function ChatWidget() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     message: userMessage,
-                    projects: projects,
-                    messages: [...messages, { role: "user", content: userMessage }],
+                    projects: projects
                 }),
             });
 
             const data = await response.json();
+            console.log("📥 API response:", data);
 
             if (data.reply) {
-                setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-            } else if (data.content) {
-                // Fallback for old API format
-                setMessages((prev) => [...prev, { role: "assistant", content: data.content }]);
+                setMessages((prev) => [...prev, { role: "bot", text: data.reply }]);
             }
         } catch (error) {
-            console.error("Chat error:", error);
+            console.error("❌ Chat error:", error);
             setMessages((prev) => [...prev, { 
-                role: "assistant", 
-                content: "I'm sorry, I'm having trouble connecting to my brain. Please try again later!" 
+                role: "bot", 
+                text: "Something went wrong. Please try again later!" 
             }]);
         } finally {
             setIsLoading(false);
@@ -168,7 +168,7 @@ export default function ChatWidget() {
                                         : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
                                         }`}
                                 >
-                                    <p className="text-sm">{formatMessage(msg.content)}</p>
+                                    <p className="text-sm">{formatMessage(msg.text)}</p>
                                 </div>
                             </div>
                         ))}
