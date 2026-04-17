@@ -207,9 +207,12 @@ export default function ChatWidget() {
                             <button
                                 type="submit"
                                 disabled={isLoading || !input.trim()}
-                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-accent text-accent-foreground hover:opacity-90 disabled:opacity-50 transition-all active:scale-95 shadow-lg shadow-accent/20"
+                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-30 transition-all active:scale-90 shadow-md shadow-accent/20 group/send"
                             >
-                                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current rotate-45">
+                                <svg 
+                                    viewBox="0 0 24 24" 
+                                    className={`w-5 h-5 fill-current transition-transform duration-300 ${isLoading ? 'animate-pulse' : 'group-hover/send:translate-x-0.5 group-hover/send:-translate-y-0.5'}`}
+                                >
                                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                                 </svg>
                             </button>
@@ -218,21 +221,32 @@ export default function ChatWidget() {
                 </div>
             )}
 
-            {/* Chat Button */}
+            {/* Chat Button — Premium Glass Trigger */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-accent text-accent-foreground shadow-2xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center z-50 group border border-white/10"
+                className={`fixed bottom-6 right-6 h-14 rounded-full shadow-2xl transition-all duration-500 flex items-center justify-center z-50 group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'}`}
             >
-                <div className="absolute inset-0 rounded-full bg-accent/20 animate-ping group-hover:hidden" />
-                {isOpen ? (
-                    <span className="text-xl">✕</span>
-                ) : (
-                    <svg viewBox="0 0 24 24" className="w-7 h-7 fill-current">
-                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
-                    </svg>
+                {/* Glow Effect */}
+                <div className="absolute inset-0 rounded-full bg-accent/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                <div className={`relative flex items-center justify-center ${isOpen ? 'rotate-90' : 'rotate-0'} transition-transform duration-500`}>
+                    {isOpen ? (
+                        <span className="text-xl font-light text-foreground">✕</span>
+                    ) : (
+                        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-accent">
+                            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+                        </svg>
+                    )}
+                </div>
+                
+                {!isOpen && (
+                    <span className="text-sm font-semibold text-foreground tracking-wide whitespace-nowrap animate-in fade-in slide-in-from-right-2 duration-500">
+                        Chat with me
+                    </span>
                 )}
             </button>
         </>
     );
+
 
 }
