@@ -45,7 +45,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
           <p style={{ fontSize: '14px', color: '#999', marginBottom: '20px' }}>
             Please try refreshing the page
           </p>
-          {process.env.NODE_ENV === 'development' && (
+          {import.meta.env.DEV && (
             <pre
               style={{
                 backgroundColor: '#1a1a1a',

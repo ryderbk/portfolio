@@ -5,8 +5,8 @@
   "framework": "vite",
   "outputDirectory": "dist",
   "env": {},
-  "routes": [
-    { "src": "/(.*)", "dest": "/" }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "git": {
     "deploymentEnabled": {

@@ -8,31 +8,14 @@ console.log("🔧 Firebase module loading...");
 
 // Firebase configuration
 // Get these values from Firebase Console > Project Settings
-// Safe environment variable accessor
-const getEnv = (key: string) => {
-    // First try import.meta.env (Vite client-side)
-    if (typeof import.meta !== 'undefined' && import.meta.env) {
-        const value = import.meta.env[key];
-        if (value) return value;
-    }
-    
-    // Fallback to process.env (shouldn't reach in production but safe for dev)
-    if (typeof process !== 'undefined' && process.env) {
-        const value = process.env[`VITE_${key}`] || process.env[key];
-        if (value) return value;
-    }
-    
-    return '';
-};
-
 const firebaseConfig = {
-    apiKey: getEnv("VITE_FIREBASE_API_KEY"),
-    authDomain: getEnv("VITE_FIREBASE_AUTH_DOMAIN"),
-    projectId: getEnv("VITE_FIREBASE_PROJECT_ID"),
-    storageBucket: getEnv("VITE_FIREBASE_STORAGE_BUCKET"),
-    messagingSenderId: getEnv("VITE_FIREBASE_MESSAGING_SENDER_ID"),
-    appId: getEnv("VITE_FIREBASE_APP_ID"),
-    measurementId: getEnv("VITE_FIREBASE_MEASUREMENT_ID"),
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || '',
 };
 
 if (typeof window !== 'undefined') {
@@ -58,9 +41,9 @@ if (typeof window !== 'undefined') {
 
 // Initialize Firebase (singleton pattern to prevent multiple instances)
 let app: FirebaseApp | null = null;
-let auth: Auth | null = null;
-let db: Firestore | null = null;
-let analytics: Analytics | null = null;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
+let analytics: Analytics | undefined;
 let initializationError: Error | null = null;
 
 function getFirebaseApp(): FirebaseApp {
@@ -80,7 +63,7 @@ function getFirebaseApp(): FirebaseApp {
             throw initializationError;
         }
     }
-    return app;
+    return app!;
 }
 
 export function getFirebaseAnalytics(): Analytics | undefined {
@@ -102,7 +85,7 @@ export function getFirebaseAuth(): Auth {
             auth = getAuth(getFirebaseApp());
             console.log("🔐 Firebase Auth initialized");
         }
-        return auth;
+        return auth!;
     } catch (error) {
         console.error("❌ Firebase Auth initialization failed:", error);
         throw error;
@@ -115,7 +98,7 @@ export function getFirestoreDb(): Firestore {
             db = getFirestore(getFirebaseApp(), "default");
             console.log("📚 Firestore database initialized");
         }
-        return db;
+        return db!;
     } catch (error) {
         console.error("❌ Firestore initialization failed:", error);
         throw error;
