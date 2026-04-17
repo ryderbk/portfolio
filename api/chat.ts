@@ -1,20 +1,13 @@
-export default async function handler(req: Request) {
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const { message } = await req.json();
-
-    const GROQ_API_KEY = process.env.GROQ_API_KEY;
-
-    if (!GROQ_API_KEY) {
-      console.error("❌ Missing GROQ_API_KEY");
-      return new Response(JSON.stringify({
-        reply: "Server misconfiguration"
-      }), { status: 500 });
-    }
+    const { message } = req.body;
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${GROQ_API_KEY}`,
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -26,23 +19,18 @@ export default async function handler(req: Request) {
       })
     });
 
-    const data = await response.json();
-    console.log("Groq response:", data);
+    const data: any = await response.json();
 
     const reply =
       data?.choices?.[0]?.message?.content ||
-      "Sorry, I couldn't generate a response.";
+      "No response";
 
-    return new Response(JSON.stringify({ reply }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
+    return res.status(200).json({ reply });
 
   } catch (error) {
-    console.error("🔥 API ERROR:", error);
-
-    return new Response(JSON.stringify({
+    console.error("API ERROR:", error);
+    return res.status(500).json({
       reply: "AI is temporarily unavailable."
-    }), { status: 500 });
+    });
   }
 }
