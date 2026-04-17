@@ -3,25 +3,11 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { fadeUp } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
-import { subscribeToProjects } from "@/services/firestore";
-export function Projects() {
-  const [projectsList, setProjects] = useState<any[]>([]);
-  const [activeId, setActiveId] = useState<string>("");
-  const [imgCycle, setImgCycle] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+import { initialProjects } from "@/lib/initial-data";
 
-  useEffect(() => {
-    const unsub = subscribeToProjects((data) => {
-      console.log("Firestore Projects:", data);
-      setProjects(data);
-      setActiveId((currentId) => {
-        if (!currentId && data.length > 0) return data[0].id;
-        return currentId;
-      });
-      setIsLoading(false);
-    });
-    return () => unsub();
-  }, []);
+export function Projects() {
+  const [activeId, setActiveId] = useState<string>(initialProjects[0].title);
+  const [imgCycle, setImgCycle] = useState(0);
 
   // Cycle images every 4 seconds for the active project
   useEffect(() => {
@@ -55,28 +41,21 @@ export function Projects() {
 
         {/* Project accordion — Interactive expanding list */}
         <div className="projects-accordion min-h-[400px]">
-          {isLoading ? (
-            <div className="flex items-center justify-center w-full py-12">
-               <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : projectsList.length === 0 ? (
-            <div className="flex items-center justify-center w-full py-12 text-muted-foreground">
-               No projects found.
-            </div>
-          ) : projectsList.map((project, i) => {
+          {initialProjects.map((project, i) => {
             const projectImages = project.images || ["/images/project-01.png"];
             const projectTags = project.tags || [];
             const currentImgIdx = imgCycle % projectImages.length;
+            const isActive = activeId === project.title;
             
             return (
               <motion.article
                 layout
-                key={project.id}
+                key={project.title}
                 {...fadeUp(i * 0.1)}
                 transition={{ duration: 0.5, ease: "easeOut" }}
-                className={`project-accordion-item group ${activeId === project.id ? 'active' : ''}`}
+                className={`project-accordion-item group ${isActive ? 'active' : ''}`}
                 onMouseEnter={() => {
-                  if (activeId !== project.id) setActiveId(project.id);
+                  if (activeId !== project.title) setActiveId(project.title);
                 }}
               >
                 {/* Image Section (Shows full on active, preview on collapsed) */}
