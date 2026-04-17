@@ -75,7 +75,7 @@ export function Navbar() {
           </button>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center p-1.5 shadow-sm rounded-2xl gap-1" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(16px) saturate(140%)' }}>
+          <div className="hidden md:flex items-center p-1.5 shadow-sm rounded-2xl gap-1" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(24px) saturate(180%)', WebkitBackdropFilter: 'blur(24px) saturate(180%)' }}>
             {navLinks.map((link) => (
               <button
                 key={link.name}

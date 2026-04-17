@@ -160,7 +160,7 @@ export default function ChatWidget() {
             {isOpen && (
                 <div className="fixed bottom-24 right-6 w-96 h-[500px] glass-card flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
                     {/* Header */}
-                    <div className="p-5 border-b border-white/10 flex items-center justify-between bg-white/5">
+                    <div className="p-5 border-b border-white/10 flex items-center justify-between" style={{ background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
                         <div>
                             <h3 className="font-display font-semibold text-foreground">Chat with Bharath</h3>
                             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">Developer & Portfolio Assistant</p>
@@ -190,7 +190,7 @@ export default function ChatWidget() {
                                 <div
                                     className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user"
                                         ? "bg-accent/10 border border-accent/20 text-foreground"
-                                        : "glass-card bg-white/5 border-white/10 text-foreground"
+                                        : "glass-card border-white/10 text-foreground"
                                         }`}
                                 >
                                     {formatMessage(msg.content)}
@@ -199,7 +199,7 @@ export default function ChatWidget() {
                         ))}
                         {isLoading && (
                             <div className="flex justify-start">
-                                <div className="glass-card bg-white/5 border-white/10 px-4 py-3 rounded-2xl rounded-bl-none">
+                                <div className="glass-card border-white/10 px-4 py-3 rounded-2xl rounded-bl-none">
                                     <div className="flex gap-1.5 item-center h-4">
                                         <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce" />
                                         <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce [animation-delay:0.2s]" />
@@ -244,6 +244,7 @@ export default function ChatWidget() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`fixed bottom-6 right-6 h-14 rounded-full shadow-2xl transition-all duration-500 flex items-center justify-center z-50 group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'}`}
+                style={{ backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
             >
                 {/* Glow Effect */}
                 <div className="absolute inset-0 rounded-full bg-accent/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />

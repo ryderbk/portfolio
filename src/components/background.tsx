@@ -33,7 +33,7 @@ export function Background() {
       <div 
         className="absolute inset-0 z-0 pointer-events-none transition-colors duration-300"
         style={{
-          background: "var(--background-scrim, rgba(0, 0, 0, 0.45))"
+          background: "var(--background-scrim)"
         }}
       />
     </div>
