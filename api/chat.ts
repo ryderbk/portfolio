@@ -1,34 +1,39 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getChatResponse } from '../src/services/ai';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  console.log("=== API START ===");
+export const config = {
+  runtime: 'edge', // Using Edge for better Response API support
+};
 
-  console.log("ENV CHECK:", {
-    hasKey: !!process.env.GROQ_API_KEY,
-    keyLength: process.env.GROQ_API_KEY?.length
-  });
-
+export default async function handler(req: Request) {
   try {
-    const { message, context, projects } = req.body;
-    console.log("Request body:", JSON.stringify({ message, context, projects }));
+    const body = await req.json();
+    const { message, context } = body;
 
-    const portfolioContext = context || { projects: projects || [] };
-    
-    console.log("Sending request to Groq via AI Service...");
-    const reply = await getChatResponse(message, portfolioContext);
-    
-    console.log("Success! Reply generated.");
-    return res.status(200).json({ reply });
+    if (!message) {
+      return new Response(
+        JSON.stringify({ reply: "Message is required" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const reply = await getChatResponse(message, context || {});
+
+    return new Response(
+      JSON.stringify({ reply }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
 
   } catch (error: any) {
-    console.error("FULL ERROR:", error);
-    return res.status(500).json({
-      reply: "DEBUG_ERROR",
-      error: String(error),
-      stack: error.stack
-    });
-  } finally {
-    console.log("=== API END ===");
+    console.error("API ERROR:", error);
+    return new Response(
+      JSON.stringify({
+        reply: "Server error",
+        error: String(error)
+      }),
+      { 
+        status: 500, 
+        headers: { "Content-Type": "application/json" } 
+      }
+    );
   }
 }

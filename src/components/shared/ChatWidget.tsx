@@ -125,8 +125,13 @@ export default function ChatWidget() {
                 }),
             });
 
-            const data = await response.json();
-            console.log("API response:", data);
+            let data;
+            try {
+                data = await response.json();
+                console.log("API response:", data);
+            } catch {
+                throw new Error("Invalid JSON from API");
+            }
 
             if (!data || !data.reply) {
                 throw new Error("Invalid response");

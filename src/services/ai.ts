@@ -118,29 +118,22 @@ export async function getChatResponse(message: string, context: PortfolioContext
       })
     });
 
-    console.log("Status:", response.status);
-    const text = await response.text();
-    console.log("Raw response:", text);
-
-    try {
-      const data = JSON.parse(text);
-      console.log("Parsed response:", data);
-      
-      const content = data?.choices?.[0]?.message?.content;
-      if (!content) return "I'm sorry, I couldn't formulate a response right now. Can we talk about my projects instead?";
-
-      const lines = content.split('\n').filter((l: string) => l.trim() !== "");
-      if (lines.length > 5) {
-        return lines.slice(0, 4).join("\n");
-      }
-
-      return content;
-    } catch (e) {
-      console.log("JSON parse failed");
-      throw new Error(`Groq API returned invalid JSON: ${text.slice(0, 100)}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Groq API failed:", errorText);
+      throw new Error(`Groq Error: ${errorText}`);
     }
+
+    const data = await response.json();
+    const content = data?.choices?.[0]?.message?.content;
+    
+    if (!content) return "No response from AI.";
+
+    const lines = content.split('\n').filter((l: string) => l.trim() !== "");
+    return lines.slice(0, 5).join("\n");
+
   } catch (error: any) {
-    console.error("AI SERVICE EXECUTION ERROR:", error.message || error);
+    console.error("AI EXECUTION ERROR:", error.message);
     throw error;
   }
 }
