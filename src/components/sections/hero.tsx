@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useMotionValue, useSpring, motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useMotionValue, useSpring, motion, AnimatePresence } from "framer-motion";
 import { mouseManager } from "@/lib/mouse-manager";
 import { Button } from "@/components/ui/button";
 
@@ -35,6 +35,23 @@ function WordCycle() {
   );
 }
 
+const container = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.12, delayChildren: 0.1 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }
+  },
+};
+
 function scrollTo(href: string) {
   document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
 }
@@ -46,46 +63,13 @@ export function Hero() {
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
 
-  const prefersReduced = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(false);
-
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    
     const unsubscribe = mouseManager.subscribe((x, y) => {
       mouseX.set((x / window.innerWidth - 0.5) * 2);
       mouseY.set((y / window.innerHeight - 0.5) * 2);
     });
-    
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, [mouseX, mouseY]);
-
-  const container = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: isMobile ? 0.05 : 0.12, delayChildren: 0.1 },
-    },
-  };
-
-  const item = (prefersReduced || isMobile)
-    ? {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { duration: 0.5 } }
-      }
-    : {
-        hidden: { opacity: 0, y: 24 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }
-        },
-      };
 
   return (
     <section
@@ -94,24 +78,22 @@ export function Hero() {
       aria-label="Introduction"
     >
       {/* Subtle grid background */}
-      {!isMobile && (
-        <motion.div
-          className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05] will-change-transform"
-          style={{
-            backgroundImage: "linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-            x: springX,
-            y: springY,
-            scale: 1.1,
-            translateZ: 0,
-          }}
-          aria-hidden="true"
-        />
-      )}
+      <motion.div
+        className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05] will-change-transform"
+        style={{
+          backgroundImage: "linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
+          x: springX,
+          y: springY,
+          scale: 1.1,
+          translateZ: 0,
+        }}
+        aria-hidden="true"
+      />
 
       {/* Accent glow */}
       <div
-        className="absolute top-1/4 right-[10%] w-[400px] h-[400px] rounded-full pointer-events-none opacity-50 md:opacity-100"
+        className="absolute top-1/4 right-[10%] w-[400px] h-[400px] rounded-full pointer-events-none"
         style={{
           background: "radial-gradient(circle, hsl(var(--accent) / 0.08) 0%, transparent 70%)",
         }}
@@ -130,7 +112,7 @@ export function Hero() {
               <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
             </span>
-            <span className="text-[10px] md:text-xs font-sans uppercase tracking-[0.2em] text-muted-foreground font-medium">
+            <span className="text-xs font-sans uppercase tracking-[0.2em] text-muted-foreground font-medium">
               Available for opportunities
             </span>
           </motion.div>
@@ -138,7 +120,7 @@ export function Hero() {
           {/* Main heading — LCP element */}
           <motion.h1
             variants={item}
-            className="hero-headline text-[clamp(2.75rem,7vw,6.5rem)] font-display font-semibold leading-[1.1] tracking-tight mb-8"
+            className="text-[clamp(2.25rem,7vw,6.5rem)] font-display font-semibold leading-[1.1] tracking-tight mb-8"
           >
             I craft{" "}
             <span className="inline-block align-baseline italic font-light text-accent">
@@ -151,13 +133,13 @@ export function Hero() {
           {/* Subline */}
           <motion.p
             variants={item}
-            className="hero-subtitle text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground max-w-xl mb-12 leading-relaxed"
+            className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground max-w-xl mb-12 leading-relaxed"
           >
             Bharath Kumar S — Full-stack developer and electronics engineer building at the intersection of hardware, software, and design.
           </motion.p>
 
           {/* CTAs — Accent primary + Ghost secondary */}
-          <motion.div variants={item} className="hero-cta-group flex flex-wrap gap-4 items-center">
+          <motion.div variants={item} className="flex flex-wrap gap-4 items-center">
             <Button
               variant="default"
               onClick={() => scrollTo("#work")}
@@ -180,19 +162,19 @@ export function Hero() {
           {/* Metrics bar */}
           <motion.div
             variants={item}
-            className="hero-stats flex gap-12 mt-16 pt-8 border-t border-border"
+            className="flex gap-12 mt-16 pt-8 border-t border-border hero-metrics"
           >
-            <div className="hero-stat-item">
-              <span className="block text-xl md:text-2xl font-display font-semibold">3+</span>
-              <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Projects</span>
+            <div>
+              <span className="block text-2xl font-display font-semibold">3+</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-widest">Projects</span>
             </div>
-            <div className="hero-stat-item">
-              <span className="block text-xl md:text-2xl font-display font-semibold">7.98</span>
-              <span className="text-[10px] text-muted-foreground uppercase tracking-widest">CGPA</span>
+            <div>
+              <span className="block text-2xl font-display font-semibold">7.98</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-widest">CGPA</span>
             </div>
-            <div className="hero-stat-item">
-              <span className="block text-xl md:text-2xl font-display font-semibold">2+</span>
-              <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Domains</span>
+            <div>
+              <span className="block text-2xl font-display font-semibold">2+</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-widest">Domains</span>
             </div>
           </motion.div>
         </motion.div>

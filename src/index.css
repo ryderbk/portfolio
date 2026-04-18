@@ -107,14 +107,10 @@
     background: transparent;
     transition: color 0.3s ease;
     line-height: 1.6;
-    height: 100%;
+    min-height: 100%;
     position: relative;
     z-index: 1;
-
-    @media (max-width: 767px) {
-      overscroll-behavior-y: contain;
-      -webkit-tap-highlight-color: transparent;
-    }
+    overflow-x: hidden;
   }
 
   /* Skip Navigation — Accessibility */
@@ -654,7 +650,7 @@ section {
 .projects-accordion {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   width: 100%;
 }
 
@@ -775,19 +771,47 @@ section {
 }
 
 @media (max-width: 1023px) {
-  .project-image-wrapper {
-    height: 250px;
+  .projects-accordion {
+    height: auto;
   }
+
+  .project-accordion-item {
+    height: auto;
+    min-height: 400px;
+    border: 1px solid hsl(var(--border) / 0.6);
+    background: var(--glass-bg);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    @apply backdrop-blur-xl backdrop-saturate-150;
+  }
+
+  .project-image-wrapper {
+    height: 220px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-image-wrapper img {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
   .project-collapsed-label {
     display: none;
   }
+
   .project-content-wrapper {
-    padding: 1.5rem;
-    opacity: 1;
-    transform: none;
-  }
-  .project-accordion-item {
-    border-radius: 12px;
+    height: auto !important;
+    padding: 1.5rem !important;
+    opacity: 1 !important;
+    transform: none !important;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start;
   }
 }
 
@@ -804,227 +828,53 @@ section {
   backface-visibility: hidden;
 }
 
-/* ============================================
-   MOBILE-FIRST OVERRIDES
-   ============================================ */
-
-@media (max-width: 767px) {
-  html, body {
-    overflow-x: hidden;
-    width: 100%;
-  }
-
+/* Global Mobile Fixes */
+@media (max-width: 768px) {
   section {
-    padding: 4rem 1.25rem !important;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
   }
 
-  h2.section-heading,
-  h2[class*="text-[clamp"] {
-    font-size: clamp(2rem, 8vw, 3rem) !important;
-    line-height: 1.1 !important;
+  .max-w-7xl {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
 
-  .glass-card {
-    padding: 1.25rem !important;
-    border-radius: 1rem !important;
-  }
-
-  button, a {
-    touch-action: manipulation;
-  }
-
-  /* Interactive Elements Touch States */
-  .interactive:active,
-  button:active,
-  a:active {
-    opacity: 0.75;
-    transform: scale(0.97);
-    transition: transform 0.1s ease;
-  }
-
-  /* Hero Section */
-  .hero-headline {
-    font-size: clamp(2.5rem, 10vw, 4rem) !important;
-    line-height: 1.1 !important;
-    letter-spacing: -0.02em !important;
-  }
-  .hero-subtitle {
-    font-size: 1rem !important;
-    line-height: 1.6 !important;
-  }
-  .hero-cta-group {
-    flex-direction: column !important;
-    width: 100% !important;
-    gap: 0.75rem !important;
-  }
-  .hero-cta-group a,
-  .hero-cta-group button {
-    width: 100% !important;
-    justify-content: center !important;
-    text-align: center !important;
-    min-height: 48px;
-  }
-  .hero-stats {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    width: 100% !important;
-    gap: 0 !important;
-  }
-  .hero-stat-item {
-    flex: 1 !important;
-    text-align: center !important;
-  }
-
-  /* Projects Section */
-  .projects-accordion {
-    flex-direction: column !important;
-    height: auto !important;
-    gap: 1rem !important;
-  }
-  .project-accordion-item {
-    width: 100% !important;
-    height: auto !important;
-    min-height: 260px !important;
-    flex: none !important;
-  }
-  .project-title {
-    font-size: clamp(1.5rem, 6vw, 2.25rem) !important;
-  }
-  .project-description {
-    display: -webkit-box !important;
-    -webkit-line-clamp: 3 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-  }
-  .project-tags {
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-  }
-  .projects-cta {
-    width: 100% !important;
-    text-align: center !important;
-    justify-content: center !important;
-  }
-
-  /* About Section */
-  .about-grid {
-    grid-template-columns: 1fr !important;
+  /* Fix for Metrics Bar in Hero */
+  .hero-metrics {
+    flex-wrap: wrap;
     gap: 2rem !important;
-  }
-  .about-headline {
-    font-size: clamp(2rem, 8vw, 3rem) !important;
-    line-height: 1.1 !important;
-  }
-  .what-i-bring-item {
-    padding: 1rem 0 !important;
-  }
-  .principles-grid {
-    grid-template-columns: 1fr !important;
-    gap: 1rem !important;
-  }
-  .education-card {
-    width: 100% !important;
+    justify-content: flex-start;
   }
 
-  /* Skills Section */
-  .skills-grid {
-    grid-template-columns: 1fr !important;
-    gap: 1rem !important;
+  /* Profile Card Fixes */
+  .profile-parent {
+    height: auto;
+    max-width: 300px;
+    margin: 0 auto;
   }
-  .skills-card {
-    width: 100% !important;
-    padding: 1.25rem !important;
-  }
-  .skill-tags {
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-  }
-  .skills-headline {
-    font-size: clamp(1.75rem, 7vw, 2.5rem) !important;
+  
+  .profile-card {
+    height: 340px;
+    transform: none !important; /* Disable 3D on hover for mobile */
   }
 
-  /* Contact Section */
-  .contact-layout {
-    flex-direction: column !important;
-    gap: 2rem !important;
-  }
-  .contact-profile-card {
-    width: 100% !important;
-  }
-  .form-row {
-    flex-direction: column !important;
-    gap: 1rem !important;
-  }
-  .form-input,
-  .form-textarea {
-    width: 100% !important;
-    min-height: 48px !important;
-    font-size: 1rem !important;
-  }
-  .form-textarea {
-    min-height: 120px !important;
-  }
-  .form-submit {
-    width: 100% !important;
-    min-height: 52px !important;
-    font-size: 1rem !important;
-  }
-  .contact-social-icon {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+  .profile-content {
+    padding: 80px 30px 0px 25px;
   }
 
-  /* Chat Widget */
-  .chat-widget-bubble {
-    bottom: 1rem !important;
+  /* Chat Widget Responsive */
+  .chat-panel {
+    width: calc(100vw - 2rem) !important;
     right: 1rem !important;
+    bottom: 5rem !important;
+    left: 1rem !important;
   }
-  .chat-widget-window {
-    width: 90vw !important;
-    height: 65vh !important;
-    bottom: 0 !important;
-    right: 0 !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    border-radius: 1.25rem 1.25rem 0 0 !important;
-  }
-  .chat-close-btn {
-    min-width: 44px !important;
-    min-height: 44px !important;
-  }
+}
 
-  /* Liquid Fallback */
-  .liquid-fallback {
-    background: radial-gradient(
-      ellipse at 60% 40%,
-      hsla(263, 70%, 70%, 0.3) 0%,
-      hsla(280, 60%, 85%, 0.15) 40%,
-      transparent 70%
-    );
-    position: absolute;
-    inset: 0;
-  }
-
-  /* Touch Targets Accessibility */
-  button, 
-  a, 
-  [role="button"],
-  input,
-  select,
-  textarea {
-    min-width: 44px;
-    min-height: 44px;
-    font-size: 16px !important; /* Prevent iOS auto-zoom */
-  }
-
-  /* Focus rings */
-  :focus-visible {
-    outline: none !important;
-    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(263, 70%, 50%) !important;
+@media (max-width: 480px) {
+  .hero-metrics > div {
+    flex: 0 0 calc(50% - 1rem);
   }
 }
 

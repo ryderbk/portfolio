@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { fadeUp } from "@/lib/animations";
 
 const technicalSkills = [
   { name: "Python" },
@@ -31,50 +31,38 @@ const hardwareSkills = [
 const softSkills = ["Problem Solving", "Communication", "Teamwork", "Adaptability", "Curiosity"];
 const languages = ["English", "Tamil"];
 
+
+
 export function Skills() {
-  const prefersReduced = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  const fadeUp = (delay = 0) => (prefersReduced || isMobile)
-    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5, delay } }
-    : { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5, ease: 'easeOut', delay } };
-
   return (
     <section id="skills" className="py-24 md:py-36 border-t border-border" aria-label="Skills and technologies">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
         {/* Header */}
         <motion.div
-           {...fadeUp()}
+          {...fadeUp()}
           className="mb-16 md:mb-24"
         >
           <div className="flex items-center gap-4 mb-4">
             <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em]">03 — Technical Arsenal</span>
           </div>
-          <h2 className="skills-headline text-[clamp(2rem,5vw,4rem)] font-display font-semibold tracking-tight leading-tight">
+          <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-semibold tracking-tight leading-tight">
             Tools & technologies I work with.
           </h2>
         </motion.div>
 
         {/* Bento grid */}
-        <div className="skills-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
           {/* Technical Skills — Large tile */}
           <motion.div
             {...fadeUp(0.1)}
-            className="skills-card glass-card p-6 md:col-span-2 lg:col-span-2"
+            className="glass-card p-6 md:col-span-2 lg:col-span-2"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Technical
             </h3>
-            <div className="skill-tags flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3">
               {technicalSkills.map((s, i) => (
                 <motion.span
                   key={s.name}
@@ -95,12 +83,12 @@ export function Skills() {
           {/* Hardware Skills */}
           <motion.div
             {...fadeUp(0.15)}
-            className="skills-card glass-card p-6"
+            className="glass-card p-6"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Hardware
             </h3>
-            <div className="skill-tags flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-2.5">
               {hardwareSkills.map((s, i) => (
                 <motion.span
                   key={s.name}
@@ -121,12 +109,12 @@ export function Skills() {
           {/* Creative Skills */}
           <motion.div
             {...fadeUp(0.2)}
-            className="skills-card glass-card p-6"
+            className="glass-card p-6"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Creative
             </h3>
-            <div className="skill-tags flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-2.5">
               {creativeSkills.map((s, i) => (
                 <motion.span
                   key={s.name}
@@ -147,12 +135,12 @@ export function Skills() {
           {/* Soft Skills */}
           <motion.div
             {...fadeUp(0.25)}
-            className="skills-card glass-card p-6"
+            className="glass-card p-6"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Soft Skills
             </h3>
-            <div className="skill-tags flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-2.5">
               {softSkills.map((s, i) => (
                 <motion.span
                   key={s}
@@ -173,12 +161,12 @@ export function Skills() {
           {/* Languages */}
           <motion.div
             {...fadeUp(0.3)}
-            className="skills-card glass-card p-6"
+            className="glass-card p-6"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Languages
             </h3>
-            <div className="skill-tags flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-2.5">
               {languages.map((lang, i) => (
                 <motion.span
                   key={lang}

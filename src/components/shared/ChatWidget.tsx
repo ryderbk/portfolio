@@ -66,14 +66,6 @@ export default function ChatWidget() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
-    }, []);
-
     // Auto-focus input when opened
     useEffect(() => {
         if (isOpen) {
@@ -81,8 +73,6 @@ export default function ChatWidget() {
                 inputRef.current?.focus();
             }, 300);
             
-            if (isMobile) return; // skip scroll-close on mobile
-
             const handleScroll = () => {
                 setIsOpen(false);
             };
@@ -91,7 +81,7 @@ export default function ChatWidget() {
             return () => window.removeEventListener('scroll', handleScroll);
         }
         return;
-    }, [isOpen, isMobile]);
+    }, [isOpen]);
 
     // Fetch projects context on mount
     useEffect(() => {
@@ -165,7 +155,7 @@ export default function ChatWidget() {
     return (
         <>
             {isOpen && (
-                <div className="chat-widget-window fixed bottom-24 right-6 w-96 h-[500px] glass-card flex flex-col z-[100] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+                <div className="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-2rem)] h-[500px] max-h-[calc(100vh-10rem)] glass-card flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 chat-panel">
                     {/* Header */}
                     <div className="p-5 border-b border-white/10 flex items-center justify-between bg-white/5 backdrop-blur-md">
                         <div>
@@ -174,7 +164,7 @@ export default function ChatWidget() {
                         </div>
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="chat-close-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
+                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
                         >
                             ✕
                         </button>
@@ -250,7 +240,7 @@ export default function ChatWidget() {
             {/* Chat Button — Premium Glass Trigger */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`chat-widget-bubble fixed bottom-6 right-6 h-14 rounded-full shadow-2xl transition-all duration-500 flex items-center justify-center z-[101] group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'} backdrop-blur-xl`}
+                className={`fixed bottom-6 right-6 h-14 rounded-full shadow-2xl transition-all duration-500 flex items-center justify-center z-50 group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'} backdrop-blur-xl`}
             >
                 {/* Glow Effect */}
                 <div className="absolute inset-0 rounded-full bg-accent/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { FaLinkedin } from "react-icons/fa";
 import { Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,19 +7,6 @@ import { Button } from "@/components/ui/button";
 export function Contact() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
-  const prefersReduced = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  const fadeUp = (delay = 0) => (prefersReduced || isMobile)
-    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5, delay } }
-    : { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5, ease: 'easeOut', delay } };
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,8 +24,11 @@ export function Contact() {
       <div className="py-16 md:py-24 border-y border-border/20 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--glass-bg)' }}>
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <motion.div
-            {...fadeUp()}
-            className="contact-layout flex flex-col md:flex-row md:items-end justify-between gap-10"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9 }}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-10"
           >
             <div>
               <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em] block mb-4">04 — Contact</span>
@@ -57,14 +47,17 @@ export function Contact() {
       {/* Contact details + form */}
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="contact-layout grid grid-cols-1 lg:grid-cols-12 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
 
             {/* Left — 3D Profile Card */}
             <motion.div
-              {...fadeUp()}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
               className="lg:col-span-5 flex items-center justify-center lg:justify-start"
             >
-              <div className="contact-profile-card profile-parent group" role="presentation">
+              <div className="profile-parent group" role="presentation">
                 <div className="profile-card">
                   <div className="profile-logo" aria-hidden="true">
                     <span className="circle circle1"></span>
@@ -87,7 +80,7 @@ export function Contact() {
                     <div className="social-buttons-container">
                       <a
                         href="mailto:sbharathkumar1125@gmail.com"
-                        className="contact-social-icon social-button"
+                        className="social-button"
                         aria-label="Send email"
                       >
                         <Mail size={16} />
@@ -96,13 +89,13 @@ export function Contact() {
                         href="https://www.linkedin.com/in/bharathkumarss"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="contact-social-icon social-button"
+                        className="social-button"
                         aria-label="Visit LinkedIn profile"
                       >
                         <FaLinkedin size={16} />
                       </a>
                       <div
-                        className="contact-social-icon social-button cursor-default"
+                        className="social-button cursor-default"
                         title="Location: Chennai, India"
                         aria-label="Location: Chennai, India"
                         role="img"
@@ -117,12 +110,15 @@ export function Contact() {
 
             {/* Right — Contact Form */}
             <motion.form
-              {...fadeUp(0.1)}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1 }}
               className="lg:col-span-7 lg:col-start-6 space-y-6"
               onSubmit={handleSubmit}
               aria-label="Contact form"
             >
-              <div className="form-row grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs font-sans uppercase tracking-widest text-muted-foreground font-medium" htmlFor="contact-name">
                     Name
@@ -133,7 +129,7 @@ export function Contact() {
                     required
                     value={formState.name}
                     onChange={e => setFormState(s => ({ ...s, name: e.target.value }))}
-                    className="form-input w-full px-4 py-3 glass-input rounded-xl text-sm font-sans"
+                    className="w-full px-4 py-3 glass-input rounded-xl text-sm font-sans"
                     placeholder="Your name"
                     autoComplete="name"
                     data-testid="input-name"
@@ -149,7 +145,7 @@ export function Contact() {
                     required
                     value={formState.email}
                     onChange={e => setFormState(s => ({ ...s, email: e.target.value }))}
-                    className="form-input w-full px-4 py-3 glass-input rounded-xl text-sm font-sans"
+                    className="w-full px-4 py-3 glass-input rounded-xl text-sm font-sans"
                     placeholder="your@email.com"
                     autoComplete="email"
                     data-testid="input-email"
@@ -167,7 +163,7 @@ export function Contact() {
                   rows={6}
                   value={formState.message}
                   onChange={e => setFormState(s => ({ ...s, message: e.target.value }))}
-                  className="form-textarea w-full px-4 py-3 glass-input rounded-xl text-sm font-sans resize-none"
+                  className="w-full px-4 py-3 glass-input rounded-xl text-sm font-sans resize-none"
                   placeholder="Tell me about your project or idea..."
                   data-testid="input-message"
                 />
@@ -176,7 +172,7 @@ export function Contact() {
               <Button
                 type="submit"
                 variant="default"
-                className="form-submit w-full"
+                className="w-full"
                 data-testid="btn-send-message"
                 aria-label={sent ? "Message sent" : "Send message"}
               >

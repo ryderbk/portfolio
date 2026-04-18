@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, memo } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { fadeUp } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
 import { initialProjects } from "@/lib/initial-data";
 
@@ -10,25 +11,19 @@ interface ProjectCardProps {
   isActive: boolean;
   currentImgIdx: number;
   onHover: (title: string) => void;
-  isMobile: boolean;
 }
 
-const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover, isMobile }: ProjectCardProps) => {
+const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: ProjectCardProps) => {
   const projectImages = project.images || ["/images/project-01.png"];
   const projectTags = project.tags || [];
-  const prefersReduced = useReducedMotion();
-
-  const animation = (prefersReduced || isMobile)
-    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5, delay: i * 0.05 } }
-    : { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5, ease: 'easeOut', delay: i * 0.1 } };
 
   return (
     <motion.article
       layout
-      {...animation}
+      {...fadeUp(i * 0.1)}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       className={`project-accordion-item group ${isActive ? 'active' : ''}`}
-      onMouseEnter={() => !isMobile && onHover(project.title)}
-      onClick={() => isMobile && onHover(project.title)}
+      onMouseEnter={() => onHover(project.title)}
     >
       <motion.div layout className="project-image-wrapper">
         {projectImages.map((img: string, idx: number) => (
@@ -43,11 +38,9 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover, isMobi
           />
         ))}
         
-        {!isMobile && (
-          <div className="project-collapsed-label">
-            <h4 className="font-projects">{project.title}</h4>
-          </div>
-        )}
+        <div className="project-collapsed-label">
+          <h4 className="font-projects">{project.title}</h4>
+        </div>
       </motion.div>
 
       <div className="project-content-wrapper">
@@ -55,14 +48,14 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover, isMobi
           <div className="flex items-center gap-3 mb-2">
             <span className="text-[10px] font-sans text-accent uppercase tracking-[0.2em] font-bold">{project.subtitle}</span>
           </div>
-          <h3 className="project-title text-2xl md:text-3xl font-projects mb-3 leading-none">
+          <h3 className="text-2xl md:text-3xl font-projects mb-3 leading-none">
             {project.title}
           </h3>
-          <p className="project-description text-sm text-muted-foreground leading-relaxed mb-6 max-w-xl">
+          <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-xl">
             {project.description}
           </p>
           
-          <div className="project-tags flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2">
             {projectTags.slice(0, 3).map((tag: string) => (
               <span
                 key={tag}
@@ -86,16 +79,7 @@ export function Projects() {
   const [activeId, setActiveId] = useState<string>(initialProjects[0].title);
   const [imgCycle, setImgCycle] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const prefersReduced = useReducedMotion();
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   // Pause interval when not in view
   useEffect(() => {
@@ -117,10 +101,6 @@ export function Projects() {
     return () => clearInterval(interval);
   }, [isVisible]);
 
-  const headingAnim = (prefersReduced || isMobile)
-    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true } }
-    : { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5, ease: 'easeOut' } };
-
   return (
     <section 
       ref={sectionRef}
@@ -130,7 +110,7 @@ export function Projects() {
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <motion.div
-          {...headingAnim}
+          {...fadeUp()}
           className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 md:mb-24"
         >
           <div>
@@ -155,19 +135,17 @@ export function Projects() {
               isActive={activeId === project.title}
               currentImgIdx={imgCycle % (project.images?.length || 1)}
               onHover={setActiveId}
-              isMobile={isMobile}
             />
           ))}
         </div>
 
         <motion.div
-          {...headingAnim}
+          {...fadeUp(0.3)}
           className="mt-12 text-center"
         >
           <Button
             variant="default"
             size="sm"
-            className="projects-cta"
             onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
             aria-label="Go to contact to discuss a project"
           >

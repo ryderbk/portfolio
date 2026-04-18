@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { fadeUp } from "@/lib/animations";
 
 const brings = [
   { title: "AI-Assisted Development", desc: "Leverage modern AI tools to ship real, working products faster — not just prototypes or concepts." },
@@ -24,20 +24,6 @@ const education = {
 };
 
 export function About() {
-  const prefersReduced = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  const fadeUp = (delay = 0) => (prefersReduced || isMobile)
-    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5, delay } }
-    : { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5, ease: 'easeOut', delay } };
-
   return (
     <section id="about" className="py-24 md:py-36 border-t border-border" aria-label="About me">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -47,13 +33,13 @@ export function About() {
           <div className="flex items-center gap-4 mb-4">
             <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em]">02 — About</span>
           </div>
-          <h2 className="about-headline text-[clamp(2rem,5vw,4rem)] font-display font-semibold tracking-tight leading-tight max-w-2xl">
+          <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-semibold tracking-tight leading-tight max-w-2xl">
             Engineer who thinks in systems, builds with intention.
           </h2>
         </motion.div>
 
         {/* Main grid */}
-        <div className="about-grid grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24">
           {/* Left — bio + education */}
           <motion.div {...fadeUp(0.1)} className="lg:col-span-5">
             <p className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground leading-relaxed mb-10">
@@ -63,7 +49,7 @@ export function About() {
             </p>
 
             {/* Education card */}
-            <div className="education-card glass-card p-6 space-y-3">
+            <div className="glass-card p-6 space-y-3">
               <h3 className="text-sm font-sans uppercase tracking-widest text-accent font-medium">Education</h3>
               <div>
                 <span className="block font-display font-semibold">{education.degree}</span>
@@ -91,7 +77,7 @@ export function About() {
                   <motion.div
                     key={b.title}
                     {...fadeUp(0.15 + i * 0.08)}
-                    className="what-i-bring-item flex gap-6 py-5 border-b border-border group"
+                    className="flex gap-6 py-5 border-b border-border group"
                   >
                     <span className="font-sans text-xs text-accent shrink-0 mt-1 font-medium">0{i + 1}</span>
                     <div>
@@ -108,7 +94,7 @@ export function About() {
               <h3 className="text-sm font-sans uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-border font-medium">
                 Core Principles
               </h3>
-              <div className="principles-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {principles.map((p, i) => (
                   <motion.div
                     key={p.title}
