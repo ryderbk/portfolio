@@ -110,6 +110,7 @@ export default function ChatWidget() {
         if (!input.trim() || isLoading) return;
 
         const userMessage = input.trim();
+        console.log("Sending message:", userMessage);
         setInput("");
         setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
         setIsLoading(true);
@@ -125,6 +126,7 @@ export default function ChatWidget() {
             });
 
             const data = await response.json();
+            console.log("API response:", data);
 
             if (!data || !data.reply) {
                 throw new Error("Invalid response");

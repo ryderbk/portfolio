@@ -100,6 +100,7 @@ export async function getChatResponse(message: string, context: PortfolioContext
   const systemPrompt = getSystemPrompt(formattedContext);
 
   try {
+    console.log("Sending request to Groq...");
     const response = await fetch(AI_CONFIG.API_URL, {
       method: "POST",
       headers: {
@@ -117,33 +118,29 @@ export async function getChatResponse(message: string, context: PortfolioContext
       })
     });
 
-    if (!response.ok) {
-      let errorMessage = "AI API request failed";
-      try {
-        const errorData = await response.json();
-        console.error("Groq API error response:", errorData);
-        errorMessage = errorData?.error?.message || errorMessage;
-      } catch (e) {
-        errorMessage = `HTTP error! status: ${response.status}`;
+    console.log("Status:", response.status);
+    const text = await response.text();
+    console.log("Raw response:", text);
+
+    try {
+      const data = JSON.parse(text);
+      console.log("Parsed response:", data);
+      
+      const content = data?.choices?.[0]?.message?.content;
+      if (!content) return "I'm sorry, I couldn't formulate a response right now. Can we talk about my projects instead?";
+
+      const lines = content.split('\n').filter((l: string) => l.trim() !== "");
+      if (lines.length > 5) {
+        return lines.slice(0, 4).join("\n");
       }
-      throw new Error(errorMessage);
+
+      return content;
+    } catch (e) {
+      console.log("JSON parse failed");
+      throw new Error(`Groq API returned invalid JSON: ${text.slice(0, 100)}`);
     }
-
-    const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
-    
-    if (!content) return "I'm sorry, I couldn't formulate a response right now. Can we talk about my projects instead?";
-
-    // Post-processing to ensure it's not too long (secondary safety)
-    const lines = content.split('\n').filter((l: string) => l.trim() !== "");
-    if (lines.length > 5) {
-      return lines.slice(0, 4).join("\n");
-    }
-
-    return content;
   } catch (error: any) {
     console.error("AI SERVICE EXECUTION ERROR:", error.message || error);
-    // On Vercel, this error message might be useful to see in logs
     throw error;
   }
 }
