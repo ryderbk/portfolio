@@ -85,15 +85,15 @@ Me: "Yeah, I'm open to opportunities right now. Feel free to reach out through t
  * Main AI Chat service handler.
  */
 export async function getChatResponse(message: string, context: PortfolioContext): Promise<string> {
-  // Broad environment variable detection to support Vercel, local Node, and Vite bundling
-  // Try standard Node, then Vite, then fallbacks
-  const apiKey = (typeof process !== "undefined" ? process.env.GROQ_API_KEY : null) || 
-                 (globalThis as any)?.process?.env?.GROQ_API_KEY ||
-                 (import.meta as any).env?.VITE_GROQ_API_KEY;
+  // Safe environment variable detection for Node.js (Vercel/Local)
+  // We avoid 'import.meta.env' as it throws in standard Node.js environments
+  const apiKey = (typeof process !== "undefined" && process.env) 
+    ? process.env.GROQ_API_KEY 
+    : (globalThis as any)?.process?.env?.GROQ_API_KEY;
   
   if (!apiKey) {
-    console.error("AI SERVICE CONFIG ERROR: GROQ_API_KEY is missing from all environment sources (process.env, etc.)");
-    throw new Error("GROQ_API_KEY is not configured. Please check your environment variables.");
+    console.error("AI CONFIG ERROR: GROQ_API_KEY is missing.");
+    throw new Error("GROQ_API_KEY not found in environment.");
   }
 
   const formattedContext = formatPortfolioContext(context);
