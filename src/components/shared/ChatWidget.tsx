@@ -62,6 +62,7 @@ export default function ChatWidget() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [portfolioData, setPortfolioData] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
