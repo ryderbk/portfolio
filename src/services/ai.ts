@@ -85,11 +85,15 @@ Me: "Yeah, I'm open to opportunities right now. Feel free to reach out through t
  * Main AI Chat service handler.
  */
 export async function getChatResponse(message: string, context: PortfolioContext): Promise<string> {
-  const apiKey = (typeof process !== "undefined" ? process.env.GROQ_API_KEY : null);
+  // Broad environment variable detection to support Vercel, local Node, and Vite bundling
+  // Try standard Node, then Vite, then fallbacks
+  const apiKey = (typeof process !== "undefined" ? process.env.GROQ_API_KEY : null) || 
+                 (globalThis as any)?.process?.env?.GROQ_API_KEY ||
+                 (import.meta as any).env?.VITE_GROQ_API_KEY;
   
   if (!apiKey) {
-    console.error("AI SERVICE: GROQ_API_KEY is missing in environment variables.");
-    throw new Error("GROQ_API_KEY is not configured.");
+    console.error("AI SERVICE CONFIG ERROR: GROQ_API_KEY is missing from all environment sources (process.env, etc.)");
+    throw new Error("GROQ_API_KEY is not configured. Please check your environment variables.");
   }
 
   const formattedContext = formatPortfolioContext(context);
@@ -109,7 +113,7 @@ export async function getChatResponse(message: string, context: PortfolioContext
           { role: "user", content: message }
         ],
         temperature: 0.7,
-        max_tokens: 250, // Reduced to keep responses short
+        max_tokens: 250, 
       })
     });
 
@@ -117,10 +121,10 @@ export async function getChatResponse(message: string, context: PortfolioContext
       let errorMessage = "AI API request failed";
       try {
         const errorData = await response.json();
+        console.error("Groq API error response:", errorData);
         errorMessage = errorData?.error?.message || errorMessage;
       } catch (e) {
-        const textError = await response.text();
-        errorMessage = `API Error ${response.status}: ${textError.slice(0, 100)}`;
+        errorMessage = `HTTP error! status: ${response.status}`;
       }
       throw new Error(errorMessage);
     }
@@ -133,12 +137,13 @@ export async function getChatResponse(message: string, context: PortfolioContext
     // Post-processing to ensure it's not too long (secondary safety)
     const lines = content.split('\n').filter((l: string) => l.trim() !== "");
     if (lines.length > 5) {
-      return lines.slice(0, 4).join("\n") + "\nCheck out my contact section to discuss more!";
+      return lines.slice(0, 4).join("\n");
     }
 
     return content;
   } catch (error: any) {
-    console.error("AI SERVICE CRITICAL ERROR:", error.message || error);
+    console.error("AI SERVICE EXECUTION ERROR:", error.message || error);
+    // On Vercel, this error message might be useful to see in logs
     throw error;
   }
 }
