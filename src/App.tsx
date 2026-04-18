@@ -5,15 +5,12 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 
-import { AuthProvider } from "@/auth/AuthContext";
-import ChatWidget from "@/components/bkfiles/ChatWidget";
+import { AuthProvider } from "@/context/AuthContext";
+import ChatWidget from "@/components/shared/ChatWidget";
 
 import Admin from "@/pages/admin";
 import Login from "@/pages/login";
 import { ThemeProvider } from "@/components/theme-provider";
-
-// Debug: Log app component loaded
-console.log("📦 App component loading...");
 
 function Router() {
   return (

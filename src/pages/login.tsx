@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useAuth } from "@/auth/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");

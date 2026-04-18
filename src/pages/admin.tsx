@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AuthGuard from "@/components/bkfiles/AuthGuard";
+import AuthGuard from "@/components/shared/AuthGuard";
 import { 
     subscribeToProjects, 
     addProject, 
@@ -43,14 +43,14 @@ export default function AdminPage() {
         });
         return () => unsubscribe();
     }, []);
+ 
+    const [_syncStatus, setSyncStatus] = useState<"idle" | "success" | "skipped" | "error">("idle");
 
-    const [syncStatus, setSyncStatus] = useState<"idle" | "success" | "skipped" | "error">("idle");
 
     const handleSync = async () => {
         setIsSyncing(true);
         setSyncStatus("idle");
         try {
-            console.log("Admin: Triggering sync initial projects...");
             const result = await syncInitialProjects(initialProjects);
             if (result === "success") {
                 setSyncStatus("success");
@@ -60,7 +60,6 @@ export default function AdminPage() {
                 alert("⚠️ Collection not empty: Sync was skipped to prevent duplicates.");
             }
         } catch (error: any) {
-            console.error("Admin Sync Error:", error);
             setSyncStatus("error");
             alert(`❌ Sync Failed: ${error.message || "Unknown error"}. Check console and Firestore rules.`);
         } finally {
@@ -72,14 +71,12 @@ export default function AdminPage() {
         setIsSyncing(true);
         setSyncStatus("idle");
         try {
-            console.log("Admin: Triggering sync remaining projects...");
             const result = await addRemainingProjects(initialProjects);
             if (result === "success") {
                 setSyncStatus("success");
                 alert("✅ Success: Remaining data synced to Firestore.");
             }
         } catch (error: any) {
-            console.error("Admin Sync Error:", error);
             setSyncStatus("error");
             alert(`❌ Sync Failed: ${error.message || "Unknown error"}. Check console and Firestore rules.`);
         } finally {
@@ -128,7 +125,6 @@ export default function AdminPage() {
             }
             setIsFormOpen(false);
         } catch (error) {
-            console.error("Save error:", error);
             alert("Failed to save project.");
         }
     };

@@ -75,7 +75,7 @@ export function Navbar() {
           </button>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center p-1.5 shadow-sm rounded-2xl gap-1 backdrop-blur-xl backdrop-saturate-150 bg-background/80 border border-border/50">
+          <div className="hidden lg:flex items-center p-1.5 shadow-sm rounded-2xl gap-1 backdrop-blur-xl backdrop-saturate-150 bg-background/80 border border-border/50">
             {navLinks.map((link) => (
               <button
                 key={link.name}
@@ -108,7 +108,7 @@ export function Navbar() {
           </div>
 
           {/* Mobile controls */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="flex lg:hidden items-center gap-3">
             <button
               onClick={toggleTheme}
               className="interactive p-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -138,11 +138,11 @@ export function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
-            animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
-            exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[100] flex flex-col" style={{ background: 'hsl(var(--background))' }}
+            className="fixed inset-0 z-[999] flex flex-col backdrop-blur-[20px] bg-background/90"
           >
             <div className="flex justify-between items-center px-6 py-5 border-b border-border">
               <span className="font-display font-bold">BK</span>
@@ -160,24 +160,29 @@ export function Navbar() {
                   key={link.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.07, duration: 0.4 }}
-                  className="border-b border-border last:border-0"
+                  transition={{ delay: i * 0.07 + 0.2, duration: 0.4 }}
+                  className="border-b border-border/50 last:border-0"
                 >
                   <button
-                    className="interactive w-full text-left py-6 text-4xl font-display font-semibold tracking-tight hover:text-accent transition-colors"
+                    className="interactive w-full text-left py-6 text-4xl font-display font-semibold tracking-tight hover:text-accent transition-colors flex items-center justify-between group"
+                    style={{ minHeight: '56px' }}
                     onClick={() => {
                       setMobileMenuOpen(false);
                       setTimeout(() => scrollTo(link.href), 350);
                     }}
                     aria-label={`Navigate to ${link.name}`}
                   >
-                    {link.name}
+                    <span>{link.name}</span>
+                    <link.icon className="opacity-20 group-hover:opacity-100 transition-opacity" size={24} />
                   </button>
                 </motion.div>
               ))}
             </nav>
-            <div className="px-6 py-8 text-sm text-muted-foreground font-sans">
-              sbharathkumar1125@gmail.com
+            <div className="px-6 py-8 text-sm text-muted-foreground font-sans flex justify-between items-center">
+              <span>sbharathkumar1125@gmail.com</span>
+              <div className="flex gap-4">
+                {/* Social links placeholder if needed */}
+              </div>
             </div>
           </motion.div>
         )}

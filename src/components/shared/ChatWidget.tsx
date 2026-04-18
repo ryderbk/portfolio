@@ -66,14 +66,23 @@ export default function ChatWidget() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
     // Auto-focus input when opened
     useEffect(() => {
         if (isOpen) {
             setTimeout(() => {
                 inputRef.current?.focus();
-            }, 300); // Wait for open animation to finish
+            }, 300);
             
-            // Close on scroll outside
+            if (isMobile) return; // skip scroll-close on mobile
+
             const handleScroll = () => {
                 setIsOpen(false);
             };
@@ -81,7 +90,8 @@ export default function ChatWidget() {
             window.addEventListener('scroll', handleScroll, { passive: true });
             return () => window.removeEventListener('scroll', handleScroll);
         }
-    }, [isOpen]);
+        return;
+    }, [isOpen, isMobile]);
 
     // Fetch projects context on mount
     useEffect(() => {
@@ -121,8 +131,6 @@ export default function ChatWidget() {
         setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
         setIsLoading(true);
 
-        console.log("💬 Sending message:", userMessage);
-
         try {
             const response = await fetch("/api/chat", {
                 method: "POST",
@@ -134,7 +142,6 @@ export default function ChatWidget() {
             });
 
             const data = await response.json();
-            console.log("API RESPONSE:", data);
 
             if (!data || !data.reply) {
                 throw new Error("Invalid response");
@@ -158,7 +165,7 @@ export default function ChatWidget() {
     return (
         <>
             {isOpen && (
-                <div className="fixed bottom-24 right-6 w-96 h-[500px] glass-card flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+                <div className="chat-widget-window fixed bottom-24 right-6 w-96 h-[500px] glass-card flex flex-col z-[100] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
                     {/* Header */}
                     <div className="p-5 border-b border-white/10 flex items-center justify-between bg-white/5 backdrop-blur-md">
                         <div>
@@ -167,7 +174,7 @@ export default function ChatWidget() {
                         </div>
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
+                            className="chat-close-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
                         >
                             ✕
                         </button>
@@ -243,7 +250,7 @@ export default function ChatWidget() {
             {/* Chat Button — Premium Glass Trigger */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`fixed bottom-6 right-6 h-14 rounded-full shadow-2xl transition-all duration-500 flex items-center justify-center z-50 group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'} backdrop-blur-xl`}
+                className={`chat-widget-bubble fixed bottom-6 right-6 h-14 rounded-full shadow-2xl transition-all duration-500 flex items-center justify-center z-[101] group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'} backdrop-blur-xl`}
             >
                 {/* Glow Effect */}
                 <div className="absolute inset-0 rounded-full bg-accent/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />

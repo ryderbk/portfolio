@@ -35,9 +35,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ["react", "react-dom", "framer-motion", "lucide-react"],
-        },
-      },
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-three': ['three'],
+          'vendor-firebase': ['firebase/app', 'firebase/firestore', 'firebase/auth'],
+        }
+      }
     },
+    chunkSizeWarningLimit: 600
   },
 });

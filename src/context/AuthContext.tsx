@@ -23,25 +23,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log("🔐 AuthProvider: Setting up auth state listener");
-        
         try {
             const auth = getFirebaseAuth();
-            console.log("✅ Firebase Auth obtained successfully");
-            
             const unsubscribe = onAuthStateChanged(auth, (user) => {
-                console.log("👤 Auth state changed:", user ? "Logged in" : "Logged out");
                 setUser(user);
                 setLoading(false);
             });
 
             return () => unsubscribe();
         } catch (err) {
-            console.error("❌ AuthProvider: Firebase initialization failed:", err);
             const errorMessage = err instanceof Error ? err.message : "Firebase initialization failed";
             setError(errorMessage);
             setLoading(false);
-            // Still render children so app doesn't crash completely
+            return;
         }
     }, []);
 

@@ -4,7 +4,7 @@ const About = lazy(() => import("@/components/sections/about").then(m => ({ defa
 const Projects = lazy(() => import("@/components/sections/projects").then(m => ({ default: m.Projects })));
 const Skills = lazy(() => import("@/components/sections/skills").then(m => ({ default: m.Skills })));
 const Contact = lazy(() => import("@/components/sections/contact").then(m => ({ default: m.Contact })));
-import { Navbar } from "@/components/layout/navbar";
+import { Navbar } from "@/components/shared/navbar";
 import { CustomCursor } from "@/components/custom-cursor";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { Preloader } from "@/components/preloader";
