@@ -723,25 +723,36 @@ section {
     justify-content: center;
     align-items: center;
     padding: 2rem;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     background: transparent;
     z-index: 10;
-    will-change: opacity;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
+    will-change: opacity, transform;
+    pointer-events: none;
   }
 
   .active .project-collapsed-label {
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0 !important;
+    transform: scale(0.9) translateY(20px);
+    visibility: hidden;
   }
 
   .project-collapsed-label h4 {
     @apply font-projects;
     color: hsl(var(--foreground));
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    font-weight: 600;
     text-align: center;
-    max-width: 90%;
+    white-space: nowrap;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    opacity: 0.75;
+    letter-spacing: 0.12em;
+    transition: all 0.3s ease;
+  }
+
+  .project-accordion-item:hover .project-collapsed-label h4 {
+    opacity: 1;
   }
 
   /* Content Section (30%) */

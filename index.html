@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bharath Kumar S — Engineer, Developer, Builder</title>
+    <title>Bk’s Portfolio</title>
     <meta name="description" content="Bharath Kumar S is a full-stack developer and electronics engineer based in Chennai, India. Building high-performance web applications, embedded systems, and creative digital solutions." />
     <meta name="theme-color" content="#09090B" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)" />
 
     <!-- OpenGraph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Bharath Kumar S — Engineer, Developer, Builder" />
+    <meta property="og:title" content="Bk’s Portfolio" />
     <meta property="og:description" content="Full-stack developer and electronics engineer building high-performance applications and embedded systems." />
     <meta property="og:image" content="/opengraph.jpg" />
     <meta property="og:url" content="https://bharathkumars.dev" />
@@ -18,7 +18,7 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Bharath Kumar S — Engineer, Developer, Builder" />
+    <meta name="twitter:title" content="Bk’s Portfolio" />
     <meta name="twitter:description" content="Full-stack developer and electronics engineer building high-performance applications and embedded systems." />
     <meta name="twitter:image" content="/opengraph.jpg" />
 
@@ -48,7 +48,7 @@
       // Prevent flash of wrong theme — runs before React mounts
       (function() {
         var stored = localStorage.getItem('portfolio-theme');
-        var theme = stored || 'dark';
+        var theme = stored || 'light';
         if (theme === 'system') {
           theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }

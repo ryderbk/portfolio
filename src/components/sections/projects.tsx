@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef, memo } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
 import { fadeUp } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
 import { initialProjects } from "@/lib/initial-data";
+import { subscribeToProjects } from "@/services/firestore";
 
 interface ProjectCardProps {
   project: any;
@@ -14,7 +15,9 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: ProjectCardProps) => {
-  const projectImages = project.images || ["/images/project-01.png"];
+  const projectImages = project.images && project.images.length > 0 
+    ? project.images 
+    : ["/images/project-01.png"];
   const projectTags = project.tags || [];
 
   return (
@@ -76,10 +79,28 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: Proj
 });
 
 export function Projects() {
-  const [activeId, setActiveId] = useState<string>(initialProjects[0].title);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeId, setActiveId] = useState<string>("");
   const [imgCycle, setImgCycle] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+
+  // Fetch projects from Firestore
+  useEffect(() => {
+    const unsubscribe = subscribeToProjects((data) => {
+      // Use Firestore data if available, otherwise fallback to initialProjects
+      const finalProjects = data.length > 0 ? data : initialProjects;
+      setProjects(finalProjects);
+      
+      // Set first project as active if none selected
+      if (finalProjects.length > 0 && !activeId) {
+        setActiveId(finalProjects[0].title);
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [activeId]);
 
   // Pause interval when not in view
   useEffect(() => {
@@ -126,18 +147,25 @@ export function Projects() {
           </p>
         </motion.div>
 
-        <div className="projects-accordion min-h-[400px]">
-          {initialProjects.map((project, i) => (
-            <ProjectCard 
-              key={project.title}
-              project={project}
-              i={i}
-              isActive={activeId === project.title}
-              currentImgIdx={imgCycle % (project.images?.length || 1)}
-              onHover={setActiveId}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-24 space-y-4">
+            <Loader2 className="w-8 h-8 animate-spin text-accent" />
+            <p className="text-sm text-muted-foreground animate-pulse">Loading amazing projects...</p>
+          </div>
+        ) : (
+          <div className="projects-accordion min-h-[400px]">
+            {projects.map((project, i) => (
+              <ProjectCard 
+                key={project.id || project.title}
+                project={project}
+                i={i}
+                isActive={activeId === project.title}
+                currentImgIdx={imgCycle % (project.images?.length || 1)}
+                onHover={setActiveId}
+              />
+            ))}
+          </div>
+        )}
 
         <motion.div
           {...fadeUp(0.3)}

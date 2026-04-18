@@ -3,13 +3,15 @@ import { getChatResponse } from '../src/services/ai';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const { message, projects } = req.body;
+    const { message, context, projects } = req.body;
 
     if (!message) {
       return res.status(400).json({ reply: "Message is required." });
     }
 
-    const reply = await getChatResponse(message, projects || []);
+    // Use context if provided, otherwise fallback to projects (for safety)
+    const portfolioContext = context || { projects: projects || [] };
+    const reply = await getChatResponse(message, portfolioContext);
     return res.status(200).json({ reply });
 
   } catch (error: any) {

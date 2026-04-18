@@ -135,7 +135,7 @@ export function Hero() {
             variants={item}
             className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground max-w-xl mb-12 leading-relaxed"
           >
-            Bharath Kumar S — Full-stack developer and electronics engineer building at the intersection of hardware, software, and design.
+            <strong className="font-semibold text-foreground">Bharath Kumar S</strong> – UI/UX Designer who blends creativity and functionality to build smooth, user-friendly digital experiences.
           </motion.p>
 
           {/* CTAs — Accent primary + Ghost secondary */}

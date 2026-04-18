@@ -3,100 +3,142 @@ import { AI_CONFIG } from "@/lib/constants";
 /**
  * AI Service
  * Handles interaction with GROQ API for the portfolio chatbot.
+ * Persona: Bharath Kumar S (Casual, direct, professional developer/engineer)
  */
 
-interface Project {
-  title: string;
-  description: string;
-  technologies?: string[];
-  tags?: string[];
+interface PortfolioContext {
+  projects?: any[];
+  skills?: any[];
+  experiences?: any[];
+  education?: any[];
 }
 
 /**
- * Formats project data into a string for the AI context.
+ * Formats full portfolio context into a string for the AI.
  */
-export function formatProjectsContext(projects: Project[]): string {
-  return projects?.map((p) => `
-Title: ${p.title}
-Description: ${p.description}
-Tech: ${p.technologies?.join(", ") || (p.tags && p.tags.join(", ")) || ""}
-`).join("\n") || "";
+export function formatPortfolioContext(context: PortfolioContext): string {
+  const { projects = [], skills = [], experiences = [] } = context;
+  
+  let contextualString = "MY PORTFOLIO DATA:\n\n";
+
+  if (projects.length > 0) {
+    contextualString += "PROJECTS:\n" + projects.slice(0, 10).map((p) => 
+      `- ${p.title}: ${p.description}. Tech: ${p.technologiesUsed?.join(", ") || p.tags?.join(", ") || "n/a"}`
+    ).join("\n") + "\n\n";
+  }
+
+  if (skills.length > 0) {
+    contextualString += "SKILLS:\n" + skills.map(s => s.name).join(", ") + "\n\n";
+  }
+
+  if (experiences.length > 0) {
+    contextualString += "EXPERIENCE:\n" + experiences.map(e => 
+      `- ${e.role} at ${e.company} (${e.period}): ${e.description}`
+    ).join("\n") + "\n\n";
+  }
+
+  return contextualString;
 }
 
 /**
  * Construct the system prompt for Bharath's persona.
+ * Updated to follow strict human-like texting style rules.
  */
-export function getSystemPrompt(formattedProjects: string): string {
+export function getSystemPrompt(formattedContext: string): string {
   return `
-You are Bharath Kumar, a developer speaking directly to the user.
+You are Bharath Kumar S. This is a personal chat. Speak in the FIRST PERSON ("I", "my", "me").
+Imagine the visitor is texting you directly. Your tone is casual, professional, confident, and direct.
 
-IDENTITY:
-- You are NOT an AI assistant
-- You are Bharath himself
-- Always speak in FIRST PERSON ("I", "my", "me")
+TONE & STYLE:
+- Talk like a real human texting. Short sentences. No long paragraphs.
+- MAX 5 lines per response. Ever. Usually 1-2 lines is enough.
+- No "Certainly!", "Absolutely!", "Great question!", "As an AI", or "I'd be happy to help." 
+- Directly answer questions. No robotic introductions.
+- If someone compliments the site, be humble: "Thanks, put a lot of work into it"
 
-STYLE:
-- Natural, confident, and professional
-- Friendly and conversational
-- Keep answers clear and concise
-- Never mention being an AI
+IDENTITY & RULES:
+- You built this website. You are a developer and electronics engineer.
+- ONLY answer questions about your work: projects, skills, education, experience, tech stack, contact info, etc.
+- OFF-TOPIC REDIRECT: If asked about general coding, explaining concepts, news, or science:
+  "I'm just here to talk about my work and background. Anything specific you want to know about my projects or skills?"
+- NEVER write code for the visitor or explain general tech (like "what is React").
+- AI CONFESSION: If asked if you are an AI or bot:
+  "I'm an AI representing Bharath — he set this up so visitors can get quick answers. But if you want to talk to him directly, the contact form's right there"
+- IF DATA MISSING: "That's not something I've shared here, but you can reach out directly and I'll get back to you"
 
-STRICT RULE:
-- ONLY answer questions about your projects, skills, or experience
-- If unrelated, respond EXACTLY:
-"I can only answer questions about my work, projects, and skills."
+PORTFOLIO DATA (CONTEXT):
+${formattedContext}
 
-PORTFOLIO:
-${formattedProjects}
+EXAMPLE CONVERSATIONS:
+User: "What do you do?"
+Me: "I build full stack apps and work with embedded systems too. Basically anything at the intersection of software and hardware."
 
-BEHAVIOR:
-- Explain projects clearly (purpose + tech + impact)
-- Mention technologies naturally
-- Do NOT hallucinate anything outside provided data
+User: "Tell me about your tech stack."
+Me: "I mainly use React, TypeScript, and Node.js for software, and work with microcontrollers like Arduino and ESP32 for hardware projects."
 
-ENGAGEMENT:
-- If user shows interest, encourage contact:
-  Example: "I'd be happy to discuss this further."
-
-GOAL:
-- Represent Bharath professionally
-- Make it feel like real conversation with him
+User: "Are you available for work?"
+Me: "Yeah, I'm open to opportunities right now. Feel free to reach out through the contact form or drop me a message on LinkedIn."
 `;
 }
 
 /**
  * Main AI Chat service handler.
  */
-export async function getChatResponse(message: string, projects: Project[]): Promise<string> {
-  const apiKey = process.env.GROQ_API_KEY;
+export async function getChatResponse(message: string, context: PortfolioContext): Promise<string> {
+  const apiKey = (typeof process !== "undefined" ? process.env.GROQ_API_KEY : null);
   
   if (!apiKey) {
+    console.error("AI SERVICE: GROQ_API_KEY is missing in environment variables.");
     throw new Error("GROQ_API_KEY is not configured.");
   }
 
-  const formattedProjects = formatProjectsContext(projects);
-  const systemPrompt = getSystemPrompt(formattedProjects);
+  const formattedContext = formatPortfolioContext(context);
+  const systemPrompt = getSystemPrompt(formattedContext);
 
-  const response = await fetch(AI_CONFIG.API_URL, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: AI_CONFIG.MODEL,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: message }
-      ]
-    })
-  });
+  try {
+    const response = await fetch(AI_CONFIG.API_URL, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: AI_CONFIG.MODEL,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: message }
+        ],
+        temperature: 0.7,
+        max_tokens: 250, // Reduced to keep responses short
+      })
+    });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData?.error?.message || "AI API request failed");
+    if (!response.ok) {
+      let errorMessage = "AI API request failed";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData?.error?.message || errorMessage;
+      } catch (e) {
+        const textError = await response.text();
+        errorMessage = `API Error ${response.status}: ${textError.slice(0, 100)}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    const content = data?.choices?.[0]?.message?.content;
+    
+    if (!content) return "I'm sorry, I couldn't formulate a response right now. Can we talk about my projects instead?";
+
+    // Post-processing to ensure it's not too long (secondary safety)
+    const lines = content.split('\n').filter((l: string) => l.trim() !== "");
+    if (lines.length > 5) {
+      return lines.slice(0, 4).join("\n") + "\nCheck out my contact section to discuss more!";
+    }
+
+    return content;
+  } catch (error: any) {
+    console.error("AI SERVICE CRITICAL ERROR:", error.message || error);
+    throw error;
   }
-
-  const data = await response.json();
-  return data?.choices?.[0]?.message?.content || "Sorry, I couldn't generate a response.";
 }

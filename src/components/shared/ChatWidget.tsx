@@ -61,8 +61,7 @@ export default function ChatWidget() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [projects, setProjects] = useState<any[]>([]);
+    const [portfolioData, setPortfolioData] = useState<any>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -83,25 +82,18 @@ export default function ChatWidget() {
         return;
     }, [isOpen]);
 
-    // Fetch projects context on mount
+    // Fetch full portfolio context on mount
     useEffect(() => {
-        const fetchProjects = async () => {
+        const fetchContext = async () => {
             try {
-                const { getFirestoreDb } = await import("@/lib/firebase");
-                const { collection, getDocs, query, orderBy, limit } = await import("firebase/firestore");
-                const db = getFirestoreDb();
-                const q = query(collection(db, "projects"), orderBy("displayOrder"), limit(10));
-                const snap = await getDocs(q);
-                setProjects(snap.docs.map(doc => ({
-                    title: doc.data().title,
-                    description: doc.data().description,
-                    technologies: doc.data().technologiesUsed || [],
-                })));
+                const { getPortfolioContext } = await import("@/services/firestore");
+                const context = await getPortfolioContext();
+                setPortfolioData(context);
             } catch (err) {
-                console.error("Error fetching projects for chat:", err);
+                console.error("Error fetching context for chat:", err);
             }
         };
-        fetchProjects();
+        fetchContext();
     }, []);
 
     const scrollToBottom = () => {
@@ -127,7 +119,7 @@ export default function ChatWidget() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     message: userMessage,
-                    projects: projects
+                    context: portfolioData
                 }),
             });
 
