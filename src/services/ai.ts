@@ -1,4 +1,4 @@
-import { AI_CONFIG } from "@/lib/constants";
+import { AI_CONFIG } from "../lib/constants";
 
 /**
  * AI Service
