@@ -2,8 +2,6 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { chatHandler } from './chat.js';
-import { generateProjectHandler } from './generate-project.js';
-import { uploadHandler, deleteUploadHandler } from './upload.js';
 
 // Load environment variables
 dotenv.config();
@@ -23,9 +21,6 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Routes
 app.post('/api/chat', chatHandler);
-app.post('/api/generate-project', generateProjectHandler);
-app.post('/api/upload', uploadHandler);
-app.delete('/api/upload', deleteUploadHandler);
 
 // Error Handling
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
@@ -36,6 +31,5 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 app.listen(PORT, () => {
     console.log(`🚀 Backend server running on http://localhost:${PORT}`);
     console.log(`- POST /api/chat`);
-    console.log(`- POST /api/generate-project`);
-    console.log(`- POST /api/upload`);
 });
+
