@@ -57,7 +57,10 @@ function formatMessage(content: string): React.ReactNode {
     return parts;
 }
 
+import { useSiteConfig } from "@/hooks/useSiteConfig";
+
 export default function ChatWidget() {
+    const { config } = useSiteConfig();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
@@ -65,6 +68,11 @@ export default function ChatWidget() {
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    // Visibility Check
+    if (config && config.chatbotVisibility === false) {
+        return null;
+    }
 
     // Auto-focus input when opened
     useEffect(() => {

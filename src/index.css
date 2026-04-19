@@ -58,6 +58,13 @@
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-display: 'Outfit', system-ui, sans-serif;
   --font-projects: 'Outfit', system-ui, sans-serif;
+
+  /* Configurational Variables */
+  --animation-speed-scale: 1;
+  --section-padding-scale: 1;
+  --blur-intensity: 20px;
+  --hover-effects: 1;
+  --contrast-multiplier: 1;
 }
 
 .dark {
@@ -92,7 +99,7 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: var(--scroll-behavior, smooth);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background: transparent;
@@ -906,3 +913,69 @@ section {
     display: none !important;
   }
 }
+
+/* ============================================
+   STYLE VARIANTS & CARD STYLES
+   ============================================ */
+
+[data-style-variant="minimal"] {
+  --radius: 0px !important;
+  --glass-bg: transparent !important;
+  --blur-intensity: 0px !important;
+}
+
+[data-style-variant="minimal"] .glass-card {
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  box-shadow: none;
+}
+
+[data-card-style="flat"] .glass-card {
+  box-shadow: none !important;
+  border-color: transparent !important;
+  background: hsl(var(--muted) / 0.5) !important;
+}
+
+[data-card-style="elevated"] .glass-card {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-card-style="outlined"] .glass-card {
+  box-shadow: none !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+/* Contrast Boost */
+.contrast-boost {
+  --foreground: 0 0% 0% !important;
+  --muted-foreground: 240 6% 20% !important;
+}
+
+.dark.contrast-boost {
+  --foreground: 0 0% 100% !important;
+  --muted-foreground: 0 0% 90% !important;
+}
+
+/* Hover Effects Toggle */
+[style*="--hover-effects: 0"] .interactive:hover,
+[style*="--hover-effects: 0"] .btn-animated:hover,
+[style*="--hover-effects: 0"] .btn-animated-secondary:hover {
+  transform: none !important;
+}
+
+/* Motion Levels */
+[data-motion="off"] *,
+[data-motion="off"] *::before,
+[data-motion="off"] *::after {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+
+[data-motion="subtle"] {
+  --animation-speed-scale: 0.5;
+}
+
+[data-motion="high"] {
+  --animation-speed-scale: 1.5;
+}
+

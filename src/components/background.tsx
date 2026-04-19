@@ -1,7 +1,11 @@
 // @ts-ignore
 import LiquidEther from "@/components/visuals/LiquidEther";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 export function Background() {
+  const { config } = useSiteConfig();
+  const showAnimation = config?.backgroundAnimation !== false;
+
   return (
     <div
       style={{
@@ -17,20 +21,22 @@ export function Background() {
       }}
     >
       {/* Background Animation Layer */}
-      <div 
-        className="liquid-canvas"
-        style={{ position: "absolute", inset: 0, zIndex: -1, pointerEvents: "auto" }}
-      >
-        <LiquidEther
-          mouseForce={20}
-          cursorSize={100}
-          resolution={0.5}
-          colors={["#5227FF", "#FF9FFC", "#B497CF"]}
-          autoDemo={true}
-          autoSpeed={0.5}
-          autoIntensity={2.2}
-        />
-      </div>
+      {showAnimation && (
+        <div 
+          className="liquid-canvas"
+          style={{ position: "absolute", inset: 0, zIndex: -1, pointerEvents: "auto" }}
+        >
+          <LiquidEther
+            mouseForce={20}
+            cursorSize={100}
+            resolution={0.5}
+            colors={["#5227FF", "#FF9FFC", "#B497CF"]}
+            autoDemo={true}
+            autoSpeed={0.5}
+            autoIntensity={2.2}
+          />
+        </div>
+      )}
 
       {/* Visibility Overlay Scrim */}
       <div 

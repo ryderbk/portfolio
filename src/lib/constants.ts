@@ -8,6 +8,7 @@ export const FIRESTORE_COLLECTIONS = {
   SKILLS: "skills",
   MESSAGES: "messages",
   EXPERIENCES: "experiences",
+  SITE_CONFIG: "siteConfig",
 } as const;
 
 export const AI_CONFIG = {

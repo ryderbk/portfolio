@@ -11,6 +11,7 @@ import ChatWidget from "@/components/shared/ChatWidget";
 import Admin from "@/pages/admin";
 import Login from "@/pages/login";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SiteConfigProvider } from "@/context/SiteConfigContext";
 
 function Router() {
   return (
@@ -26,15 +27,17 @@ function Router() {
 function AppContent() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="portfolio-theme">
-      <AuthProvider>
-        <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <Router />
-          </WouterRouter>
-          <ChatWidget />
-          <Toaster />
-        </TooltipProvider>
-      </AuthProvider>
+      <SiteConfigProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <Router />
+            </WouterRouter>
+            <ChatWidget />
+            <Toaster />
+          </TooltipProvider>
+        </AuthProvider>
+      </SiteConfigProvider>
     </ThemeProvider>
   );
 }
