@@ -6,7 +6,9 @@ import {
   updateProject,
   deleteProject,
 } from "@/services/firestore";
-import { Trash2, Edit2, Plus, RefreshCw, X, FolderKanban } from "lucide-react";
+import { Trash2, Edit2, Plus, RefreshCw, X, FolderKanban, Palette, MousePointer2, Settings, LifeBuoy } from "lucide-react";
+import ConfigPanel from "@/components/admin/ConfigPanel";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 interface Project {
   id: string;
@@ -19,11 +21,14 @@ interface Project {
   [key: string]: any;
 }
 
+type Tab = "projects" | "appearance" | "behavior" | "advanced";
+
 export default function AdminPage() {
+  const [activeTab, setActiveTab] = useState<Tab>("projects");
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false); /* Form state */
   const [formData, setFormData] = useState({
     title: "",
     subtitle: "",
@@ -31,6 +36,8 @@ export default function AdminPage() {
     tags: "",
     image: "",
   });
+
+  const { isSyncing } = useSiteConfig();
 
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
@@ -69,8 +76,8 @@ export default function AdminPage() {
       ...formData,
       tags: formData.tags
         .split(",")
-        .map((t: string) => t.trim())
-        .filter((t: string) => t !== ""),
+        .map((t) => t.trim())
+        .filter((t) => t !== ""),
       updatedAt: new Date(),
     };
     try {
@@ -102,118 +109,174 @@ export default function AdminPage() {
   return (
     <AuthGuard>
       <div className="min-h-screen pt-24 pb-12 px-6 bg-background dark:bg-background transition-colors duration-500">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
             <div>
               <h1 className="text-4xl font-bold text-foreground flex items-center gap-3">
-                <FolderKanban className="text-primary" /> Projects
+                <Settings className="text-primary animate-spin-slow" /> Control Center
               </h1>
               <p className="text-muted-foreground text-sm mt-1">
-                Manage your portfolio projects
+                Manage your portfolio data and visual ecosystem
               </p>
             </div>
             
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => handleOpenForm()}
-                className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-              >
-                <Plus size={18} /> Add Project
-              </button>
+              {isSyncing && (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full border border-primary/20">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Syncing Cloud</span>
+                </div>
+              )}
+              {activeTab === "projects" && (
+                <button
+                  onClick={() => handleOpenForm()}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  <Plus size={18} /> Add Project
+                </button>
+              )}
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-border mb-8" />
-
           {/* Main Dashboard Layout */}
-          <main className="min-h-[500px] pb-24">
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center justify-between pb-2">
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                  All Projects <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{projects.length}</span>
-                </h2>
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8">
+            {/* Sidebar Navigation */}
+            <aside className="space-y-2">
+              <nav className="flex flex-col gap-1">
+                <button
+                  onClick={() => setActiveTab("projects")}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === "projects" ? "bg-primary text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                >
+                  <FolderKanban size={18} /> Projects
+                </button>
+                <div className="pt-4 pb-2 px-4">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Configuration</span>
+                </div>
+                <button
+                  onClick={() => setActiveTab("appearance")}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === "appearance" ? "bg-primary text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                >
+                  <Palette size={18} /> Appearance
+                </button>
+                <button
+                  onClick={() => setActiveTab("behavior")}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === "behavior" ? "bg-primary text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                >
+                  <MousePointer2 size={18} /> Behavior
+                </button>
+                <button
+                  onClick={() => setActiveTab("advanced")}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === "advanced" ? "bg-primary text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                >
+                  <Settings size={18} /> Advanced
+                </button>
+              </nav>
 
-              {loading ? (
-                <div className="flex flex-col items-center justify-center py-32 gap-4">
-                  <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                  <p className="text-sm font-medium text-muted-foreground">Loading projects...</p>
+              <div className="mt-8 p-4 rounded-2xl bg-muted/40 border border-border">
+                <div className="flex items-center gap-2 text-primary mb-2">
+                  <LifeBuoy size={16} />
+                  <span className="text-xs font-bold">Help & Support</span>
                 </div>
-              ) : projects.length === 0 ? (
-                <div className="text-center py-24 p-8 rounded-3xl border border-dashed border-border bg-muted/20">
-                  <div className="mb-4 flex justify-center text-muted-foreground opacity-50">
-                    <RefreshCw size={48} />
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Changes to appearance apply instantly to all visitors. Use presets for quick styling.
+                </p>
+              </div>
+            </aside>
+
+            {/* Content Area */}
+            <main className="min-h-[500px] pb-24">
+              {activeTab === "projects" ? (
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                  <div className="flex items-center justify-between border-b border-border pb-4">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                      All Projects <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{projects.length}</span>
+                    </h2>
                   </div>
-                  <h3 className="text-lg font-bold">No Projects Found</h3>
-                  <p className="text-sm text-muted-foreground mt-1 mb-6">
-                    Start by adding a new project to your portfolio.
-                  </p>
-                  <button onClick={() => handleOpenForm()} className="px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold">
-                    Add Project
-                  </button>
-                </div>
-              ) : (
-                <div className="grid gap-4">
-                  {projects.map((project) => (
-                    <div
-                      key={project.id}
-                      className="p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group relative overflow-hidden"
-                    >
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="flex gap-4">
-                            {project.image && (
-                              <div className="w-20 h-20 rounded-xl overflow-hidden border border-border bg-muted shrink-0 hidden md:block">
-                                <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-                              </div>
-                            )}
-                            <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
-                                {project.subtitle}
-                              </span>
-                            </div>
-                            <h3 className="text-lg font-bold text-foreground">
-                              {project.title}
-                            </h3>
-                            <p className="text-muted-foreground text-sm line-clamp-1 max-w-xl leading-relaxed">
-                              {project.description}
-                            </p>
-                            {project.tags && (
-                              <div className="flex flex-wrap gap-2 mt-4">
-                                {project.tags.map((tag: string, i: number) => (
-                                  <span
-                                    key={tag + i}
-                                    className="px-2 py-0.5 text-[10px] font-medium bg-muted text-foreground rounded-md border border-border"
-                                  >
-                                    {tag}
+
+                  {loading ? (
+                    <div className="flex flex-col items-center justify-center py-32 gap-4">
+                      <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                      <p className="text-sm font-medium text-muted-foreground">Loading projects...</p>
+                    </div>
+                  ) : projects.length === 0 ? (
+                    <div className="text-center py-24 p-8 rounded-3xl border border-dashed border-border bg-muted/20">
+                      <div className="mb-4 flex justify-center text-muted-foreground opacity-50">
+                        <RefreshCw size={48} />
+                      </div>
+                      <h3 className="text-lg font-bold">No Projects Found</h3>
+                      <p className="text-sm text-muted-foreground mt-1 mb-6">
+                        Start by adding a new project to your portfolio.
+                      </p>
+                      <button onClick={() => handleOpenForm()} className="px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold">
+                        Add Project
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4">
+                      {projects.map((project) => (
+                        <div
+                          key={project.id}
+                          className="p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group relative overflow-hidden"
+                        >
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="flex gap-4">
+                               {project.image && (
+                                 <div className="w-20 h-20 rounded-xl overflow-hidden border border-border bg-muted shrink-0 hidden md:block">
+                                    <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                                 </div>
+                               )}
+                               <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
+                                    {project.subtitle}
                                   </span>
-                                ))}
+                                </div>
+                                <h3 className="text-lg font-bold text-foreground">
+                                  {project.title}
+                                </h3>
+                                <p className="text-muted-foreground text-sm line-clamp-1 max-w-xl leading-relaxed">
+                                  {project.description}
+                                </p>
+                                {project.tags && (
+                                  <div className="flex flex-wrap gap-2 mt-4">
+                                    {project.tags.map((tag, i) => (
+                                      <span
+                                        key={tag + i}
+                                        className="px-2 py-0.5 text-[10px] font-medium bg-muted text-foreground rounded-md border border-border"
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleOpenForm(project)}
+                                className="p-2 text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                              >
+                                <Edit2 size={18} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(project.id)}
+                                className="p-2 text-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleOpenForm(project)}
-                            className="p-2 text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                          >
-                            <Edit2 size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(project.id)}
-                            className="p-2 text-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
+              ) : (
+                <ConfigPanel activeTab={activeTab as any} onTabChange={setActiveTab as any} />
               )}
-            </div>
-          </main>
+            </main>
+          </div>
         </div>
       </div>
 
@@ -240,7 +303,7 @@ export default function AdminPage() {
                     type="text"
                     required
                     value={formData.title}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    onChange={(e) =>
                       setFormData({ ...formData, title: e.target.value })
                     }
                     className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary focus:bg-background outline-none transition-all"
@@ -252,7 +315,7 @@ export default function AdminPage() {
                   <input
                     type="text"
                     value={formData.subtitle}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    onChange={(e) =>
                       setFormData({ ...formData, subtitle: e.target.value })
                     }
                     className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary focus:bg-background outline-none transition-all"
@@ -266,7 +329,7 @@ export default function AdminPage() {
                   required
                   rows={4}
                   value={formData.description}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
                   className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary focus:bg-background outline-none resize-none transition-all"
@@ -278,7 +341,7 @@ export default function AdminPage() {
                 <input
                   type="text"
                   value={formData.tags}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  onChange={(e) =>
                     setFormData({ ...formData, tags: e.target.value })
                   }
                   className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary focus:bg-background outline-none transition-all"
@@ -290,7 +353,7 @@ export default function AdminPage() {
                 <input
                   type="url"
                   value={formData.image}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  onChange={(e) =>
                     setFormData({ ...formData, image: e.target.value })
                   }
                   className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary focus:bg-background outline-none transition-all"
