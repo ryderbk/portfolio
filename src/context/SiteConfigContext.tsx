@@ -161,14 +161,10 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const { setTheme } = useTheme();
   const capturedRef = useRef(false);
 
-  // Resolve the effective dark/light state by checking the actual DOM class
-  // This allows ThemeProvider to be the source of truth for the theme class
-  const resolveIsDark = useCallback((): boolean => {
-    const root = document.documentElement;
-    // Check the actual dark/light class from ThemeProvider
-    if (root.classList.contains("dark")) return true;
-    if (root.classList.contains("light")) return false;
-    // Fallback to system preference
+  // Resolve the effective dark/light state
+  const resolveIsDark = useCallback((mode: string): boolean => {
+    if (mode === "dark") return true;
+    if (mode === "light") return false;
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   }, []);
 
@@ -227,6 +223,7 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Apply all config to DOM
   const applyConfigToDOM = useCallback((newConfig: SiteConfig) => {
     const root = document.documentElement;
+<<<<<<< HEAD
     
     // Apply theme mode if provided
     if (newConfig.themeMode) {
@@ -235,6 +232,13 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     // Get the current theme from the DOM (managed by ThemeProvider or our own setter)
     const isDark = resolveIsDark();
+=======
+    const isDark = resolveIsDark(newConfig.themeMode);
+
+    // Theme class
+    root.classList.remove("light", "dark");
+    root.classList.add(isDark ? "dark" : "light");
+>>>>>>> parent of acf1217 (fix: resolve admin config not applying to DOM and styles)
 
     // Apply palette (this sets all color CSS variables)
     applyPaletteToDOM(newConfig.selectedPalette || "original", isDark);
@@ -321,6 +325,7 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return () => unsubscribe();
   }, [applyConfigToDOM]);
 
+<<<<<<< HEAD
   const refreshConfig = async () => {
     setIsSyncing(true);
     try {
@@ -336,30 +341,32 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   // Listen for theme changes (from ThemeProvider) to re-apply palette
+=======
+  // Listen for system theme changes to re-apply palette
+>>>>>>> parent of acf1217 (fix: resolve admin config not applying to DOM and styles)
   useEffect(() => {
-    const root = document.documentElement;
-    const observer = new MutationObserver(() => {
-      // When dark/light class changes, re-apply config with new theme
-      applyConfigToDOM(config);
-    });
-
-    observer.observe(root, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    return () => observer.disconnect();
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = () => {
+      if (config.themeMode === "system") {
+        applyConfigToDOM(config);
+      }
+    };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, [config, applyConfigToDOM]);
 
   const updateConfig = async (updates: Partial<SiteConfig>) => {
     const newConfig = { ...config, ...updates };
     setConfig(newConfig);
+<<<<<<< HEAD
 
     // If theme mode changed, apply it via ThemeProvider
     if (updates.themeMode) {
       applyThemeToDOM(updates.themeMode);
     }
 
+=======
+>>>>>>> parent of acf1217 (fix: resolve admin config not applying to DOM and styles)
     applyConfigToDOM(newConfig);
     configService.saveLocalConfig(newConfig);
 

@@ -8,7 +8,7 @@ import {
 } from "@/services/firestore";
 import { Trash2, Edit2, Plus, RefreshCw, X, FolderKanban, Palette, MousePointer2, Settings, LifeBuoy } from "lucide-react";
 import ConfigPanel from "@/components/admin/ConfigPanel";
-import { useSiteConfig } from "@/context/SiteConfigContext";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 interface Project {
   id: string;

@@ -7,11 +7,14 @@ export function Background() {
   const { config } = useSiteConfig();
   const showAnimation = config?.backgroundAnimation !== false;
 
+<<<<<<< HEAD
   const { selectedPalette } = config || { selectedPalette: 'original' };
   const palette = COLOR_PALETTES.find(p => p.id === selectedPalette) || COLOR_PALETTES[0];
   const isDark = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
   const colors = isDark ? palette.dark : palette.light;
 
+=======
+>>>>>>> parent of acf1217 (fix: resolve admin config not applying to DOM and styles)
   return (
     <div
       style={{
@@ -28,7 +31,7 @@ export function Background() {
     >
       {/* Background Animation Layer */}
       {showAnimation && (
-        <div
+        <div 
           className="liquid-canvas"
           style={{ position: "absolute", inset: 0, zIndex: -1, pointerEvents: "auto" }}
         >
@@ -36,7 +39,11 @@ export function Background() {
             mouseForce={20}
             cursorSize={100}
             resolution={0.5}
+<<<<<<< HEAD
             colors={[colors.accent, colors.surface, colors.bg]}
+=======
+            colors={["#5227FF", "#FF9FFC", "#B497CF"]}
+>>>>>>> parent of acf1217 (fix: resolve admin config not applying to DOM and styles)
             autoDemo={true}
             autoSpeed={0.5}
             autoIntensity={2.2}

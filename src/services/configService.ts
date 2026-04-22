@@ -8,7 +8,6 @@ import { getFirestoreDb } from '@/lib/firebase';
 import { FIRESTORE_COLLECTIONS } from '@/lib/constants';
 import { SiteConfig, DEFAULT_SITE_CONFIG } from '@/types/site-config';
 
-const db = getFirestoreDb();
 const CONFIG_DOC_ID = "global";
 const LOCAL_STORAGE_KEY = "site-config";
 
@@ -39,6 +38,7 @@ export const configService = {
   async getRemoteConfig(): Promise<SiteConfig | null> {
     console.log("🔍 configService: Fetching remote config...");
     try {
+      const db = getFirestoreDb();
       const docRef = doc(db, FIRESTORE_COLLECTIONS.SITE_CONFIG, CONFIG_DOC_ID);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
@@ -60,6 +60,7 @@ export const configService = {
   async updateRemoteConfig(config: SiteConfig) {
     console.log("💾 configService: Updating remote config...", config);
     try {
+      const db = getFirestoreDb();
       const docRef = doc(db, FIRESTORE_COLLECTIONS.SITE_CONFIG, CONFIG_DOC_ID);
       await setDoc(docRef, {
         ...config,
@@ -76,11 +77,17 @@ export const configService = {
    * Subscribe to remote config changes
    */
   subscribeToConfig(callback: (config: SiteConfig) => void) {
-    const docRef = doc(db, FIRESTORE_COLLECTIONS.SITE_CONFIG, CONFIG_DOC_ID);
-    return onSnapshot(docRef, (snapshot) => {
-      if (snapshot.exists()) {
-        callback(snapshot.data() as SiteConfig);
-      }
-    });
+    try {
+      const db = getFirestoreDb();
+      const docRef = doc(db, FIRESTORE_COLLECTIONS.SITE_CONFIG, CONFIG_DOC_ID);
+      return onSnapshot(docRef, (snapshot) => {
+        if (snapshot.exists()) {
+          callback(snapshot.data() as SiteConfig);
+        }
+      });
+    } catch (error) {
+      console.error("❌ configService: Error subscribing to config:", error);
+      return () => {}; // Return a no-op unsubscribe function
+    }
   }
 };

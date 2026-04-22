@@ -71,8 +71,8 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: Proj
         </div>
       </div>
 
-      <div className="absolute top-6 right-6 p-2 rounded-full border opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none backdrop-blur-sm" style={{ borderColor: 'hsl(var(--border) / 0.5)', backgroundColor: 'hsl(var(--card) / 0.8)' }}>
-        <ArrowUpRight size={18} style={{ color: 'hsl(var(--foreground))' }} />
+      <div className="absolute top-6 right-6 p-2 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-black/40 backdrop-blur-sm">
+        <ArrowUpRight size={18} className="text-white" />
       </div>
     </motion.article>
   );

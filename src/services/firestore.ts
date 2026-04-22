@@ -17,7 +17,7 @@ import {
 import { getFirestoreDb } from '@/lib/firebase';
 import { FIRESTORE_COLLECTIONS } from '@/lib/constants';
 
-const db = getFirestoreDb();
+
 
 /**
  * Projects Services
@@ -25,7 +25,7 @@ const db = getFirestoreDb();
 export const subscribeToProjects = (callback: (projects: any[]) => void) => {
   // We use a simple collection reference first to be as resilient as possible.
   // Ordering can be done client-side if the fields don't exist yet in all docs.
-  const projectsRef = collection(db, FIRESTORE_COLLECTIONS.PROJECTS);
+  const projectsRef = collection(getFirestoreDb(), FIRESTORE_COLLECTIONS.PROJECTS);
   
   return onSnapshot(projectsRef, (snapshot) => {
     console.log(`Firestore: Received snapshot with ${snapshot.docs.length} documents.`);
@@ -48,7 +48,7 @@ export const subscribeToProjects = (callback: (projects: any[]) => void) => {
 };
 
 export const getAllProjects = async (limitCount = 50) => {
-  const q = query(collection(db, "projects"), orderBy("displayOrder"), limit(limitCount));
+  const q = query(collection(getFirestoreDb(), "projects"), orderBy("displayOrder"), limit(limitCount));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({
     id: doc.id,
@@ -97,7 +97,7 @@ export const syncInitialProjects = async (initialData: any[]) => {
       };
 
       console.log(`📤 Uploading project ${i + 1}: ${project.title}`);
-      await addDoc(collection(db, "projects"), projectData);
+      await addDoc(collection(getFirestoreDb(), "projects"), projectData);
     }
     
     console.log("✅ All projects successfully synced to Firestore.");
@@ -115,7 +115,7 @@ export const syncInitialProjects = async (initialData: any[]) => {
 export const addRemainingProjects = async (projectsToAdd: any[]) => {
   console.log("🚀 Starting remaining projects sync...");
   try {
-    const projectsRef = collection(db, FIRESTORE_COLLECTIONS.PROJECTS);
+    const projectsRef = collection(getFirestoreDb(), FIRESTORE_COLLECTIONS.PROJECTS);
     const snapshot = await getDocs(projectsRef);
     
     const existingTitles = new Set();
@@ -169,7 +169,7 @@ export const addRemainingProjects = async (projectsToAdd: any[]) => {
  * Skills Services
  */
 export const subscribeToSkills = (callback: (skills: any[]) => void) => {
-  const q = query(collection(db, FIRESTORE_COLLECTIONS.SKILLS), orderBy("displayOrder"), orderBy("name"));
+  const q = query(collection(getFirestoreDb(), FIRESTORE_COLLECTIONS.SKILLS), orderBy("displayOrder"), orderBy("name"));
   return onSnapshot(q, (snapshot) => {
     const skills = snapshot.docs.map(doc => ({
       id: doc.id,
@@ -183,7 +183,7 @@ export const subscribeToSkills = (callback: (skills: any[]) => void) => {
  * Messages Services
  */
 export const subscribeToMessages = (callback: (messages: any[]) => void) => {
-  const q = query(collection(db, FIRESTORE_COLLECTIONS.MESSAGES), orderBy("createdAt", "desc"));
+  const q = query(collection(getFirestoreDb(), FIRESTORE_COLLECTIONS.MESSAGES), orderBy("createdAt", "desc"));
   return onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map(doc => ({
       id: doc.id,
@@ -199,9 +199,9 @@ export const subscribeToMessages = (callback: (messages: any[]) => void) => {
  */
 export async function getPortfolioContext() {
   const [projectsSnap, skillsSnap, expSnap] = await Promise.all([
-    getDocs(query(collection(db, FIRESTORE_COLLECTIONS.PROJECTS), orderBy('displayOrder'), limit(10))),
-    getDocs(query(collection(db, FIRESTORE_COLLECTIONS.SKILLS), orderBy('displayOrder'), limit(20))),
-    getDocs(query(collection(db, FIRESTORE_COLLECTIONS.EXPERIENCES), orderBy('displayOrder'), limit(10)))
+    getDocs(query(collection(getFirestoreDb(), FIRESTORE_COLLECTIONS.PROJECTS), orderBy('displayOrder'), limit(10))),
+    getDocs(query(collection(getFirestoreDb(), FIRESTORE_COLLECTIONS.SKILLS), orderBy('displayOrder'), limit(20))),
+    getDocs(query(collection(getFirestoreDb(), FIRESTORE_COLLECTIONS.EXPERIENCES), orderBy('displayOrder'), limit(10)))
   ]);
 
   return {
@@ -215,7 +215,7 @@ export async function getPortfolioContext() {
  * Generic Operations
  */
 export const addDocument = async (collectionName: string, data: DocumentData) => {
-  return await addDoc(collection(db, collectionName), {
+  return await addDoc(collection(getFirestoreDb(), collectionName), {
     ...data,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -223,7 +223,7 @@ export const addDocument = async (collectionName: string, data: DocumentData) =>
 };
 
 export const updateDocument = async (collectionName: string, id: string, data: DocumentData) => {
-  const docRef = doc(db, collectionName, id);
+  const docRef = doc(getFirestoreDb(), collectionName, id);
   return await updateDoc(docRef, {
     ...data,
     updatedAt: new Date()
@@ -231,19 +231,19 @@ export const updateDocument = async (collectionName: string, id: string, data: D
 };
 
 export const removeDocument = async (collectionName: string, id: string) => {
-  const docRef = doc(db, collectionName, id);
+  const docRef = doc(getFirestoreDb(), collectionName, id);
   return await deleteDoc(docRef);
 };
 
 export const getCollectionCount = async (collectionName: string) => {
-  const snapshot = await getCountFromServer(collection(db, collectionName));
+  const snapshot = await getCountFromServer(collection(getFirestoreDb(), collectionName));
   return snapshot.data().count;
 };
 
 export const batchUpdateProjectOrders = async (projects: { id: string }[]) => {
-  const batch = writeBatch(db);
+  const batch = writeBatch(getFirestoreDb());
   projects.forEach((project, index) => {
-    const projectRef = doc(db, FIRESTORE_COLLECTIONS.PROJECTS, project.id);
+    const projectRef = doc(getFirestoreDb(), FIRESTORE_COLLECTIONS.PROJECTS, project.id);
     batch.update(projectRef, { displayOrder: index });
   });
   await batch.commit();
