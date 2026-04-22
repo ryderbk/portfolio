@@ -35,24 +35,24 @@ export class ErrorBoundary extends React.Component<Props, State> {
             alignItems: 'center',
             justifyContent: 'center',
             minHeight: '100vh',
-            backgroundColor: '#09090B',
-            color: '#FFFFFF',
+            backgroundColor: 'hsl(var(--background))',
+            color: 'hsl(var(--foreground))',
             padding: '20px',
             fontFamily: 'system-ui, sans-serif',
           }}
         >
           <h1 style={{ fontSize: '24px', marginBottom: '10px' }}>Something went wrong</h1>
-          <p style={{ fontSize: '14px', color: '#999', marginBottom: '20px' }}>
+          <p style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px' }}>
             Please try refreshing the page
           </p>
           {import.meta.env.DEV && (
             <pre
               style={{
-                backgroundColor: '#1a1a1a',
+                backgroundColor: 'hsl(var(--card))',
                 padding: '15px',
                 borderRadius: '8px',
                 fontSize: '12px',
-                color: '#ff6b6b',
+                color: 'hsl(var(--accent))',
                 maxWidth: '600px',
                 overflow: 'auto',
               }}
@@ -65,8 +65,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
             style={{
               marginTop: '20px',
               padding: '10px 20px',
-              backgroundColor: '#fff',
-              color: '#000',
+              backgroundColor: 'hsl(var(--accent))',
+              color: 'hsl(var(--accent-foreground))',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',

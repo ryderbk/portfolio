@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun, Menu, X, Briefcase, User, Wrench, Mail } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
+import { useSiteConfig } from "@/context/SiteConfigContext";
 
 const navLinks = [
   { name: "Work", href: "#work", icon: Briefcase },
@@ -16,6 +17,7 @@ function scrollTo(href: string) {
 
 export function Navbar() {
   const { theme, setTheme } = useTheme();
+  const { updateConfig } = useSiteConfig();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [active, setActive] = useState("");
@@ -43,7 +45,12 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    // Also sync with SiteConfig
+    updateConfig({ themeMode: newTheme });
+  };
 
   return (
     <>

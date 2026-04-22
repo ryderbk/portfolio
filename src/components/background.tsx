@@ -6,6 +6,13 @@ export function Background() {
   const { config } = useSiteConfig();
   const showAnimation = config?.backgroundAnimation !== false;
 
+  // Get accent color from CSS variables or use defaults
+  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+
+  // Convert HSL to Hex for LiquidEther (fallback to palette colors if not available)
+  const liquidColors = ["hsl(var(--accent))", "hsl(var(--primary))", "hsl(var(--secondary))"];
+
   return (
     <div
       style={{
@@ -22,7 +29,7 @@ export function Background() {
     >
       {/* Background Animation Layer */}
       {showAnimation && (
-        <div 
+        <div
           className="liquid-canvas"
           style={{ position: "absolute", inset: 0, zIndex: -1, pointerEvents: "auto" }}
         >
@@ -30,7 +37,7 @@ export function Background() {
             mouseForce={20}
             cursorSize={100}
             resolution={0.5}
-            colors={["#5227FF", "#FF9FFC", "#B497CF"]}
+            colors={["#7C3AED", "#8B5CF6", "#A78BFA"]}
             autoDemo={true}
             autoSpeed={0.5}
             autoIntensity={2.2}

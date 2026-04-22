@@ -196,10 +196,14 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isSyncing, setIsSyncing] = useState(false);
   const capturedRef = useRef(false);
 
-  // Resolve the effective dark/light state
-  const resolveIsDark = useCallback((mode: string): boolean => {
-    if (mode === "dark") return true;
-    if (mode === "light") return false;
+  // Resolve the effective dark/light state by checking the actual DOM class
+  // This allows ThemeProvider to be the source of truth for the theme class
+  const resolveIsDark = useCallback((): boolean => {
+    const root = document.documentElement;
+    // Check the actual dark/light class from ThemeProvider
+    if (root.classList.contains("dark")) return true;
+    if (root.classList.contains("light")) return false;
+    // Fallback to system preference
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   }, []);
 
@@ -252,11 +256,8 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Apply all config to DOM
   const applyConfigToDOM = useCallback((newConfig: SiteConfig) => {
     const root = document.documentElement;
-    const isDark = resolveIsDark(newConfig.themeMode);
-
-    // Theme class
-    root.classList.remove("light", "dark");
-    root.classList.add(isDark ? "dark" : "light");
+    // Get the current theme from the DOM (managed by ThemeProvider)
+    const isDark = resolveIsDark();
 
     // Apply palette (this sets all color CSS variables)
     applyPaletteToDOM(newConfig.selectedPalette || "original", isDark);
@@ -342,21 +343,47 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return () => unsubscribe();
   }, [applyConfigToDOM]);
 
-  // Listen for system theme changes to re-apply palette
+  // Listen for theme changes (from ThemeProvider) to re-apply palette
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = () => {
-      if (config.themeMode === "system") {
-        applyConfigToDOM(config);
-      }
-    };
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    const root = document.documentElement;
+    const observer = new MutationObserver(() => {
+      // When dark/light class changes, re-apply config with new theme
+      applyConfigToDOM(config);
+    });
+
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
   }, [config, applyConfigToDOM]);
 
   const updateConfig = async (updates: Partial<SiteConfig>) => {
     const newConfig = { ...config, ...updates };
     setConfig(newConfig);
+
+    // If theme mode changed, update the document class for ThemeProvider to pick up
+    if (updates.themeMode) {
+      const root = document.documentElement;
+      const newIsDark = updates.themeMode === "dark"
+        ? true
+        : updates.themeMode === "light"
+          ? false
+          : window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      root.classList.remove("light", "dark");
+      root.classList.add(newIsDark ? "dark" : "light");
+
+      // Also update localStorage for ThemeProvider to read
+      const themeStorageKey = "portfolio-theme";
+      if (updates.themeMode === "system") {
+        localStorage.setItem(themeStorageKey, "system");
+      } else {
+        localStorage.setItem(themeStorageKey, updates.themeMode);
+      }
+    }
+
     applyConfigToDOM(newConfig);
     configService.saveLocalConfig(newConfig);
 
