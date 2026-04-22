@@ -1,5 +1,5 @@
 // @ts-ignore
-import GradientBlinds from "@/components/visuals/GradientBlinds";
+import Antigravity from "@/components/visuals/Antigravity";
 import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 export function Background() {
@@ -26,19 +26,17 @@ export function Background() {
           className="liquid-canvas"
           style={{ position: "absolute", inset: 0, zIndex: -1, pointerEvents: "auto" }}
         >
-          <GradientBlinds
-            gradientColors={[config?.accentColor || '#FF9FFC', '#5227FF']}
-            angle={0}
-            noise={0.3}
-            blindCount={12}
-            blindMinWidth={50}
-            spotlightRadius={0.5}
-            spotlightSoftness={1}
-            spotlightOpacity={1}
-            mouseDampening={0.15}
-            distortAmount={0}
-            shineDirection="left"
-            mixBlendMode="lighten"
+          <Antigravity
+            count={300}
+            magnetRadius={6}
+            ringRadius={7}
+            waveSpeed={0.4}
+            waveAmplitude={1}
+            particleSize={1.5}
+            lerpSpeed={0.05}
+            color={config?.accentColor || '#FF9FFC'}
+            autoAnimate={true}
+            particleVariance={1}
           />
         </div>
       )}
