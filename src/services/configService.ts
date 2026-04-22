@@ -37,15 +37,19 @@ export const configService = {
    * Get config from Firestore
    */
   async getRemoteConfig(): Promise<SiteConfig | null> {
+    console.log("🔍 configService: Fetching remote config...");
     try {
       const docRef = doc(db, FIRESTORE_COLLECTIONS.SITE_CONFIG, CONFIG_DOC_ID);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        return docSnap.data() as SiteConfig;
+        const data = docSnap.data() as SiteConfig;
+        console.log("✅ configService: Remote config fetched successfully", data);
+        return data;
       }
+      console.warn("⚠️ configService: No remote config found, returning null");
       return null;
     } catch (error) {
-      console.error("Error fetching remote config:", error);
+      console.error("❌ configService: Error fetching remote config:", error);
       return null;
     }
   },
@@ -54,14 +58,16 @@ export const configService = {
    * Update config in Firestore
    */
   async updateRemoteConfig(config: SiteConfig) {
+    console.log("💾 configService: Updating remote config...", config);
     try {
       const docRef = doc(db, FIRESTORE_COLLECTIONS.SITE_CONFIG, CONFIG_DOC_ID);
       await setDoc(docRef, {
         ...config,
         updatedAt: new Date()
       }, { merge: true });
+      console.log("✅ configService: Remote config updated successfully");
     } catch (error) {
-      console.error("Error updating remote config:", error);
+      console.error("❌ configService: Error updating remote config:", error);
       throw error;
     }
   },

@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
-import { SiteConfig, DEFAULT_SITE_CONFIG, PRESETS, COLOR_PALETTES, FONT_OPTIONS, GOOGLE_FONTS_BASE } from "@/types/site-config";
+import { SiteConfig, DEFAULT_SITE_CONFIG, PRESETS, COLOR_PALETTES, FONT_OPTIONS, GOOGLE_FONTS_BASE, ThemeMode } from "@/types/site-config";
 import type { PaletteColors } from "@/types/site-config";
 import { configService } from "@/services/configService";
+import { useTheme } from "@/components/theme-provider";
 
 interface SiteConfigContextType {
   config: SiteConfig;
@@ -9,14 +10,13 @@ interface SiteConfigContextType {
   resetToDefault: () => void;
   applyPreset: (presetName: string) => void;
   isSyncing: boolean;
+  refreshConfig: () => Promise<void>;
 }
 
 const SiteConfigContext = createContext<SiteConfigContextType | undefined>(undefined);
 
 // ── Module-level state for original token capture ───────────────────
-let originalLightTokens: Record<string, string> | null = null;
-let originalDarkTokens: Record<string, string> | null = null;
-let originalFontFamily: string = "";
+let originalTokensCaptured = false;
 
 const CSS_TOKEN_KEYS = [
   "--background", "--foreground", "--primary", "--primary-foreground",
@@ -28,46 +28,10 @@ const GLASS_KEYS = [
   "--glass-bg", "--glass-border", "--glass-shadow", "--glass-highlight", "--background-scrim",
 ];
 
-/** Capture original CSS variable values from the stylesheet (before any inline overrides) */
+/** Capture original CSS variable values (effectively just a flag now as we use style.removeProperty) */
 function captureOriginalTokens() {
-  if (originalLightTokens) return; // already captured
-
-  const root = document.documentElement;
-  const wasLight = root.classList.contains("light") || !root.classList.contains("dark");
-
-  // Capture current mode tokens
-  const captureCurrentTokens = (): Record<string, string> => {
-    const style = getComputedStyle(root);
-    const tokens: Record<string, string> = {};
-    for (const key of [...CSS_TOKEN_KEYS, ...GLASS_KEYS]) {
-      tokens[key] = style.getPropertyValue(key).trim();
-    }
-    return tokens;
-  };
-
-  if (wasLight) {
-    originalLightTokens = captureCurrentTokens();
-    // Temporarily switch to dark to capture dark tokens
-    root.classList.remove("light");
-    root.classList.add("dark");
-    // Force style recalc
-    void getComputedStyle(root).getPropertyValue("--background");
-    originalDarkTokens = captureCurrentTokens();
-    // Switch back
-    root.classList.remove("dark");
-    root.classList.add("light");
-  } else {
-    originalDarkTokens = captureCurrentTokens();
-    root.classList.remove("dark");
-    root.classList.add("light");
-    void getComputedStyle(root).getPropertyValue("--background");
-    originalLightTokens = captureCurrentTokens();
-    root.classList.remove("light");
-    root.classList.add("dark");
-  }
-
-  // Capture original font
-  originalFontFamily = getComputedStyle(document.body).fontFamily || "'Inter', system-ui, sans-serif";
+  if (originalTokensCaptured) return;
+  originalTokensCaptured = true;
 }
 
 // ── Hex-to-HSL conversion ───────────────────────────────────────────
@@ -194,6 +158,7 @@ function removeGoogleFont() {
 export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [config, setConfig] = useState<SiteConfig>(configService.getLocalConfig());
   const [isSyncing, setIsSyncing] = useState(false);
+  const { setTheme } = useTheme();
   const capturedRef = useRef(false);
 
   // Resolve the effective dark/light state by checking the actual DOM class
@@ -252,11 +217,23 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     root.style.setProperty("--font-display", font.family);
     document.body.style.fontFamily = font.family;
   }, []);
+  
+  // Apply theme class to DOM
+  const applyThemeToDOM = useCallback((themeMode: ThemeMode) => {
+    // Sync with ThemeProvider state (which also updates DOM and localStorage)
+    setTheme(themeMode);
+  }, [setTheme]);
 
   // Apply all config to DOM
   const applyConfigToDOM = useCallback((newConfig: SiteConfig) => {
     const root = document.documentElement;
-    // Get the current theme from the DOM (managed by ThemeProvider)
+    
+    // Apply theme mode if provided
+    if (newConfig.themeMode) {
+      applyThemeToDOM(newConfig.themeMode);
+    }
+
+    // Get the current theme from the DOM (managed by ThemeProvider or our own setter)
     const isDark = resolveIsDark();
 
     // Apply palette (this sets all color CSS variables)
@@ -335,6 +312,7 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     // Subscribe to remote changes
     const unsubscribe = configService.subscribeToConfig((remoteConfig) => {
+      console.log("🔄 SiteConfigContext: Remote config update received", remoteConfig);
       setConfig(remoteConfig);
       configService.saveLocalConfig(remoteConfig);
       applyConfigToDOM(remoteConfig);
@@ -342,6 +320,20 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     return () => unsubscribe();
   }, [applyConfigToDOM]);
+
+  const refreshConfig = async () => {
+    setIsSyncing(true);
+    try {
+      const remoteConfig = await configService.getRemoteConfig();
+      if (remoteConfig) {
+        setConfig(remoteConfig);
+        configService.saveLocalConfig(remoteConfig);
+        applyConfigToDOM(remoteConfig);
+      }
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   // Listen for theme changes (from ThemeProvider) to re-apply palette
   useEffect(() => {
@@ -363,25 +355,9 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const newConfig = { ...config, ...updates };
     setConfig(newConfig);
 
-    // If theme mode changed, update the document class for ThemeProvider to pick up
+    // If theme mode changed, apply it via ThemeProvider
     if (updates.themeMode) {
-      const root = document.documentElement;
-      const newIsDark = updates.themeMode === "dark"
-        ? true
-        : updates.themeMode === "light"
-          ? false
-          : window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-      root.classList.remove("light", "dark");
-      root.classList.add(newIsDark ? "dark" : "light");
-
-      // Also update localStorage for ThemeProvider to read
-      const themeStorageKey = "portfolio-theme";
-      if (updates.themeMode === "system") {
-        localStorage.setItem(themeStorageKey, "system");
-      } else {
-        localStorage.setItem(themeStorageKey, updates.themeMode);
-      }
+      applyThemeToDOM(updates.themeMode);
     }
 
     applyConfigToDOM(newConfig);
@@ -410,7 +386,7 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   return (
-    <SiteConfigContext.Provider value={{ config, updateConfig, resetToDefault, applyPreset, isSyncing }}>
+    <SiteConfigContext.Provider value={{ config, updateConfig, resetToDefault, applyPreset, isSyncing, refreshConfig }}>
       {children}
     </SiteConfigContext.Provider>
   );

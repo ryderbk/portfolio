@@ -2,7 +2,7 @@ import React from "react";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { 
   Palette, Settings, Zap, RotateCcw, Sun, Moon, Monitor,
-  MousePointer2, Type, Maximize, Box, Layers, Undo2, Check
+  MousePointer2, Type, Maximize, Box, Layers, Undo2, Check, RefreshCw
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PRESETS, COLOR_PALETTES, FONT_OPTIONS } from "@/types/site-config";
@@ -13,7 +13,7 @@ interface ConfigPanelProps {
 }
 
 export default function ConfigPanel({ activeTab, onTabChange }: ConfigPanelProps) {
-  const { config, updateConfig, resetToDefault, applyPreset, isSyncing } = useSiteConfig();
+  const { config, updateConfig, resetToDefault, applyPreset, isSyncing, refreshConfig } = useSiteConfig();
   const { toast } = useToast();
 
   const ControlGroup = ({ title, children, icon: Icon }: { title: string, children: React.ReactNode, icon?: any }) => (
@@ -104,6 +104,15 @@ export default function ConfigPanel({ activeTab, onTabChange }: ConfigPanelProps
           )}
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={async () => {
+              await refreshConfig();
+              toast({ title: "Config Refreshed", description: "Latest settings have been fetched from the server." });
+            }}
+            className="px-3 py-1.5 bg-background border border-border hover:border-primary rounded-lg text-xs font-bold flex items-center gap-2 transition-all"
+          >
+            <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} /> Fetch Latest
+          </button>
           <button
             onClick={() => {
               resetToDefault();

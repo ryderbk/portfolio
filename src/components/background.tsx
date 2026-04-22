@@ -1,17 +1,16 @@
 // @ts-ignore
 import LiquidEther from "@/components/visuals/LiquidEther";
 import { useSiteConfig } from "@/hooks/useSiteConfig";
+import { COLOR_PALETTES } from "@/types/site-config";
 
 export function Background() {
   const { config } = useSiteConfig();
   const showAnimation = config?.backgroundAnimation !== false;
 
-  // Get accent color from CSS variables or use defaults
-  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-
-  // Convert HSL to Hex for LiquidEther (fallback to palette colors if not available)
-  const liquidColors = ["hsl(var(--accent))", "hsl(var(--primary))", "hsl(var(--secondary))"];
+  const { selectedPalette } = config || { selectedPalette: 'original' };
+  const palette = COLOR_PALETTES.find(p => p.id === selectedPalette) || COLOR_PALETTES[0];
+  const isDark = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
+  const colors = isDark ? palette.dark : palette.light;
 
   return (
     <div
@@ -37,7 +36,7 @@ export function Background() {
             mouseForce={20}
             cursorSize={100}
             resolution={0.5}
-            colors={["#7C3AED", "#8B5CF6", "#A78BFA"]}
+            colors={[colors.accent, colors.surface, colors.bg]}
             autoDemo={true}
             autoSpeed={0.5}
             autoIntensity={2.2}
