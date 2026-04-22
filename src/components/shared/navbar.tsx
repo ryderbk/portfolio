@@ -73,15 +73,25 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           <button
-            className="interactive group flex items-center gap-1"
+            className="interactive group flex items-center gap-2"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             data-testid="btn-logo"
             aria-label="Scroll to top"
           >
-            <span className="font-display text-lg font-bold tracking-tighter group-hover:opacity-60 transition-opacity duration-200">
+            <span
+              className="font-display font-bold group-hover:opacity-60 transition-opacity duration-200 leading-none flex items-center justify-center"
+              style={{
+                fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
+                letterSpacing: '0.08em',
+                lineHeight: 1,
+                minWidth: '2ch',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
               BK
             </span>
-            <span className="text-muted-foreground font-sans text-xs ml-2 hidden sm:inline opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span className="text-muted-foreground font-sans text-xs hidden sm:inline opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ fontSize: '0.7rem' }}>
               Portfolio
             </span>
           </button>
@@ -172,7 +182,10 @@ export function Navbar() {
             className="fixed inset-0 z-[100] flex flex-col" style={{ background: 'hsl(var(--background))' }}
           >
             <div className="flex justify-between items-center px-6 py-5 border-b border-border">
-              <span className="font-display font-bold">BK</span>
+              <span
+                className="font-display font-bold leading-none"
+                style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)', letterSpacing: '0.08em', lineHeight: 1 }}
+              >BK</span>
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 className="interactive p-2"
