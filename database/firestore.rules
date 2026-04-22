@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // TEMPORARY: Allow all reads and writes for initial development/sync
+    // IMPORTANT: Restrict this after your data is synced!
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
