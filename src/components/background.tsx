@@ -1,5 +1,5 @@
 // @ts-ignore
-import LiquidEther from "@/components/visuals/LiquidEther";
+import Antigravity from "@/components/visuals/Antigravity";
 import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 export function Background() {
@@ -26,14 +26,17 @@ export function Background() {
           className="liquid-canvas"
           style={{ position: "absolute", inset: 0, zIndex: -1, pointerEvents: "auto" }}
         >
-          <LiquidEther
-            mouseForce={20}
-            cursorSize={100}
-            resolution={0.5}
-            colors={["#5227FF", "#FF9FFC", "#B497CF"]}
-            autoDemo={true}
-            autoSpeed={0.5}
-            autoIntensity={2.2}
+          <Antigravity
+            count={300}
+            magnetRadius={6}
+            ringRadius={7}
+            waveSpeed={0.4}
+            waveAmplitude={1}
+            particleSize={1.5}
+            lerpSpeed={0.05}
+            color={'#FF9FFC'}
+            autoAnimate={true}
+            particleVariance={1}
           />
         </div>
       )}
