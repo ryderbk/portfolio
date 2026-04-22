@@ -142,31 +142,27 @@ export default function AdminPage() {
           {/* Main Dashboard Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8">
             {/* Sidebar Navigation */}
-            <aside className="space-y-2">
-              <nav className="flex flex-col gap-1">
-                <button
-                  onClick={() => setActiveTab("projects")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "projects" ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                >
-                  <FolderKanban size={18} /> Projects
-                </button>
+            <aside className="flex flex-col gap-4">
+              <button
+                onClick={() => setActiveTab("projects")}
+                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === "projects" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+              >
+                <FolderKanban size={18} /> Projects
+              </button>
 
-                <button
-                  onClick={() => setActiveTab("appearance")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "appearance" ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                >
-                  <Palette size={18} /> Appearance
-                </button>
+              <button
+                onClick={() => setActiveTab("appearance")}
+                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === "appearance" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+              >
+                <Palette size={18} /> Appearance
+              </button>
 
-
-              </nav>
-
-              <div className="mt-6 p-3 rounded-xl bg-muted/40 border border-border">
-                <div className="flex items-center gap-2 text-primary mb-2">
-                  <LifeBuoy size={16} />
-                  <span className="text-xs font-bold">Help & Support</span>
+              <div className="p-5 rounded-2xl bg-muted/30 border border-border/50">
+                <div className="flex items-center gap-2.5 text-primary mb-3">
+                  <LifeBuoy size={18} />
+                  <span className="text-sm font-bold">Help & Support</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                <p className="text-[12px] text-muted-foreground leading-relaxed">
                   Changes to appearance apply instantly to all visitors. Use presets for quick styling.
                 </p>
               </div>

@@ -59,190 +59,22 @@ function formatMessage(content: string): React.ReactNode {
 
 import { useSiteConfig } from "@/hooks/useSiteConfig";
 
+import { ChatInterface } from "./ChatInterface";
+
 export default function ChatWidget() {
     const { config } = useSiteConfig();
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [input, setInput] = useState("");
-    const [portfolioData, setPortfolioData] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
 
     // Visibility Check
     if (config && config.chatbotVisibility === false) {
         return null;
     }
 
-    // Auto-focus input when opened
-    useEffect(() => {
-        if (isOpen) {
-            setTimeout(() => {
-                inputRef.current?.focus();
-            }, 300);
-            
-            const handleScroll = () => {
-                setIsOpen(false);
-            };
-            
-            window.addEventListener('scroll', handleScroll, { passive: true });
-            return () => window.removeEventListener('scroll', handleScroll);
-        }
-        return;
-    }, [isOpen]);
-
-    // Fetch full portfolio context on mount
-    useEffect(() => {
-        const fetchContext = async () => {
-            try {
-                const { getPortfolioContext } = await import("@/services/firestore");
-                const context = await getPortfolioContext();
-                setPortfolioData(context);
-            } catch (err) {
-                console.error("Error fetching context for chat:", err);
-            }
-        };
-        fetchContext();
-    }, []);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    const handleSendMessage = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim() || isLoading) return;
-
-        const userMessage = input.trim();
-        console.log("Sending message:", userMessage);
-        setInput("");
-        setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
-        setIsLoading(true);
-
-        try {
-            const response = await fetch("/api/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    message: userMessage,
-                    context: portfolioData
-                }),
-            });
-
-            let data;
-            try {
-                data = await response.json();
-                console.log("API response:", data);
-            } catch {
-                throw new Error("Invalid JSON from API");
-            }
-
-            if (!data || !data.reply) {
-                throw new Error("Invalid response");
-            }
-
-            setMessages((prev) => [
-                ...prev, 
-                { role: "assistant", content: data.reply }
-            ]);
-        } catch (error) {
-            console.error("Chat error:", error);
-            setMessages((prev) => [
-                ...prev, 
-                { role: "assistant", content: "AI is temporarily unavailable." }
-            ]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     return (
         <>
             {isOpen && (
-                <div className="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-2rem)] h-[500px] max-h-[calc(100vh-10rem)] glass-card flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 chat-panel">
-                    {/* Header */}
-                    <div className="p-5 border-b border-white/10 flex items-center justify-between bg-white/5 backdrop-blur-md">
-                        <div>
-                            <h3 className="font-display font-semibold text-foreground">Chat with Bharath</h3>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">Developer & Portfolio Assistant</p>
-                        </div>
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                            ✕
-                        </button>
-                    </div>
-
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
-                        {messages.length === 0 && (
-                            <div className="text-center py-10">
-                                <p className="text-sm text-muted-foreground">
-                                    👋 Hi! I'm Bharath. Ask me anything about my projects, skills, or experience.
-                                </p>
-                            </div>
-                        )}
-                        {messages.map((msg, idx) => (
-                            <div
-                                key={idx}
-                                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                            >
-                                <div
-                                    className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user"
-                                        ? "bg-accent/10 border border-accent/20 text-foreground"
-                                        : "glass-card border-white/10 text-foreground"
-                                        }`}
-                                >
-                                    {formatMessage(msg.content)}
-                                </div>
-                            </div>
-                        ))}
-                        {isLoading && (
-                            <div className="flex justify-start">
-                                <div className="glass-card border-white/10 px-4 py-3 rounded-2xl rounded-bl-none">
-                                    <div className="flex gap-1.5 item-center h-4">
-                                        <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce" />
-                                        <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce [animation-delay:0.2s]" />
-                                        <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce [animation-delay:0.4s]" />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
-
-                    {/* Input */}
-                    <form onSubmit={handleSendMessage} className="p-5 bg-white/5 border-t border-white/10">
-                        <div className="flex gap-2">
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                placeholder="Ask me something..."
-                                className="flex-1 px-4 py-2.5 rounded-xl glass-input text-sm"
-                                disabled={isLoading}
-                            />
-                            <button
-                                type="submit"
-                                disabled={isLoading || !input.trim()}
-                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-30 transition-all active:scale-90 group/send"
-                                style={{ boxShadow: 'var(--base-shadow)' }}
-                            >
-                                <svg 
-                                    viewBox="0 0 24 24" 
-                                    className={`w-5 h-5 fill-current transition-transform duration-300 ${isLoading ? 'animate-pulse' : 'group-hover/send:translate-x-0.5 group-hover/send:-translate-y-0.5'}`}
-                                >
-                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                                </svg>
-                            </button>
-                        </div>
-                    </form>
+                <div className="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-2rem)] h-[500px] max-h-[calc(100vh-10rem)] glass-card flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 chat-panel shadow-2xl">
+                    <ChatInterface onClose={() => setIsOpen(false)} />
                 </div>
             )}
 

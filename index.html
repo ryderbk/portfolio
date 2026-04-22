@@ -46,14 +46,19 @@
   </head>
   <body>
     <script>
-      // Prevent flash of wrong theme — runs before React mounts
+      // Prevent FOUC: Instantly restore compiled theme and CSS variables before React mounts
       (function() {
-        var stored = localStorage.getItem('portfolio-theme');
-        var theme = stored || 'light';
-        if (theme === 'system') {
-          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        try {
+          var cssText = localStorage.getItem('portfolio-css-text');
+          var cssClasses = localStorage.getItem('portfolio-css-classes');
+          var cardStyle = localStorage.getItem('portfolio-card-style');
+          
+          if (cssText) document.documentElement.style.cssText = cssText;
+          if (cssClasses) document.documentElement.className = cssClasses;
+          if (cardStyle) document.documentElement.setAttribute('data-card-style', cardStyle);
+        } catch (e) {
+          console.error("Failed to restore initial theme", e);
         }
-        document.documentElement.classList.add(theme);
       })();
     </script>
     <div id="root"></div>

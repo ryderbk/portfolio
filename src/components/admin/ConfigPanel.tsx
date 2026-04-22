@@ -110,7 +110,7 @@ export default function ConfigPanel() {
                     updateConfig({ themeMode: id });
                     toast({ title: "Theme Updated", description: `Switched to ${id} mode.` });
                   }}
-                  className={`p-2 rounded-md transition-all ${config.themeMode === id ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`p-2 rounded-md transition-all ${config.themeMode === id ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   <Icon size={18} />
                 </button>
@@ -229,7 +229,7 @@ export default function ConfigPanel() {
                 <button
                   key={r}
                   onClick={() => updateConfig({ radius: r })}
-                  className={`flex-1 py-1.5 rounded-md text-[10px] font-bold uppercase transition-all ${config.radius === r ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`flex-1 py-1.5 rounded-md text-[10px] font-bold uppercase transition-all ${config.radius === r ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {r}
                 </button>
@@ -242,7 +242,7 @@ export default function ConfigPanel() {
                 <button
                   key={s}
                   onClick={() => updateConfig({ shadow: s })}
-                  className={`flex-1 py-1.5 rounded-md text-[10px] font-bold uppercase transition-all ${config.shadow === s ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`flex-1 py-1.5 rounded-md text-[10px] font-bold uppercase transition-all ${config.shadow === s ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {s}
                 </button>

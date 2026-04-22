@@ -6,11 +6,9 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 
 import { AuthProvider } from "@/context/AuthContext";
-import ChatWidget from "@/components/shared/ChatWidget";
 
 import Admin from "@/pages/admin";
 import Login from "@/pages/login";
-import { ThemeProvider } from "@/components/theme-provider";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 
 function Router() {
@@ -26,19 +24,16 @@ function Router() {
 
 function AppContent() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="portfolio-theme">
-      <SiteConfigProvider>
-        <AuthProvider>
-          <TooltipProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-              <Router />
-            </WouterRouter>
-            <ChatWidget />
-            <Toaster />
-          </TooltipProvider>
-        </AuthProvider>
-      </SiteConfigProvider>
-    </ThemeProvider>
+    <SiteConfigProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <Router />
+          </WouterRouter>
+          <Toaster />
+        </TooltipProvider>
+      </AuthProvider>
+    </SiteConfigProvider>
   );
 }
 

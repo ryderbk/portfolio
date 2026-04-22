@@ -401,6 +401,11 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     // Card Style
     root.setAttribute("data-card-style", newConfig.cardStyle);
+
+    // Save compiled state for instant load (FOUC prevention)
+    localStorage.setItem('portfolio-css-text', root.style.cssText);
+    localStorage.setItem('portfolio-css-classes', root.className);
+    localStorage.setItem('portfolio-card-style', newConfig.cardStyle);
   }, [resolveIsDark, applyPaletteToDOM, applyFontToDOM]);
 
   // Capture original tokens on first mount (before any palette is applied)
