@@ -8,9 +8,9 @@
    ============================================ */
 
 @theme inline {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Outfit', system-ui, sans-serif;
-  --font-projects: 'Outfit', system-ui, sans-serif;
+  --font-sans: var(--font-family-sans, 'Inter', system-ui, -apple-system, sans-serif);
+  --font-display: var(--font-family-display, 'Outfit', system-ui, sans-serif);
+  --font-projects: var(--font-family-projects, 'Outfit', system-ui, sans-serif);
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -55,9 +55,11 @@
   --glass-highlight: rgba(255, 255, 255, 0.1);
   --background-scrim: rgba(255, 255, 255, 0.4);
 
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Outfit', system-ui, sans-serif;
-  --font-projects: 'Outfit', system-ui, sans-serif;
+  --base-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  --font-sans: var(--font-family-sans, 'Inter', system-ui, sans-serif);
+  --font-display: var(--font-family-display, 'Outfit', system-ui, sans-serif);
+  --font-projects: var(--font-family-projects, 'Outfit', system-ui, sans-serif);
 
   /* Configurational Variables */
   --animation-speed-scale: 1;
@@ -65,6 +67,14 @@
   --blur-intensity: 20px;
   --hover-effects: 1;
   --contrast-multiplier: 1;
+
+  /* Font typographic variables — overridden per-font by SiteConfigContext */
+  --font-body-line-height: 1.6;
+  --font-body-letter-spacing: 0em;
+  --font-body-scale: 1;
+  --font-heading-scale: 1;
+  --font-heading-letter-spacing: -0.02em;
+  --font-heading-line-height: 1.1;
 }
 
 .dark {
@@ -87,6 +97,8 @@
   --glass-shadow: rgba(0, 0, 0, 0.5);
   --glass-highlight: rgba(255, 255, 255, 0.05);
   --background-scrim: rgba(0, 0, 0, 0.55);
+
+  --base-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
 }
 
 /* ============================================
@@ -106,14 +118,22 @@
     overflow-x: hidden;
     text-rendering: optimizeLegibility;
     height: 100%;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
 
   body {
     @apply text-foreground font-sans;
     color: hsl(var(--foreground));
     background: transparent;
-    transition: color 0.3s ease;
-    line-height: 1.6;
+    transition: color 0.3s ease, letter-spacing 0.3s ease, line-height 0.3s ease;
+    line-height: var(--font-body-line-height, 1.6);
+    letter-spacing: var(--font-body-letter-spacing, 0em);
+    font-size: calc(1rem * var(--font-body-scale, 1));
     min-height: 100%;
     position: relative;
     z-index: 1;
@@ -142,10 +162,12 @@
 
   /* Headings */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
+    @apply font-display;
     font-weight: 600;
-    line-height: 1.1;
+    line-height: var(--font-heading-line-height, 1.1);
+    letter-spacing: var(--font-heading-letter-spacing, -0.02em);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: letter-spacing 0.3s ease, line-height 0.3s ease;
   }
   .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -197,7 +219,7 @@
     @apply backdrop-blur-2xl backdrop-saturate-150;
     background-color: var(--glass-bg, rgba(255, 255, 255, 0.1));
     border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
-    box-shadow: 0 8px 32px var(--glass-shadow, rgba(0, 0, 0, 0.1)), inset 0 1px 0 var(--glass-highlight, rgba(255, 255, 255, 0.1));
+    box-shadow: var(--base-shadow), inset 0 1px 0 var(--glass-highlight, rgba(255, 255, 255, 0.1));
     border-radius: var(--radius, 1rem);
   }
 
@@ -206,7 +228,7 @@
     @apply backdrop-blur-xl backdrop-saturate-150;
     background-color: var(--glass-bg, rgba(255, 255, 255, 0.1));
     border-color: var(--glass-border, rgba(255, 255, 255, 0.1));
-    box-shadow: 0 4px 24px var(--glass-shadow, rgba(0, 0, 0, 0.1));
+    box-shadow: var(--base-shadow);
   }
 
   /* Text Utilities */
@@ -243,7 +265,7 @@
   .glass-input {
     @apply backdrop-blur-lg backdrop-saturate-150;
     background-color: var(--glass-bg, rgba(255, 255, 255, 0.08));
-    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+    border: 1px solid var(--glass-border, hsl(var(--border)));
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     color: hsl(var(--foreground));
   }
@@ -357,7 +379,7 @@
 .btn-animated {
   color: hsl(var(--accent));
   border-color: hsl(var(--accent) / 0.3);
-  box-shadow: 0 4px 15px hsl(var(--accent) / 0.1);
+  box-shadow: 0 4px 16px hsl(var(--accent) / 0.15);
 }
 .btn-animated .circle { background-color: hsl(var(--accent)); }
 .btn-animated:hover { color: hsl(var(--accent-foreground)); }
@@ -367,7 +389,7 @@
 .btn-animated-secondary {
   color: hsl(var(--foreground));
   border-color: var(--glass-border);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--base-shadow);
 }
 .btn-animated-secondary .circle { background-color: hsl(var(--foreground)); }
 .btn-animated-secondary:hover { color: hsl(var(--background)); }
@@ -440,7 +462,7 @@ section {
   border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.15));
   transition: all 0.5s ease-in-out;
   transform-style: preserve-3d;
-  box-shadow: 0px 25px 25px -5px rgba(0,0,0,0.1);
+  box-shadow: var(--base-shadow);
 }
 
 .profile-glass {
@@ -458,7 +480,7 @@ section {
 }
 
 .profile-content {
-  padding: 100px 60px 0px 30px;
+  padding: 100px 40px 0px 40px;
   transform: translate3d(0, 0, 30px);
 }
 
@@ -480,12 +502,12 @@ section {
 }
 
 .profile-bottom {
-  padding: 10px 12px;
+  padding: 0;
   transform-style: preserve-3d;
   position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+  bottom: 32px;
+  left: 40px;
+  right: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -506,7 +528,7 @@ section {
   border: 1px solid hsl(var(--border));
   display: grid;
   place-content: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--base-shadow);
   transition: transform 0.2s ease-in-out, background 0.2s, box-shadow 0.2s, color 0.2s;
   color: hsl(var(--foreground));
   cursor: pointer;
@@ -686,12 +708,13 @@ section {
     flex-direction: column;
     will-change: flex, transform;
     transform: translateZ(0);
+    box-shadow: var(--base-shadow);
   }
 
   .project-accordion-item.active {
     flex: 3.5;
     border-color: hsl(var(--accent) / 0.4);
-    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--base-shadow);
   }
 
   /* Image Section (70%) */
@@ -803,6 +826,7 @@ section {
     flex-direction: column;
     overflow: hidden;
     @apply backdrop-blur-xl backdrop-saturate-150;
+    box-shadow: var(--base-shadow);
   }
 
   .project-image-wrapper {
@@ -937,7 +961,8 @@ section {
 }
 
 [data-card-style="elevated"] .glass-card {
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: var(--base-shadow) !important;
+  border: 1px solid hsl(var(--border) / 0.5) !important;
 }
 
 [data-card-style="outlined"] .glass-card {
@@ -945,15 +970,25 @@ section {
   border: 1px solid hsl(var(--border)) !important;
 }
 
+[data-card-style="glass"] .glass-card {
+  box-shadow: var(--base-shadow), inset 0 1px 0 var(--glass-highlight) !important;
+  border: 1px solid var(--glass-border) !important;
+  background: var(--glass-bg) !important;
+}
+
 /* Contrast Boost */
 .contrast-boost {
   --foreground: 0 0% 0% !important;
   --muted-foreground: 240 6% 20% !important;
+  --primary: 0 0% 0% !important;
+  --accent-foreground: 0 0% 100% !important;
 }
 
 .dark.contrast-boost {
   --foreground: 0 0% 100% !important;
   --muted-foreground: 0 0% 90% !important;
+  --primary: 0 0% 100% !important;
+  --accent-foreground: 0 0% 0% !important;
 }
 
 /* Hover Effects Toggle */

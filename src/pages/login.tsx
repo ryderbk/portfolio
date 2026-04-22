@@ -20,7 +20,7 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-6">
-            <div className="w-full max-w-md p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl">
+            <div className="w-full max-w-md p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900" style={{ boxShadow: 'var(--base-shadow)' }}>
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Admin Login</h1>
                     <p className="text-zinc-500 text-sm">Sign in to manage your portfolio</p>

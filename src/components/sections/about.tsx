@@ -25,7 +25,7 @@ const education = {
 
 export function About() {
   return (
-    <section id="about" className="py-24 md:py-36 border-t border-border" aria-label="About me">
+    <section id="about" className="py-24 md:py-36" aria-label="About me">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
         {/* Section header */}
@@ -33,7 +33,14 @@ export function About() {
           <div className="flex items-center gap-4 mb-4">
             <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em]">02 — About</span>
           </div>
-          <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-semibold tracking-tight leading-tight max-w-2xl">
+          <h2
+            className="font-display font-semibold max-w-2xl"
+            style={{
+              fontSize: "clamp(calc(2rem * var(--font-heading-scale, 1)), calc(5vw * var(--font-heading-scale, 1)), calc(4rem * var(--font-heading-scale, 1)))",
+              lineHeight: "var(--font-heading-line-height, 1.1)",
+              letterSpacing: "var(--font-heading-letter-spacing, -0.02em)",
+            }}
+          >
             Engineer who thinks in systems, builds with intention.
           </h2>
         </motion.div>

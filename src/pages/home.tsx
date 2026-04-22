@@ -13,6 +13,24 @@ export default function Home() {
   const [loaded, setLoaded] = useState(false);
   const handlePreloaderComplete = useCallback(() => setLoaded(true), []);
 
+  // Automatic fullscreen on first interaction
+  useState(() => {
+    const handleInteraction = () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {
+          // Silent fail if browser blocks it or user denies
+        });
+      }
+      window.removeEventListener("click", handleInteraction);
+      window.removeEventListener("touchstart", handleInteraction);
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("click", handleInteraction);
+      window.addEventListener("touchstart", handleInteraction);
+    }
+  });
+
   return (
     <>
       <Background />

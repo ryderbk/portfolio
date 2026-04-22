@@ -51,7 +51,10 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: Proj
           <div className="flex items-center gap-3 mb-2">
             <span className="text-[10px] font-sans text-accent uppercase tracking-[0.2em] font-bold">{project.subtitle}</span>
           </div>
-          <h3 className="text-2xl md:text-3xl font-projects mb-3 leading-none">
+          <h3
+            className="font-projects mb-3 leading-none"
+            style={{ fontSize: "clamp(1.5rem, calc(2.5vw * var(--font-heading-scale, 1)), calc(2rem * var(--font-heading-scale, 1)))" }}
+          >
             {project.title}
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-xl">
@@ -126,7 +129,7 @@ export function Projects() {
     <section 
       ref={sectionRef}
       id="work" 
-      className="py-24 md:py-36 border-t border-border" 
+      className="py-24 md:py-36" 
       aria-label="Selected work"
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -138,7 +141,14 @@ export function Projects() {
             <div className="flex items-center gap-4 mb-4">
               <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em]">01 — Selected Work</span>
             </div>
-            <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-semibold tracking-tight leading-tight">
+            <h2
+              className="font-display font-semibold"
+              style={{
+                fontSize: "clamp(calc(2rem * var(--font-heading-scale, 1)), calc(5vw * var(--font-heading-scale, 1)), calc(4rem * var(--font-heading-scale, 1)))",
+                lineHeight: "var(--font-heading-line-height, 1.1)",
+                letterSpacing: "var(--font-heading-letter-spacing, -0.02em)",
+              }}
+            >
               Case Studies.
             </h2>
           </div>

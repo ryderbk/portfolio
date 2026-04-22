@@ -231,7 +231,8 @@ export default function ChatWidget() {
                             <button
                                 type="submit"
                                 disabled={isLoading || !input.trim()}
-                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-30 transition-all active:scale-90 shadow-md shadow-accent/20 group/send"
+                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-30 transition-all active:scale-90 group/send"
+                                style={{ boxShadow: 'var(--base-shadow)' }}
                             >
                                 <svg 
                                     viewBox="0 0 24 24" 
@@ -248,7 +249,7 @@ export default function ChatWidget() {
             {/* Chat Button — Premium Glass Trigger */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`fixed bottom-6 right-6 h-14 rounded-full shadow-2xl transition-all duration-500 flex items-center justify-center z-50 group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'} backdrop-blur-xl`}
+                className={`fixed bottom-6 right-6 h-14 rounded-full transition-all duration-500 flex items-center justify-center z-50 group border border-white/10 glass-card hover:border-accent/50 ${isOpen ? 'w-14 px-0' : 'w-40 px-6 gap-3'} backdrop-blur-xl`}
             >
                 {/* Glow Effect */}
                 <div className="absolute inset-0 rounded-full bg-accent/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />

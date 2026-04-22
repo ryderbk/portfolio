@@ -1,6 +1,6 @@
 export type ThemeMode = "dark" | "light" | "system";
 export type StyleVariant = "minimal" | "modern" | "glass" | "premium";
-export type RadiusSize = "none" | "small" | "normal" | "rounded" | "pill";
+export type RadiusSize = "none" | "small" | "normal" | "rounded";
 export type ShadowIntensity = "none" | "soft" | "medium" | "strong";
 export type SpacingDensity = "compact" | "normal" | "spacious";
 export type MotionLevel = "off" | "subtle" | "normal" | "high";
@@ -69,15 +69,7 @@ export const PRESETS: Record<string, Partial<SiteConfig>> = {
     accentColor: "#000000",
     cardStyle: "outlined",
   },
-  modern: {
-    styleVariant: "modern",
-    radius: "rounded",
-    shadow: "soft",
-    glassEffect: true,
-    blurEffects: true,
-    accentColor: "#6366f1",
-    cardStyle: "elevated",
-  },
+
   glass: {
     styleVariant: "glass",
     radius: "rounded",
@@ -90,16 +82,23 @@ export const PRESETS: Record<string, Partial<SiteConfig>> = {
     accentColor: "#8b5cf6",
     cardStyle: "glass",
   },
-  "premium-dark": {
+
+  spiderman: {
     themeMode: "dark",
     styleVariant: "premium",
-    radius: "pill",
+    selectedPalette: "spiderman",
+    selectedFont: "bebas-neue",
+    radius: "small",
     shadow: "strong",
     glassEffect: true,
     blurEffects: true,
-    accentColor: "#f59e0b",
+    blurIntensity: 20,
+    transparencyLevel: 0.08,
     backgroundAnimation: true,
-    cardStyle: "elevated",
+    accentColor: "#E31212",
+    cardStyle: "glass",
+    motionLevel: "high",
+    contrastBoost: true,
   },
 };
 
@@ -167,6 +166,13 @@ export const COLOR_PALETTES: ColorPalette[] = [
     dark:  { bg: "#120E12", surface: "#2A1F2A", accent: "#C4A0C4", text: "#F2EAF2", muted: "#7A5C7A" },
     light: { bg: "#F2EAF2", surface: "#E0D0E0", accent: "#7A5C7A", text: "#120E12", muted: "#A880A8" },
   },
+  {
+    id: "spiderman",
+    name: "Spider-Man",
+    nativeMode: "dark",
+    dark:  { bg: "#000000", surface: "#0F0F10", accent: "#E31212", text: "#FFFFFF", muted: "#888888" },
+    light: { bg: "#F5F5F5", surface: "#E8E8E8", accent: "#B30F0F", text: "#000000", muted: "#555555" },
+  },
 ];
 
 /* ============================================
@@ -180,56 +186,111 @@ export interface FontOption {
   importParam: string; // Google Fonts URL parameter (empty for original)
   type: string;
   useFor: string;
+  /** Multiplier applied to heading clamp sizes (1 = default) */
+  headingScale?: number;
+  /** Body line-height override */
+  lineHeight?: string;
+  /** Body letter-spacing override */
+  letterSpacing?: string;
+  /** Heading letter-spacing override */
+  headingLetterSpacing?: string;
+  /** Heading line-height override */
+  headingLineHeight?: string;
+  /** Body font-size scale (1 = default) */
+  bodyScale?: number;
 }
 
 export const FONT_OPTIONS: FontOption[] = [
   {
     id: "original",
     name: "Original",
-    family: "", // Will be captured at runtime
+    family: "",
     importParam: "",
     type: "Default",
     useFor: "Site Default",
+    // All defaults — no overrides needed
+    headingScale: 1,
+    lineHeight: "1.6",
+    letterSpacing: "0em",
+    headingLetterSpacing: "-0.02em",
+    headingLineHeight: "1.1",
+    bodyScale: 1,
   },
   {
-    id: "cormorant-garamond",
-    name: "Cormorant Garamond",
-    family: "'Cormorant Garamond', serif",
-    importParam: "Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400",
-    type: "High-contrast Serif",
-    useFor: "Headings / Display",
-  },
-  {
+    // Playfair Display: editorial serif. Slightly bigger, more breathing room
     id: "playfair-display",
     name: "Playfair Display",
     family: "'Playfair Display', serif",
     importParam: "Playfair+Display:ital,wght@0,400;0,700;1,400",
     type: "Display Serif",
     useFor: "Hero / Titles",
+    headingScale: 1.08,
+    lineHeight: "1.7",
+    letterSpacing: "0.005em",
+    headingLetterSpacing: "-0.015em",
+    headingLineHeight: "1.12",
+    bodyScale: 1.02,
   },
   {
+    // Josefin Sans: geometric, spaced-out. Needs extra tracking + relaxed line height
     id: "josefin-sans",
     name: "Josefin Sans",
     family: "'Josefin Sans', sans-serif",
     importParam: "Josefin+Sans:wght@100;300;400;600",
     type: "Geometric Sans",
     useFor: "UI / Navigation / Labels",
+    headingScale: 1.04,
+    lineHeight: "1.65",
+    letterSpacing: "0.04em",
+    headingLetterSpacing: "0.02em",
+    headingLineHeight: "1.1",
+    bodyScale: 1,
   },
   {
+    // DM Serif Display: classical, dignified. Needs larger heading + comfortable body
     id: "dm-serif-display",
     name: "DM Serif Display",
     family: "'DM Serif Display', serif",
     importParam: "DM+Serif+Display:ital@0;1",
     type: "Classical Serif",
     useFor: "Hero / Section Headings",
+    headingScale: 1.1,
+    lineHeight: "1.72",
+    letterSpacing: "0.008em",
+    headingLetterSpacing: "-0.01em",
+    headingLineHeight: "1.15",
+    bodyScale: 1.03,
   },
   {
+    // Raleway: elegant geometric sans. Slightly tighter, airy feeling
     id: "raleway",
     name: "Raleway",
     family: "'Raleway', sans-serif",
     importParam: "Raleway:wght@200;300;400;600",
     type: "Elegant Sans",
     useFor: "Body Copy / General UI",
+    headingScale: 1.0,
+    lineHeight: "1.68",
+    letterSpacing: "0.02em",
+    headingLetterSpacing: "0.01em",
+    headingLineHeight: "1.08",
+    bodyScale: 1,
+  },
+  {
+    // Bebas Neue: all-caps condensed display. Needs BIG heading size, tight leading,
+    // wide tracking on body, and body scaled up since it lacks lowercase descenders
+    id: "bebas-neue",
+    name: "Bebas Neue",
+    family: "'Bebas Neue', sans-serif",
+    importParam: "Bebas+Neue",
+    type: "Cinematic Display",
+    useFor: "Hero / Titles / Spiderman",
+    headingScale: 1.25,
+    lineHeight: "1.4",
+    letterSpacing: "0.08em",
+    headingLetterSpacing: "0.05em",
+    headingLineHeight: "1.0",
+    bodyScale: 1.1,
   },
 ];
 

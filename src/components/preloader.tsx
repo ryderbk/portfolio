@@ -8,17 +8,17 @@ export function Preloader({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
     let current = 0;
     const interval = setInterval(() => {
-      current += Math.floor(Math.random() * 20) + 8;
+      current += Math.floor(Math.random() * 30) + 15;
       if (current >= 100) {
         current = 100;
         clearInterval(interval);
         setTimeout(() => {
           setDone(true);
-          setTimeout(onComplete, 400);
-        }, 200);
+          setTimeout(onComplete, 200);
+        }, 100);
       }
       setCount(current);
-    }, 50);
+    }, 30);
     return () => clearInterval(interval);
   }, [onComplete]);
 

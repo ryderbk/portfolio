@@ -18,7 +18,7 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="border-t border-border" aria-label="Contact">
+    <section id="contact" className="" aria-label="Contact">
 
       {/* Top CTA banner — Translucent Glass Effect */}
       <div className="py-16 md:py-24 border-y border-border/20 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--glass-bg)' }}>
@@ -32,7 +32,14 @@ export function Contact() {
           >
             <div>
               <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em] block mb-4">04 — Contact</span>
-              <h2 className="text-[clamp(2.25rem,5.5vw,4.5rem)] font-display font-semibold leading-tight tracking-tight text-foreground">
+              <h2
+                className="font-display font-semibold text-foreground"
+                style={{
+                  fontSize: "clamp(calc(2.25rem * var(--font-heading-scale, 1)), calc(5.5vw * var(--font-heading-scale, 1)), calc(4.5rem * var(--font-heading-scale, 1)))",
+                  lineHeight: "var(--font-heading-line-height, 1.1)",
+                  letterSpacing: "var(--font-heading-letter-spacing, -0.02em)",
+                }}
+              >
                 Let's build something<br />
                 <span className="italic font-light text-accent">together.</span>
               </h2>
@@ -184,7 +191,7 @@ export function Contact() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border" role="contentinfo">
+      <footer className="" role="contentinfo">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="font-sans text-xs text-muted-foreground">
             © {new Date().getFullYear()} Bharath Kumar S. All rights reserved.

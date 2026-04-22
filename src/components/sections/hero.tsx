@@ -77,20 +77,6 @@ export function Hero() {
       className="relative min-h-[100dvh] flex items-center overflow-hidden"
       aria-label="Introduction"
     >
-      {/* Subtle grid background */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05] will-change-transform"
-        style={{
-          backgroundImage: "linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-          x: springX,
-          y: springY,
-          scale: 1.1,
-          translateZ: 0,
-        }}
-        aria-hidden="true"
-      />
-
       {/* Accent glow */}
       <div
         className="absolute top-1/4 right-[10%] w-[400px] h-[400px] rounded-full pointer-events-none"
@@ -109,8 +95,8 @@ export function Hero() {
           {/* Status badge */}
           <motion.div variants={item} className="flex items-center gap-3 mb-10">
             <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
-              <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent" />
             </span>
             <span className="text-xs font-sans uppercase tracking-[0.2em] text-muted-foreground font-medium">
               Available for opportunities
@@ -120,7 +106,12 @@ export function Hero() {
           {/* Main heading — LCP element */}
           <motion.h1
             variants={item}
-            className="text-[clamp(2.25rem,7vw,6.5rem)] font-display font-semibold leading-[1.1] tracking-tight mb-8"
+            className="font-display font-semibold mb-8"
+            style={{
+              fontSize: "clamp(calc(2.25rem * var(--font-heading-scale, 1)), calc(7vw * var(--font-heading-scale, 1)), calc(6.5rem * var(--font-heading-scale, 1)))",
+              lineHeight: "var(--font-heading-line-height, 1.1)",
+              letterSpacing: "var(--font-heading-letter-spacing, -0.02em)",
+            }}
           >
             I craft{" "}
             <span className="inline-block align-baseline italic font-light text-accent">
@@ -162,7 +153,7 @@ export function Hero() {
           {/* Metrics bar */}
           <motion.div
             variants={item}
-            className="flex gap-12 mt-16 pt-8 border-t border-border hero-metrics"
+            className="flex gap-12 mt-16 pt-8 hero-metrics"
           >
             <div>
               <span className="block text-2xl font-display font-semibold">3+</span>
@@ -188,11 +179,6 @@ export function Hero() {
           aria-hidden="true"
         >
           <span className="font-sans text-[10px] text-muted-foreground uppercase tracking-[0.3em]">Scroll</span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="w-[1px] h-12 bg-gradient-to-b from-muted-foreground to-transparent"
-          />
         </motion.div>
 
         {/* Location — Desktop only */}

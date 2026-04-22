@@ -35,7 +35,7 @@ const languages = ["English", "Tamil"];
 
 export function Skills() {
   return (
-    <section id="skills" className="py-24 md:py-36 border-t border-border" aria-label="Skills and technologies">
+    <section id="skills" className="py-24 md:py-36" aria-label="Skills and technologies">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
         {/* Header */}
@@ -46,7 +46,14 @@ export function Skills() {
           <div className="flex items-center gap-4 mb-4">
             <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em]">03 — Technical Arsenal</span>
           </div>
-          <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-semibold tracking-tight leading-tight">
+          <h2
+            className="font-display font-semibold"
+            style={{
+              fontSize: "clamp(calc(2rem * var(--font-heading-scale, 1)), calc(5vw * var(--font-heading-scale, 1)), calc(4rem * var(--font-heading-scale, 1)))",
+              lineHeight: "var(--font-heading-line-height, 1.1)",
+              letterSpacing: "var(--font-heading-letter-spacing, -0.02em)",
+            }}
+          >
             Tools & technologies I work with.
           </h2>
         </motion.div>

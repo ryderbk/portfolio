@@ -1,0 +1,230 @@
+.bottom-section {
+  background: #f5f5f5;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.bottom-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bs-stats-band {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #1a1a1a;
+  padding: 50px 5%;
+  gap: 0;
+}
+
+.bs-stat {
+  text-align: center;
+  padding: 20px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  transition: background 0.3s;
+}
+
+.bs-stat:last-child {
+  border-right: none;
+}
+
+.bs-stat:hover {
+  background: rgba(220, 30, 30, 0.05);
+}
+
+.bs-stat-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 5vw, 64px);
+  color: #dc1e1e;
+  letter-spacing: 2px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.bs-stat-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 4px;
+}
+
+.bs-final-cta {
+  position: relative;
+  background: #000000;
+  padding: 120px 5%;
+  overflow: hidden;
+  text-align: center;
+}
+
+.bs-final-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bs-web-pattern {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 50%, rgba(220, 30, 30, 0.08) 0%, transparent 70%);
+}
+
+.bs-final-content {
+  position: relative;
+  z-index: 2;
+}
+
+.bs-final-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  color: rgba(220, 30, 30, 0.7);
+  letter-spacing: 6px;
+  margin-bottom: 20px;
+}
+
+.bs-final-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 8vw, 110px);
+  color: #ffffff;
+  letter-spacing: 8px;
+  line-height: 0.95;
+  margin: 0 0 30px;
+  text-shadow: 0 0 80px rgba(220, 30, 30, 0.3);
+}
+
+.bs-final-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto 40px;
+}
+
+.bs-final-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.bs-btn-primary {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 4px;
+  text-decoration: none;
+  padding: 14px 40px;
+  background: #dc1e1e;
+  color: #ffffff;
+  border: 2px solid #dc1e1e;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.bs-btn-primary:hover {
+  background: #ff2525;
+  border-color: #ff2525;
+  box-shadow: 0 0 30px rgba(220, 30, 30, 0.5);
+  transform: translateY(-2px);
+}
+
+.bs-btn-secondary {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 4px;
+  text-decoration: none;
+  padding: 14px 40px;
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.bs-btn-secondary:hover {
+  border-color: rgba(255,255,255,0.6);
+  transform: translateY(-2px);
+}
+
+.bs-footer {
+  background: #0a0a0a;
+  padding: 40px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.bs-footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: #ffffff;
+  letter-spacing: 5px;
+  text-shadow: 0 0 20px rgba(220, 30, 30, 0.6);
+}
+
+.bs-footer-copy {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 2px;
+}
+
+.bs-footer-links {
+  display: flex;
+  gap: 28px;
+}
+
+.bs-footer-link {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  text-decoration: none;
+  letter-spacing: 3px;
+  transition: color 0.2s;
+}
+
+.bs-footer-link:hover {
+  color: #dc1e1e;
+}
+
+@media (max-width: 768px) {
+  .bs-stats-band {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bs-stat {
+    border-right: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .bs-stat:nth-child(2),
+  .bs-stat:nth-child(4) {
+    border-right: none;
+  }
+
+  .bs-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .bs-footer-links {
+    justify-content: center;
+  }
+
+  .bs-final-cta {
+    padding: 80px 5%;
+  }
+
+  .bs-final-title { font-size: 48px; }
+}
+
+@media (max-width: 480px) {
+  .bs-stats-band {
+    grid-template-columns: 1fr 1fr;
+    padding: 40px 5%;
+  }
+}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Moon, Sun, Menu, X, Briefcase, User, Wrench, Mail } from "lucide-react";
-import { useTheme } from "@/components/theme-provider";
+import { Moon, Sun, Menu, X, Briefcase, User, Wrench, Mail, Maximize } from "lucide-react";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 const navLinks = [
   { name: "Work", href: "#work", icon: Briefcase },
@@ -15,7 +15,12 @@ function scrollTo(href: string) {
 }
 
 export function Navbar() {
-  const { theme, setTheme } = useTheme();
+  const { config, updateConfig } = useSiteConfig();
+  
+  // Resolve current actual theme based on config or system preference
+  const isDark = config.themeMode === "dark" || 
+    (config.themeMode === "system" && typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [active, setActive] = useState("");
@@ -43,7 +48,14 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
+  const toggleTheme = () => updateConfig({ themeMode: isDark ? "light" : "dark" });
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   return (
     <>
@@ -75,7 +87,7 @@ export function Navbar() {
           </button>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center p-1.5 shadow-sm rounded-2xl gap-1 backdrop-blur-xl backdrop-saturate-150 bg-background/80 border border-border/50">
+          <div className="hidden md:flex items-center p-1.5 rounded-2xl gap-1 backdrop-blur-xl backdrop-saturate-150 bg-background/80 border border-border/50" style={{ boxShadow: 'var(--base-shadow)' }}>
             {navLinks.map((link) => (
               <button
                 key={link.name}
@@ -98,23 +110,38 @@ export function Navbar() {
             <div className="w-px h-6 bg-border mx-2" aria-hidden="true" />
 
             <button
+              onClick={toggleFullscreen}
+              className="interactive w-[40px] h-[40px] flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-all duration-200"
+              aria-label="Toggle Fullscreen"
+            >
+              <Maximize size={18} />
+            </button>
+
+            <button
               onClick={toggleTheme}
               className="interactive w-[40px] h-[40px] flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-all duration-200"
               data-testid="btn-theme-toggle"
-              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
             >
-              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
           </div>
 
           {/* Mobile controls */}
           <div className="md:hidden flex items-center gap-3">
             <button
+              onClick={toggleFullscreen}
+              className="interactive p-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Toggle Fullscreen"
+            >
+              <Maximize size={16} />
+            </button>
+            <button
               onClick={toggleTheme}
               className="interactive p-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
             >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
             <button
               onClick={() => setMobileMenuOpen(true)}

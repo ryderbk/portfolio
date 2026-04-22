@@ -6,7 +6,7 @@ import {
   updateProject,
   deleteProject,
 } from "@/services/firestore";
-import { Trash2, Edit2, Plus, RefreshCw, X, FolderKanban, Palette, MousePointer2, Settings, LifeBuoy } from "lucide-react";
+import { Trash2, Edit2, Plus, RefreshCw, X, FolderKanban, Palette, Settings, LifeBuoy } from "lucide-react";
 import ConfigPanel from "@/components/admin/ConfigPanel";
 import { useSiteConfig } from "@/hooks/useSiteConfig";
 
@@ -21,7 +21,7 @@ interface Project {
   [key: string]: any;
 }
 
-type Tab = "projects" | "appearance" | "behavior" | "advanced";
+type Tab = "projects" | "appearance";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<Tab>("projects");
@@ -131,7 +131,7 @@ export default function AdminPage() {
               {activeTab === "projects" && (
                 <button
                   onClick={() => handleOpenForm()}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   <Plus size={18} /> Add Project
                 </button>
@@ -146,34 +146,22 @@ export default function AdminPage() {
               <nav className="flex flex-col gap-1">
                 <button
                   onClick={() => setActiveTab("projects")}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === "projects" ? "bg-primary text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "projects" ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                 >
                   <FolderKanban size={18} /> Projects
                 </button>
-                <div className="pt-4 pb-2 px-4">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Configuration</span>
-                </div>
+
                 <button
                   onClick={() => setActiveTab("appearance")}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === "appearance" ? "bg-primary text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "appearance" ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                 >
                   <Palette size={18} /> Appearance
                 </button>
-                <button
-                  onClick={() => setActiveTab("behavior")}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === "behavior" ? "bg-primary text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                >
-                  <MousePointer2 size={18} /> Behavior
-                </button>
-                <button
-                  onClick={() => setActiveTab("advanced")}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === "advanced" ? "bg-primary text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                >
-                  <Settings size={18} /> Advanced
-                </button>
+
+
               </nav>
 
-              <div className="mt-8 p-4 rounded-2xl bg-muted/40 border border-border">
+              <div className="mt-6 p-3 rounded-xl bg-muted/40 border border-border">
                 <div className="flex items-center gap-2 text-primary mb-2">
                   <LifeBuoy size={16} />
                   <span className="text-xs font-bold">Help & Support</span>
@@ -208,7 +196,7 @@ export default function AdminPage() {
                       <p className="text-sm text-muted-foreground mt-1 mb-6">
                         Start by adding a new project to your portfolio.
                       </p>
-                      <button onClick={() => handleOpenForm()} className="px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold">
+                      <button onClick={() => handleOpenForm()} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-xs font-bold">
                         Add Project
                       </button>
                     </div>
@@ -218,6 +206,7 @@ export default function AdminPage() {
                         <div
                           key={project.id}
                           className="p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group relative overflow-hidden"
+                          style={{ boxShadow: 'var(--base-shadow)' }}
                         >
                           <div className="flex justify-between items-start gap-4">
                             <div className="flex gap-4">
@@ -273,7 +262,7 @@ export default function AdminPage() {
                   )}
                 </div>
               ) : (
-                <ConfigPanel activeTab={activeTab as any} onTabChange={setActiveTab as any} />
+                <ConfigPanel />
               )}
             </main>
           </div>
@@ -382,7 +371,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-8 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="px-8 py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   {editingProject ? "Update Changes" : "Create Project"}
                 </button>

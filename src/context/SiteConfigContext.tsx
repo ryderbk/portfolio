@@ -15,8 +15,6 @@ const SiteConfigContext = createContext<SiteConfigContextType | undefined>(undef
 
 // ── Module-level state for original token capture ───────────────────
 let originalLightTokens: Record<string, string> | null = null;
-let originalDarkTokens: Record<string, string> | null = null;
-let originalFontFamily: string = "";
 
 const CSS_TOKEN_KEYS = [
   "--background", "--foreground", "--primary", "--primary-foreground",
@@ -52,12 +50,12 @@ function captureOriginalTokens() {
     root.classList.add("dark");
     // Force style recalc
     void getComputedStyle(root).getPropertyValue("--background");
-    originalDarkTokens = captureCurrentTokens();
+    captureCurrentTokens();
     // Switch back
     root.classList.remove("dark");
     root.classList.add("light");
   } else {
-    originalDarkTokens = captureCurrentTokens();
+    captureCurrentTokens();
     root.classList.remove("dark");
     root.classList.add("light");
     void getComputedStyle(root).getPropertyValue("--background");
@@ -67,7 +65,7 @@ function captureOriginalTokens() {
   }
 
   // Capture original font
-  originalFontFamily = getComputedStyle(document.body).fontFamily || "'Inter', system-ui, sans-serif";
+  getComputedStyle(document.body).fontFamily || "'Inter', system-ui, sans-serif";
 }
 
 // ── Hex-to-HSL conversion ───────────────────────────────────────────
@@ -129,8 +127,13 @@ function luminance(hex: string): number {
 /** Derive full CSS token map from 5 palette core colors */
 function deriveCSSTokens(colors: PaletteColors, isDark: boolean): Record<string, string> {
   const cardColor = blendHex(colors.bg, colors.surface, 0.35);
-  const borderColor = blendHex(colors.surface, colors.muted, 0.35);
-  const accentFg = luminance(colors.accent) > 0.5 ? colors.text : colors.bg;
+  const borderColor = blendHex(colors.surface, colors.muted, 0.45);
+  
+  // Visibility: In dark mode, colors.text is light and colors.bg is dark.
+  // We want the foreground on the accent to have high contrast.
+  const accentFg = isDark 
+    ? (luminance(colors.accent) > 0.45 ? colors.bg : colors.text)
+    : (luminance(colors.accent) > 0.5 ? colors.text : colors.bg);
 
   const tokens: Record<string, string> = {
     "--background": hexToHSL(colors.bg),
@@ -140,7 +143,7 @@ function deriveCSSTokens(colors: PaletteColors, isDark: boolean): Record<string,
     "--secondary": hexToHSL(colors.surface),
     "--secondary-foreground": hexToHSL(colors.text),
     "--muted": hexToHSL(colors.surface),
-    "--muted-foreground": hexToHSL(colors.muted),
+    "--muted-foreground": isDark && luminance(colors.muted) < 0.45 ? "240 5% 75%" : hexToHSL(colors.muted),
     "--accent": hexToHSL(colors.accent),
     "--accent-foreground": hexToHSL(accentFg),
     "--card": hexToHSL(cardColor),
@@ -156,10 +159,11 @@ function deriveCSSTokens(colors: PaletteColors, isDark: boolean): Record<string,
     tokens["--glass-highlight"] = "rgba(255, 255, 255, 0.05)";
     tokens["--background-scrim"] = "rgba(0, 0, 0, 0.55)";
   } else {
-    tokens["--glass-bg"] = "rgba(255, 255, 255, 0.12)";
-    tokens["--glass-border"] = "rgba(255, 255, 255, 0.15)";
+    // Light mode: use dark-ish semi-transparent borders for better visibility
+    tokens["--glass-bg"] = "rgba(255, 255, 255, 0.4)";
+    tokens["--glass-border"] = "rgba(0, 0, 0, 0.08)";
     tokens["--glass-shadow"] = "rgba(0, 0, 0, 0.05)";
-    tokens["--glass-highlight"] = "rgba(255, 255, 255, 0.1)";
+    tokens["--glass-highlight"] = "rgba(255, 255, 255, 0.5)";
     tokens["--background-scrim"] = "rgba(255, 255, 255, 0.4)";
   }
 
@@ -230,13 +234,28 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Apply font to the DOM
   const applyFontToDOM = useCallback((fontId: string) => {
     const root = document.documentElement;
+    const STYLE_ID = "dynamic-global-font";
+    
+    // Remove existing dynamic font style tag if it exists
+    const existingStyle = document.getElementById(STYLE_ID);
+    if (existingStyle) existingStyle.remove();
 
     if (fontId === "original") {
-      // Remove font overrides
       removeGoogleFont();
+      root.style.removeProperty("--font-family-sans");
+      root.style.removeProperty("--font-family-display");
+      root.style.removeProperty("--font-family-projects");
       root.style.removeProperty("--font-sans");
       root.style.removeProperty("--font-display");
+      root.style.removeProperty("--font-projects");
       document.body.style.removeProperty("font-family");
+      // Reset typographic variables
+      root.style.removeProperty("--font-body-line-height");
+      root.style.removeProperty("--font-body-letter-spacing");
+      root.style.removeProperty("--font-body-scale");
+      root.style.removeProperty("--font-heading-scale");
+      root.style.removeProperty("--font-heading-letter-spacing");
+      root.style.removeProperty("--font-heading-line-height");
       return;
     }
 
@@ -244,9 +263,52 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     if (!font) return;
 
     loadGoogleFont(font.importParam);
-    root.style.setProperty("--font-sans", font.family);
-    root.style.setProperty("--font-display", font.family);
-    document.body.style.fontFamily = font.family;
+    const fontValue = font.family;
+    
+    // 1. Update root CSS font-family variables with high priority
+    root.style.setProperty("--font-family-sans", fontValue, "important");
+    root.style.setProperty("--font-family-display", fontValue, "important");
+    root.style.setProperty("--font-family-projects", fontValue, "important");
+    root.style.setProperty("--font-sans", fontValue, "important");
+    root.style.setProperty("--font-display", fontValue, "important");
+    root.style.setProperty("--font-projects", fontValue, "important");
+
+    // 2. Apply per-font typographic CSS variables
+    root.style.setProperty("--font-body-line-height",       font.lineHeight            ?? "1.6");
+    root.style.setProperty("--font-body-letter-spacing",    font.letterSpacing         ?? "0em");
+    root.style.setProperty("--font-body-scale",             String(font.bodyScale      ?? 1));
+    root.style.setProperty("--font-heading-scale",          String(font.headingScale   ?? 1));
+    root.style.setProperty("--font-heading-letter-spacing", font.headingLetterSpacing  ?? "-0.02em");
+    root.style.setProperty("--font-heading-line-height",    font.headingLineHeight     ?? "1.1");
+    
+    // 3. Inject an absolute override style tag
+    const style = document.createElement("style");
+    style.id = STYLE_ID;
+    style.innerHTML = `
+      /* Extreme reset for all text-bearing elements and Tailwind font classes */
+      *, .font-sans, .font-display, .font-projects, [class*="font-"] {
+        font-family: ${fontValue} !important;
+      }
+      /* Protect monospace elements */
+      code, pre, kbd, samp, .font-mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+      }
+      /* Apply per-font body spacing */
+      body {
+        line-height: var(--font-body-line-height, 1.6) !important;
+        letter-spacing: var(--font-body-letter-spacing, 0em) !important;
+        font-size: calc(1rem * var(--font-body-scale, 1)) !important;
+      }
+      /* Apply per-font heading metrics */
+      h1, h2, h3, h4, h5, h6 {
+        letter-spacing: var(--font-heading-letter-spacing, -0.02em) !important;
+        line-height: var(--font-heading-line-height, 1.1) !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // 4. Direct body fallback
+    document.body.style.setProperty("font-family", fontValue, "important");
   }, []);
 
   // Apply all config to DOM
@@ -272,7 +334,7 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     // Radius
     const radiusMap: Record<string, string> = {
-      none: "0px", small: "0.25rem", normal: "0.5rem", rounded: "1rem", pill: "9999px",
+      none: "0px", small: "0.25rem", normal: "0.5rem", rounded: "1rem",
     };
     root.style.setProperty("--radius", radiusMap[newConfig.radius]);
 
@@ -290,7 +352,10 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           ? `rgba(255, 255, 255, ${newConfig.transparencyLevel / 2})`
           : `rgba(255, 255, 255, ${newConfig.transparencyLevel})`
         );
-        root.style.setProperty("--glass-border", `rgba(255, 255, 255, ${newConfig.transparencyLevel + 0.05})`);
+        root.style.setProperty("--glass-border", isDark 
+          ? `rgba(255, 255, 255, ${newConfig.transparencyLevel + 0.15})`
+          : `rgba(0, 0, 0, 0.1)`
+        );
       } else {
         root.style.setProperty("--glass-bg", isDark ? "hsl(240 4% 10%)" : "hsl(0 0% 100%)");
         root.style.setProperty("--glass-border", "hsl(var(--border))");
@@ -315,6 +380,24 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       root.style.setProperty("--contrast-multiplier", "1");
       root.classList.remove("contrast-boost");
     }
+
+    // Shadow Intensity
+    let shadowValue = "0 8px 30px rgba(0, 0, 0, 0.08)";
+    if (newConfig.shadow === "none") {
+      shadowValue = "none";
+    } else if (newConfig.shadow === "soft") {
+      shadowValue = "0 4px 12px rgba(0, 0, 0, 0.05)";
+    } else if (newConfig.shadow === "medium") {
+      shadowValue = "0 8px 30px rgba(0, 0, 0, 0.08)";
+    } else if (newConfig.shadow === "strong") {
+      shadowValue = "0 20px 60px rgba(0, 0, 0, 0.18)";
+    }
+    
+    const finalShadow = isDark && shadowValue !== "none"
+      ? shadowValue.replace(/rgba\(0, 0, 0, ([\d.]+)\)/g, "rgba(0, 0, 0, 0.45)")
+      : shadowValue;
+    
+    root.style.setProperty("--base-shadow", finalShadow);
 
     // Card Style
     root.setAttribute("data-card-style", newConfig.cardStyle);
