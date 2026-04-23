@@ -232,7 +232,7 @@ export function ChatInterface({
       >
         {messages.length === 0 && !isLoading && (
           <div className="flex-1 flex items-center justify-center text-center">
-            <div className="max-w-[90%] px-5 py-4 rounded-2xl text-sm leading-relaxed bg-muted/30 border border-border/10 text-foreground shadow-inner">
+            <div className="max-w-[90%] px-5 py-4 text-sm leading-relaxed text-muted-foreground">
               Hi!👋 Ask me anything about my work.
             </div>
           </div>
