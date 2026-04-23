@@ -184,47 +184,6 @@ export function Hero() {
             </Button>
           </motion.div>
 
-          {/* Metrics bar */}
-          <motion.div
-            variants={item}
-            className="flex gap-12 mt-16 pt-8 hero-metrics"
-          >
-            <div>
-              <span className="block text-2xl font-display font-semibold">3+</span>
-              <span className="text-xs text-muted-foreground uppercase tracking-widest">Projects</span>
-            </div>
-            <div>
-              <span className="block text-2xl font-display font-semibold">7.98</span>
-              <span className="text-xs text-muted-foreground uppercase tracking-widest">CGPA</span>
-            </div>
-            <div>
-              <span className="block text-2xl font-display font-semibold">2+</span>
-              <span className="text-xs text-muted-foreground uppercase tracking-widest">Domains</span>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          aria-hidden="true"
-        >
-          <span className="font-sans text-[10px] text-muted-foreground uppercase tracking-[0.3em]">Scroll</span>
-        </motion.div>
-
-        {/* Location — Desktop only */}
-        <motion.div
-          className="absolute bottom-10 right-6 md:right-12 hidden md:flex flex-col items-end gap-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.8 }}
-          aria-hidden="true"
-        >
-          <span className="text-xs font-sans text-muted-foreground uppercase tracking-widest font-medium">Chennai, India</span>
-          <span className="text-[10px] font-sans text-muted-foreground/50 uppercase tracking-widest">Batch 2023–2027</span>
         </motion.div>
       </div>
     </section>
