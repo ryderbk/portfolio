@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { fadeUp } from "@/lib/animations";
 import { SectionHeading } from "@/components/section-heading";
-import { Briefcase, GraduationCap, MapPin, Mail, Phone, Linkedin } from "lucide-react";
+import { Briefcase, GraduationCap } from "lucide-react";
 
 const experience = {
   role: "Internship",
@@ -31,15 +31,6 @@ const education = [
   },
 ];
 
-const languages = ["English", "Tamil"];
-
-const contact = [
-  { icon: MapPin, label: "Perambur, Chennai" },
-  { icon: Phone, label: "+91 98843 26984", href: "tel:+919884326984" },
-  { icon: Mail, label: "sbharathkumar1125@gmail.com", href: "mailto:sbharathkumar1125@gmail.com" },
-  { icon: Linkedin, label: "linkedin.com/in/bharathkumarss", href: "https://www.linkedin.com/in/bharathkumarss" },
-];
-
 export function About() {
   return (
     <section id="about" className="py-24 md:py-36" aria-label="About me">
@@ -56,34 +47,10 @@ export function About() {
               to build real products. I combine technical depth with a proactive, adaptable mindset — thriving
               in dynamic environments where hardware meets software.
             </motion.p>
-
-            {/* Contact chips */}
-            <motion.ul {...fadeUp(0.2)} className="mt-8 flex flex-wrap gap-x-5 gap-y-3">
-              {contact.map(({ icon: Icon, label, href }) => {
-                const content = (
-                  <>
-                    <Icon className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
-                    <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{label}</span>
-                  </>
-                );
-                return (
-                  <li key={label}>
-                    {href ? (
-                      <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
-                         className="group inline-flex items-center gap-2">
-                        {content}
-                      </a>
-                    ) : (
-                      <span className="group inline-flex items-center gap-2">{content}</span>
-                    )}
-                  </li>
-                );
-              })}
-            </motion.ul>
           </div>
 
           {/* Portrait — right side */}
-          <motion.div {...fadeUp(0.15)} className="lg:col-span-4 order-1 lg:order-2 flex justify-center lg:justify-end w-full lg:mt-9">
+          <motion.div {...fadeUp(0.15)} className="lg:col-span-4 order-1 lg:order-2 flex justify-center lg:justify-end w-full lg:mt-12">
             <div className="relative w-full max-w-[260px] md:max-w-[300px] group">
               <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-accent/25 via-accent/10 to-transparent blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
               <div className="glass-card relative overflow-hidden rounded-2xl aspect-[4/5] p-0">
@@ -142,18 +109,6 @@ export function About() {
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* Languages */}
-            <div className="mt-6 flex items-center gap-4">
-              <h4 className="text-xs font-sans uppercase tracking-[0.2em] text-muted-foreground font-medium">Languages</h4>
-              <div className="flex flex-wrap gap-2">
-                {languages.map((l) => (
-                  <span key={l} className="text-xs font-sans px-3 py-1 border border-border rounded-full text-muted-foreground">
-                    {l}
-                  </span>
-                ))}
-              </div>
             </div>
           </motion.div>
         </div>
