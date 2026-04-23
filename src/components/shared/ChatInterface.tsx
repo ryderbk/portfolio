@@ -246,7 +246,7 @@ export function ChatInterface({
             <div
               className={`max-w-[90%] px-5 py-4 rounded-2xl text-sm leading-relaxed ${msg.role === "user"
                   ? "bg-accent/10 border border-accent/20 text-foreground shadow-sm"
-                  : "bg-muted/30 border border-border/10 text-foreground shadow-inner"
+                  : "bg-muted/30 border border-border/10 text-foreground"
                 }`}
             >
               {formatMessage(msg.content)}
@@ -279,7 +279,7 @@ export function ChatInterface({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 px-5 py-4 rounded-lg bg-background border border-border shadow-inner focus:border-accent/40 outline-none text-sm font-medium transition-all"
+            className="flex-1 px-5 py-4 rounded-lg bg-background border border-border focus:border-accent/40 outline-none text-sm font-medium transition-all"
             disabled={isLoading}
           />
           <button
