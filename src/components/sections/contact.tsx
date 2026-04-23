@@ -84,7 +84,7 @@ export function Contact() {
                     className="group flex items-center gap-4 text-sm font-sans text-foreground hover:text-accent transition-colors"
                     data-testid="link-email"
                   >
-                    <span className="flex items-center justify-center w-10 h-10 rounded-full border border-border/60 group-hover:border-accent/70 transition-colors">
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full border border-border group-hover:border-accent transition-colors">
                       <Mail size={16} aria-hidden="true" />
                     </span>
                     <span>sbharathkumar1125@gmail.com</span>
@@ -96,7 +96,7 @@ export function Contact() {
                     className="group flex items-center gap-4 text-sm font-sans text-foreground hover:text-accent transition-colors"
                     data-testid="link-phone"
                   >
-                    <span className="flex items-center justify-center w-10 h-10 rounded-full border border-border/60 group-hover:border-accent/70 transition-colors">
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full border border-border group-hover:border-accent transition-colors">
                       <Phone size={16} aria-hidden="true" />
                     </span>
                     <span>+91 98843 26984</span>
@@ -110,7 +110,7 @@ export function Contact() {
                     className="group flex items-center gap-4 text-sm font-sans text-foreground hover:text-accent transition-colors"
                     data-testid="link-linkedin"
                   >
-                    <span className="flex items-center justify-center w-10 h-10 rounded-full border border-border/60 group-hover:border-accent/70 transition-colors">
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full border border-border group-hover:border-accent transition-colors">
                       <FaLinkedin size={16} aria-hidden="true" />
                     </span>
                     <span>linkedin.com/in/bharathkumarss</span>
@@ -124,7 +124,7 @@ export function Contact() {
                     className="group flex items-center gap-4 text-sm font-sans text-foreground hover:text-accent transition-colors"
                     data-testid="link-location"
                   >
-                    <span className="flex items-center justify-center w-10 h-10 rounded-full border border-border/60 group-hover:border-accent/70 transition-colors">
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full border border-border group-hover:border-accent transition-colors">
                       <MapPin size={16} aria-hidden="true" />
                     </span>
                     <span>Perambur, Chennai, India</span>
