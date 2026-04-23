@@ -97,8 +97,8 @@ export function Hero() {
         className="absolute inset-0 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]"
         style={{
           backgroundImage:
-            "linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
+            "linear-gradient(to right, hsl(var(--border) / 0.2) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.2) 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
         }}
         aria-hidden="true"
       />
