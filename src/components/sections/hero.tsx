@@ -142,9 +142,12 @@ export function Hero() {
             <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
               <motion.span variants={headingWord} className="inline-block">craft</motion.span>
             </span>
-            <span className="inline-block align-baseline italic font-light text-accent">
+            <motion.span
+              variants={headingWord}
+              className="inline-block align-baseline italic font-light text-accent"
+            >
               <WordCycle />
-            </span>
+            </motion.span>
             <br />
             <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
               <motion.span variants={headingWord} className="inline-block">not</motion.span>
