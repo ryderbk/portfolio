@@ -29,33 +29,31 @@ export function About() {
     <section id="about" className="py-24 md:py-36" aria-label="About me">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
-        {/* Section header — animated underline draws in after the title appears. */}
-        <SectionHeading eyebrow="02 — About" className="mb-16 md:mb-24 max-w-2xl">
-          Engineer who thinks in systems, builds with intention.
-        </SectionHeading>
-
-        {/* Intro row — bio on the left, portrait on the right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 mb-16 md:mb-24 items-center">
-          <motion.div {...fadeUp(0.1)} className="lg:col-span-7 order-2 lg:order-1">
-            <p className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground leading-relaxed">
+        {/* Intro row — heading + bio on the left, portrait on the right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-16 md:mb-24 items-start">
+          <div className="lg:col-span-8 order-2 lg:order-1">
+            <SectionHeading eyebrow="02 — About" className="mb-8 md:mb-10 max-w-2xl">
+              Engineer who thinks in systems, builds with intention.
+            </SectionHeading>
+            <motion.p {...fadeUp(0.1)} className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground leading-relaxed max-w-xl">
               I'm a fast-moving engineer who thinks in systems and builds with intention.
               I combine technical depth with creative problem-solving — whether I'm writing code,
               designing a solution, or understanding a manufacturing process.
-            </p>
-          </motion.div>
+            </motion.p>
+          </div>
 
           {/* Portrait — right side */}
-          <motion.div {...fadeUp(0.15)} className="lg:col-span-5 order-1 lg:order-2 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[280px] md:max-w-[320px] group">
-              <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-accent/30 to-transparent blur-2xl opacity-60 group-hover:opacity-90 transition-opacity duration-500" aria-hidden="true" />
+          <motion.div {...fadeUp(0.15)} className="lg:col-span-4 order-1 lg:order-2 flex justify-center lg:justify-end w-full">
+            <div className="relative w-full max-w-[260px] md:max-w-[300px] group">
+              <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-accent/25 via-accent/10 to-transparent blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
               <div className="glass-card relative overflow-hidden rounded-2xl aspect-[4/5] p-0">
                 <img
                   src="/images/profile.png"
-                  alt="Portrait of the author"
+                  alt="Portrait of Bharath Kumar S"
                   loading="lazy"
                   className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" aria-hidden="true" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-transparent" aria-hidden="true" />
               </div>
             </div>
           </motion.div>
