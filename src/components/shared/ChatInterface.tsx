@@ -201,12 +201,12 @@ export function ChatInterface({
   return (
     <div
       className={`flex flex-col overflow-hidden ${isInline
-          ? "w-full h-full rounded-xl bg-muted shadow-sm ring-1 ring-border/50"
+          ? "w-full h-full rounded-2xl bg-card/40 border border-border/60 backdrop-blur-2xl backdrop-saturate-150 [box-shadow:var(--base-shadow)]"
           : "glass-card h-[500px] z-50 shadow-2xl"
         } ${className}`}
     >
       {/* Header */}
-      <div className="p-6 border-b border-border/10 flex items-center justify-between bg-card">
+      <div className="p-6 border-b border-border/40 flex items-center justify-between">
         <div>
           <h3 className="font-display font-black text-2xl text-foreground">
             Chat / AI
@@ -228,7 +228,7 @@ export function ChatInterface({
       {/* Messages */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-background/50 relative flex flex-col"
+        className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar relative flex flex-col"
       >
         {messages.length === 0 && !isLoading && (
           <div className="flex-1 flex items-center justify-center text-center">
@@ -270,7 +270,7 @@ export function ChatInterface({
       {/* Input */}
       <form
         onSubmit={handleSendMessage}
-        className="p-6 bg-card border-t border-border/10"
+        className="p-6 border-t border-border/40"
       >
         <div className="flex gap-3">
           <input
