@@ -50,8 +50,8 @@ export function About() {
           </div>
 
           {/* Portrait — right side */}
-          <motion.div {...fadeUp(0.15)} className="lg:col-span-4 order-1 lg:order-2 flex justify-center lg:justify-end w-full lg:mt-12">
-            <div className="relative w-full max-w-[260px] md:max-w-[300px] group">
+          <motion.div {...fadeUp(0.15)} className="lg:col-span-4 order-1 lg:order-2 flex justify-center lg:justify-end w-full lg:mt-24">
+            <div className="relative w-full max-w-[320px] md:max-w-[380px] group">
               <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-accent/25 via-accent/10 to-transparent blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
               <div className="glass-card relative overflow-hidden rounded-2xl aspect-[4/5] p-0">
                 <img
