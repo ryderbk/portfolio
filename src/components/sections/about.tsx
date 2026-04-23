@@ -61,22 +61,8 @@ export function About() {
             </div>
           </motion.div>
 
-          {/* Right — photo + what I bring + principles */}
+          {/* Right — what I bring + principles */}
           <div className="lg:col-span-6 lg:col-start-7">
-            {/* Profile photo */}
-            <motion.div {...fadeUp(0.1)} className="relative mb-12 group">
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-accent/30 via-accent/10 to-transparent opacity-60 blur-md group-hover:opacity-90 transition-opacity duration-500" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card aspect-[4/5] max-w-sm ml-auto">
-                <img
-                  src="/images/profile.png"
-                  alt="Portrait of the engineer"
-                  loading="lazy"
-                  className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" aria-hidden="true" />
-              </div>
-            </motion.div>
-
             {/* What I Bring */}
             <motion.div {...fadeUp(0.15)} className="mb-12">
               <h3 className="text-sm font-sans uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-border font-medium">
