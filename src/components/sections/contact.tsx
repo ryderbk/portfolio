@@ -54,7 +54,7 @@ export function Contact() {
       {/* Contact details + form */}
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
 
             {/* Left — Contact Info */}
             <motion.div
@@ -64,7 +64,7 @@ export function Contact() {
               transition={{ duration: 0.7 }}
               className="lg:col-span-5"
             >
-              <div className="rounded-2xl border border-border/40 backdrop-blur-2xl backdrop-saturate-150 p-8 md:p-10 space-y-8 shadow-lg" style={{ background: 'var(--glass-bg)' }}>
+              <div className="h-full rounded-2xl border border-border/40 backdrop-blur-2xl backdrop-saturate-150 p-8 md:p-10 flex flex-col justify-between gap-8 shadow-lg" style={{ background: 'var(--glass-bg)' }}>
               <div>
                 <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em] block mb-4">
                   Get in touch
