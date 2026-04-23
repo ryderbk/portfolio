@@ -1112,45 +1112,6 @@ section {
   transform: translate3d(0, 0, 0);
 }
 
-/* Custom cursor — dot + trailing ring. Hidden on touch devices via media query
-   (the JS also short-circuits, but this guards initial paint). */
-.custom-cursor-dot,
-.custom-cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 300;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-  will-change: transform;
-}
-.custom-cursor-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: hsl(var(--accent));
-  mix-blend-mode: difference;
-}
-.custom-cursor-ring {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1.5px solid hsl(var(--accent) / 0.6);
-  /* Smooth scale change on hover state via the JS-set --cursor-scale. */
-  transition: opacity 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
-}
-.custom-cursor-ring.is-hover {
-  border-color: hsl(var(--accent));
-  background: hsl(var(--accent) / 0.08);
-}
-@media (pointer: coarse) {
-  .custom-cursor-dot,
-  .custom-cursor-ring {
-    display: none;
-  }
-}
-
 /* Section heading underline — scaleX(0 → 1) from left.
    transform-origin pinned left so the line "draws" cleanly. */
 .section-heading {
@@ -1210,10 +1171,6 @@ section {
 /* Reduced motion — disable cinematic globals and keep the UI usable. */
 @media (prefers-reduced-motion: reduce) {
   .page-load-overlay {
-    display: none !important;
-  }
-  .custom-cursor-dot,
-  .custom-cursor-ring {
     display: none !important;
   }
   .section-heading-underline {
