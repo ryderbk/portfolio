@@ -92,6 +92,17 @@ export function Hero() {
       className="relative min-h-[100dvh] flex items-center overflow-hidden"
       aria-label="Introduction"
     >
+      {/* Subtle grid background */}
+      <div
+        className="absolute inset-0 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
+        }}
+        aria-hidden="true"
+      />
+
       {/* Accent glow — slow Ken Burns scale on entrance for cinematic depth. */}
       <motion.div
         className="absolute top-1/4 right-[10%] w-[400px] h-[400px] rounded-full pointer-events-none"
