@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useMotionValue, useSpring, motion, AnimatePresence } from "framer-motion";
 import { mouseManager } from "@/lib/mouse-manager";
 import { Button } from "@/components/ui/button";
-import { useMagnetic } from "@/hooks/useMagnetic";
 
 const words = ["experiences,", "products,", "solutions,"];
 
@@ -78,10 +77,6 @@ export function Hero() {
 
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
-
-  // Magnetic hover refs for the two CTAs.
-  const ctaPrimaryRef = useMagnetic<HTMLButtonElement>(10);
-  const ctaSecondaryRef = useMagnetic<HTMLButtonElement>(10);
 
   useEffect(() => {
     const unsubscribe = mouseManager.subscribe((x, y) => {
@@ -168,10 +163,9 @@ export function Hero() {
             <strong className="font-semibold text-foreground">Bharath Kumar S</strong> – UI/UX Designer who blends creativity and functionality to build smooth, user-friendly digital experiences.
           </motion.p>
 
-          {/* CTAs — magnetic hover on both. */}
+          {/* CTAs */}
           <motion.div variants={item} className="flex flex-wrap gap-4 items-center">
             <Button
-              ref={ctaPrimaryRef}
               variant="default"
               onClick={() => scrollTo("#work")}
               data-testid="btn-view-work"
@@ -181,7 +175,6 @@ export function Hero() {
             </Button>
 
             <Button
-              ref={ctaSecondaryRef}
               variant="default"
               onClick={() => scrollTo("#contact")}
               data-testid="btn-contact"
