@@ -35,7 +35,7 @@ export function Background() {
               waveSpeed={0.4}
               waveAmplitude={1}
               particleSize={1.5}
-              lerpSpeed={0.05}
+              lerpSpeed={0.12}
               color={config?.accentColor || '#FF9FFC'}
               autoAnimate={true}
               particleVariance={1}
