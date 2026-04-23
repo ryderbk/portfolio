@@ -1,27 +1,24 @@
-# Portfolio
+# Bk's Portfolio
 
-## Overview
-A Vite + React 19 + TypeScript portfolio site with an Express backend that proxies an AI chat endpoint (Groq) and a Firebase-backed data layer.
+A Vite + React 19 + TypeScript portfolio with an Express backend. Features a 3D Three.js scene, Framer Motion animations, Firebase (client SDK), and a Groq-powered AI chat assistant.
 
-## Stack
-- Frontend: Vite 6, React 19, TailwindCSS 4, Framer Motion, Three.js, Firebase
-- Backend: Express 5 (TypeScript via tsx)
-- AI: Groq API
-- Data: Firebase / Firestore
+## Architecture
 
-## Replit Setup
-- Frontend (Vite) runs on port 5000 (webview), bound to 0.0.0.0 with `allowedHosts: true` for the Replit iframe proxy.
-- Backend (Express) runs on port 3001 (console).
-- Vite dev server proxies `/api/*` -> `http://localhost:3001`.
-- Workflows:
-  - `Start application`: `npm run dev` (port 5000)
-  - `Backend`: `npm run backend` (port 3001)
+- **Frontend**: Vite dev server on port `5000` (`npm run dev`). Aliased `@/` -> `src/`. Tailwind v4 via `@tailwindcss/vite`.
+- **Backend**: Express on port `3001` (`npm run backend` -> `tsx backend/server.ts`). Exposes `POST /api/chat` and `GET /health`.
+- **Proxy**: Vite forwards `/api/*` to the backend (`http://localhost:3001`), so the browser only ever talks to port 5000.
 
-## Environment Variables
-See `.env.example`. Required for full functionality:
-- `GROQ_API_KEY` — server-side AI chat
-- `VITE_FIREBASE_*` — client-side Firebase config
+## Workflows
 
-## Notes
-- The legacy `api/chat.ts` (Vercel Edge function) is unused on Replit; the Express backend at `backend/chat.ts` serves `/api/chat` instead.
-- `vercel.json` is no longer used by the runtime.
+- `Start application` — `npm run dev` (port 5000, webview)
+- `Backend` — `npm run backend` (port 3001, console)
+
+## Environment variables
+
+- `GROQ_API_KEY` — required for the chat assistant (server-side only).
+- `VITE_FIREBASE_*` — optional Firebase web client config; the app degrades gracefully if missing.
+
+## Migrated from Vercel
+
+- Removed reliance on `@vercel/node` request handlers at runtime — the same `chatHandler` is mounted under Express.
+- Vite `server.host = 0.0.0.0` and `allowedHosts = true` for the Replit iframe proxy.
