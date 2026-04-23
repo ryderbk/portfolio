@@ -51,14 +51,14 @@ export function About() {
 
           {/* Portrait — right side */}
           <motion.div {...fadeUp(0.15)} className="lg:col-span-4 order-1 lg:order-2 flex justify-center lg:justify-end w-full lg:mt-12">
-            <div className="relative w-full max-w-[320px] md:max-w-[360px] group">
-              <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-accent/25 via-accent/10 to-transparent blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
+            <div className="relative w-full max-w-[320px] md:max-w-[360px]">
+              <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-accent/25 via-accent/10 to-transparent blur-2xl opacity-70" aria-hidden="true" />
               <div className="glass-card relative overflow-hidden rounded-2xl aspect-[3/4] p-0">
                 <img
                   src="/images/profile.png"
                   alt="Portrait of Bharath Kumar S"
                   loading="lazy"
-                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
+                  className="w-full h-full object-cover object-center"
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-transparent" aria-hidden="true" />
               </div>
@@ -74,7 +74,7 @@ export function About() {
               <Briefcase className="w-4 h-4 text-accent" aria-hidden="true" />
               <h3 className="text-sm font-sans uppercase tracking-[0.2em] text-muted-foreground font-medium">Experience</h3>
             </div>
-            <div className="glass-card p-6 md:p-7 h-full">
+            <div className="glass-card p-6 md:p-7">
               <div className="flex items-start justify-between gap-4 mb-3">
                 <div>
                   <h4 className="font-display font-semibold text-lg leading-tight">{experience.company}</h4>
