@@ -116,11 +116,19 @@ export function Contact() {
                     <span>linkedin.com/in/bharathkumarss</span>
                   </a>
                 </li>
-                <li className="flex items-center gap-4 text-sm font-sans text-foreground">
-                  <span className="flex items-center justify-center w-10 h-10 rounded-full glass-input border border-border/40">
-                    <MapPin size={16} aria-hidden="true" />
-                  </span>
-                  <span>Perambur, Chennai, India</span>
+                <li>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Perambur,+Chennai,+India"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-4 text-sm font-sans text-foreground hover:text-accent transition-colors"
+                    data-testid="link-location"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full glass-input border border-border/40 group-hover:border-accent/60 transition-colors">
+                      <MapPin size={16} aria-hidden="true" />
+                    </span>
+                    <span>Perambur, Chennai, India</span>
+                  </a>
                 </li>
               </ul>
               </div>
