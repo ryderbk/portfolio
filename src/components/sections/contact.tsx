@@ -156,7 +156,7 @@ export function Contact() {
                     required
                     value={formState.name}
                     onChange={e => setFormState(s => ({ ...s, name: e.target.value }))}
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-accent/50 outline-none transition-colors text-sm font-sans"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-accent/50 focus:ring-2 focus:ring-accent/20 outline-none transition-colors placeholder:text-muted-foreground text-foreground text-sm font-sans"
                     placeholder="Your name"
                     autoComplete="name"
                     data-testid="input-name"
@@ -172,7 +172,7 @@ export function Contact() {
                     required
                     value={formState.email}
                     onChange={e => setFormState(s => ({ ...s, email: e.target.value }))}
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-accent/50 outline-none transition-colors text-sm font-sans"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-accent/50 focus:ring-2 focus:ring-accent/20 outline-none transition-colors placeholder:text-muted-foreground text-foreground text-sm font-sans"
                     placeholder="your@email.com"
                     autoComplete="email"
                     data-testid="input-email"
@@ -190,7 +190,7 @@ export function Contact() {
                   rows={6}
                   value={formState.message}
                   onChange={e => setFormState(s => ({ ...s, message: e.target.value }))}
-                  className="w-full flex-1 min-h-[160px] px-4 py-3 bg-background border border-border rounded-xl focus:border-accent/50 outline-none transition-colors text-sm font-sans resize-none"
+                  className="w-full flex-1 min-h-[160px] px-4 py-3 bg-background border border-border rounded-xl focus:border-accent/50 focus:ring-2 focus:ring-accent/20 outline-none transition-colors placeholder:text-muted-foreground text-foreground text-sm font-sans resize-none"
                   placeholder="Tell me about your project or idea..."
                   data-testid="input-message"
                 />
