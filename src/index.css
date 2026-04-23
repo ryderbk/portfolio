@@ -759,39 +759,29 @@ section {
     align-items: stretch;
   }
 
-  /* PERF: previously each card had backdrop-filter: blur(40px) saturate(2), which
-     forced the GPU to re-blur a large region of the animated WebGL background on
-     EVERY frame as the cards resized. With 4 cards animating simultaneously, this
-     was the single biggest cause of the "stuck" hover. We use a solid translucent
-     background instead — visually nearly identical, but compositor-only.
-
-     `flex-grow` animates natively via CSS (snappier ease-out curve). `contain`
-     scopes layout/paint work so resizing one card doesn't invalidate the whole
-     page. */
   .project-accordion-item {
     height: 100%;
-    flex: 1 1 0;
+    flex: 1;
     min-width: 0;
     overflow: hidden;
     cursor: pointer;
-    transition:
-      flex-grow 0.45s cubic-bezier(0.32, 0.72, 0, 1),
-      border-color 0.25s ease,
-      box-shadow 0.25s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transform: translateZ(0);
     position: relative;
-    background: hsl(var(--card) / 0.6);
+    @apply backdrop-blur-2xl backdrop-saturate-200;
     border: 1px solid hsl(var(--border));
+    background: var(--glass-bg);
     border-radius: 16px;
     display: flex;
     flex-direction: column;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
     box-shadow: var(--base-shadow);
-    contain: layout style;
   }
 
   .project-accordion-item.active {
-    flex-grow: 3.5;
+    flex: 3.5;
     border-color: hsl(var(--accent) / 0.4);
-    background: hsl(var(--card) / 0.85);
     box-shadow: var(--base-shadow);
   }
 
@@ -803,20 +793,10 @@ section {
     overflow: hidden;
   }
 
-  /* PERF: image wrapper height transitions in sync with the card's flex-grow,
-     using the matched ease curve. */
-  .project-image-wrapper {
-    transition: height 0.45s cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
   .active .project-image-wrapper {
     height: 60%;
   }
 
-  /* PERF: filter transitions cause expensive per-frame paint. We keep opacity
-     + transform (compositor-only) and apply the grayscale/brightness change
-     INSTANTLY when the active class is added — the eye doesn't notice the
-     filter snap during the larger card expansion, and we save a lot of paint. */
   .project-image-wrapper img {
     width: 100%;
     height: 100%;
@@ -824,19 +804,20 @@ section {
     opacity: 0;
     transform: translateZ(0);
     transition:
-      opacity 0.45s cubic-bezier(0.32, 0.72, 0, 1),
-      transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+      opacity 0.6s ease,
+      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+      filter 0.5s ease;
     filter: grayscale(0.5) brightness(0.7);
   }
 
   .project-accordion-item.active .project-image-wrapper img {
-    will-change: transform, opacity; /* layer hint only on the active card */
+    will-change: transform, filter, opacity;
   }
 
   .active .project-image-wrapper img {
     opacity: 1;
     transform: translateZ(0) scale(1.05);
-    filter: grayscale(0) brightness(1); /* snap, not animated */
+    filter: grayscale(0) brightness(1);
   }
 
   /* Collapsed Label (Center aligned) */
