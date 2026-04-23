@@ -108,20 +108,20 @@ export default function AdminPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen pt-24 pb-12 px-6 bg-background dark:bg-background transition-colors duration-500">
+      <div className="min-h-screen pt-20 md:pt-24 pb-12 px-4 sm:px-6 bg-background dark:bg-background transition-colors duration-500">
         <div className="max-w-6xl mx-auto">
           {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-6 mb-8 md:mb-12">
             <div>
-              <h1 className="text-4xl font-bold text-foreground flex items-center gap-3">
-                <Settings className="text-primary animate-spin-slow" /> Control Center
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground flex items-center gap-3">
+                <Settings className="text-primary animate-spin-slow shrink-0" /> Control Center
               </h1>
               <p className="text-muted-foreground text-sm mt-1">
                 Manage your portfolio data and visual ecosystem
               </p>
             </div>
-            
-            <div className="flex items-center gap-3">
+
+            <div className="flex items-center gap-3 flex-wrap">
               {isSyncing && (
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full border border-primary/20">
                   <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
@@ -140,24 +140,24 @@ export default function AdminPage() {
           </div>
 
           {/* Main Dashboard Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6 lg:gap-8">
             {/* Sidebar Navigation */}
-            <aside className="flex flex-col gap-4">
+            <aside className="flex flex-row lg:flex-col gap-3 lg:gap-4 overflow-x-auto pb-2 lg:pb-0">
               <button
                 onClick={() => setActiveTab("projects")}
-                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === "projects" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all shrink-0 ${activeTab === "projects" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
               >
                 <FolderKanban size={18} /> Projects
               </button>
 
               <button
                 onClick={() => setActiveTab("appearance")}
-                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === "appearance" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all shrink-0 ${activeTab === "appearance" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
               >
                 <Palette size={18} /> Appearance
               </button>
 
-              <div className="p-5 rounded-2xl bg-muted/30 border border-border/50">
+              <div className="hidden lg:block p-5 rounded-2xl bg-muted/30 border border-border/50">
                 <div className="flex items-center gap-2.5 text-primary mb-3">
                   <LifeBuoy size={18} />
                   <span className="text-sm font-bold">Help & Support</span>
@@ -201,26 +201,26 @@ export default function AdminPage() {
                       {projects.map((project) => (
                         <div
                           key={project.id}
-                          className="p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group relative overflow-hidden"
+                          className="p-4 sm:p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group relative overflow-hidden"
                           style={{ boxShadow: 'var(--base-shadow)' }}
                         >
-                          <div className="flex justify-between items-start gap-4">
-                            <div className="flex gap-4">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                            <div className="flex gap-4 min-w-0 flex-1">
                                {project.image && (
-                                 <div className="w-20 h-20 rounded-xl overflow-hidden border border-border bg-muted shrink-0 hidden md:block">
+                                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-border bg-muted shrink-0">
                                     <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
                                  </div>
                                )}
-                               <div className="space-y-1">
+                               <div className="space-y-1 min-w-0 flex-1">
                                 <div className="flex items-center gap-2">
                                   <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
                                     {project.subtitle}
                                   </span>
                                 </div>
-                                <h3 className="text-lg font-bold text-foreground">
+                                <h3 className="text-base sm:text-lg font-bold text-foreground break-words">
                                   {project.title}
                                 </h3>
-                                <p className="text-muted-foreground text-sm line-clamp-1 max-w-xl leading-relaxed">
+                                <p className="text-muted-foreground text-sm line-clamp-2 sm:line-clamp-1 max-w-xl leading-relaxed">
                                   {project.description}
                                 </p>
                                 {project.tags && (
@@ -237,7 +237,7 @@ export default function AdminPage() {
                                 )}
                               </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 self-end sm:self-start shrink-0">
                               <button
                                 onClick={() => handleOpenForm(project)}
                                 className="p-2 text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
@@ -280,7 +280,7 @@ export default function AdminPage() {
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+            <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-6 max-h-[80vh] overflow-y-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-bold ml-1">Project Title</label>
@@ -357,7 +357,7 @@ export default function AdminPage() {
                   </div>
                 )}
               </div>
-              <div className="flex gap-4 justify-end pt-6 border-t border-border mt-8">
+              <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end pt-6 border-t border-border mt-8">
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
