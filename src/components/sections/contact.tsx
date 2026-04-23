@@ -64,7 +64,7 @@ export function Contact() {
               transition={{ duration: 0.7 }}
               className="lg:col-span-5"
             >
-              <div className="h-full rounded-2xl border border-border/60 backdrop-blur-2xl backdrop-saturate-150 p-6 sm:p-8 md:p-10 flex flex-col justify-between gap-8 bg-card/40" style={{ boxShadow: 'var(--base-shadow)' }}>
+              <div className="h-full rounded-2xl border border-border/60 backdrop-blur-2xl backdrop-saturate-150 p-6 sm:p-8 md:p-10 flex flex-col justify-center gap-8 bg-card/40" style={{ boxShadow: 'var(--base-shadow)' }}>
               <div>
                 <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em] block mb-4">
                   Get in touch
