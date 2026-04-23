@@ -759,14 +759,21 @@ section {
     align-items: stretch;
   }
 
+  /* PERF: animate `flex-grow` directly via CSS with a smooth ease curve. Previously
+     the `flex` value snapped instantly while Framer Motion's `layout` prop ran a
+     JS-driven FLIP on every sibling — two systems fighting the same layout, which
+     produced the "stuck"/janky hover. CSS handles flex-grow interpolation natively
+     and stays on the compositor for sizing. */
   .project-accordion-item {
     height: 100%;
-    flex: 1;
+    flex: 1 1 0;
     min-width: 0;
     overflow: hidden;
     cursor: pointer;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    transform: translateZ(0);
+    transition:
+      flex-grow 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
     position: relative;
     @apply backdrop-blur-2xl backdrop-saturate-200;
     border: 1px solid hsl(var(--border));
@@ -774,16 +781,13 @@ section {
     border-radius: 16px;
     display: flex;
     flex-direction: column;
-    /* PERF: removed `flex` from will-change — it isn't a compositor property and
-       was telling the browser to prepare for something it can't optimize. Keep
-       `transform` only. translate3d() forces a GPU layer (fallback hack). */
-    will-change: transform;
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0); /* GPU layer */
     box-shadow: var(--base-shadow);
+    contain: layout paint; /* isolate layout work to this card */
   }
 
   .project-accordion-item.active {
-    flex: 3.5;
+    flex-grow: 3.5;
     border-color: hsl(var(--accent) / 0.4);
     box-shadow: var(--base-shadow);
   }
@@ -796,13 +800,20 @@ section {
     overflow: hidden;
   }
 
+  /* PERF: smoothly transition the image-wrapper height alongside the flex-grow
+     change so the image area expands in sync with the card. */
+  .project-image-wrapper {
+    transition: height 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
   .active .project-image-wrapper {
     height: 60%;
   }
 
-  /* PERF: filter transitions are expensive (paint on every frame) but visually
-     important here. Promote to its own GPU layer so the paint stays isolated
-     and doesn't invalidate surrounding content. */
+  /* PERF: filter transitions cause expensive per-frame paint. We keep opacity
+     + transform (compositor-only) and apply the grayscale/brightness change
+     INSTANTLY when the active class is added — the eye doesn't notice the
+     filter snap during the larger card expansion, and we save a lot of paint. */
   .project-image-wrapper img {
     width: 100%;
     height: 100%;
@@ -810,21 +821,19 @@ section {
     opacity: 0;
     transform: translateZ(0);
     transition:
-      opacity 0.6s ease,
-      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-      filter 0.5s ease;
+      opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
     filter: grayscale(0.5) brightness(0.7);
   }
 
   .project-accordion-item.active .project-image-wrapper img {
-    will-change: transform, filter, opacity; /* hint only on the active item */
+    will-change: transform, opacity; /* layer hint only on the active card */
   }
 
   .active .project-image-wrapper img {
     opacity: 1;
-    /* PERF: combine scale with translateZ(0) so the GPU layer hint isn't lost. */
     transform: translateZ(0) scale(1.05);
-    filter: grayscale(0) brightness(1);
+    filter: grayscale(0) brightness(1); /* snap, not animated */
   }
 
   /* Collapsed Label (Center aligned) */

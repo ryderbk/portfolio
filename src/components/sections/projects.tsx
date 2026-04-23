@@ -22,13 +22,15 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: Proj
 
   return (
     <motion.article
-      layout
       {...fadeUp(i * 0.1)}
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`project-accordion-item group ${isActive ? 'active' : ''}`}
       onMouseEnter={() => onHover(project.title)}
     >
-      <motion.div layout className="project-image-wrapper">
+      {/* PERF: removed Framer Motion `layout` prop. The accordion expand is now
+          handled purely by CSS (flex-grow + height transitions), avoiding the
+          per-frame JS FLIP measurement that was causing the "stuck" hover. */}
+      <div className="project-image-wrapper">
         {projectImages.map((img: string, idx: number) => (
           <img 
             key={img + idx}
@@ -44,7 +46,7 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: Proj
         <div className="project-collapsed-label">
           <h4 className="font-projects">{project.title}</h4>
         </div>
-      </motion.div>
+      </div>
 
       <div className="project-content-wrapper">
         <div className="project-content-inner">
