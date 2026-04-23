@@ -130,7 +130,9 @@
     @apply text-foreground font-sans;
     color: hsl(var(--foreground));
     background: transparent;
-    transition: color 0.3s ease, letter-spacing 0.3s ease, line-height 0.3s ease;
+    /* PERF: only `color` is transitioned (paint-only). letter-spacing/line-height
+       were removed — they trigger layout, which is far too expensive for body. */
+    transition: color 0.3s ease;
     line-height: var(--font-body-line-height, 1.6);
     letter-spacing: var(--font-body-letter-spacing, 0em);
     font-size: calc(1rem * var(--font-body-scale, 1));
@@ -143,7 +145,7 @@
   /* Skip Navigation — Accessibility */
   .skip-nav {
     position: absolute;
-    top: -100%;
+    top: 0;
     left: 16px;
     z-index: 10000;
     padding: 8px 16px;
@@ -153,11 +155,15 @@
     font-weight: 600;
     border-radius: 0 0 8px 8px;
     text-decoration: none;
-    transition: top 0.2s;
+    /* PERF: animate transform (compositor) instead of `top` (layout).
+       translate3d forces GPU layer promotion as a fallback for older browsers. */
+    transform: translate3d(0, -120%, 0);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
   }
 
   .skip-nav:focus {
-    top: 0;
+    transform: translate3d(0, 0, 0);
   }
 
   /* Headings */
@@ -167,7 +173,8 @@
     line-height: var(--font-heading-line-height, 1.1);
     letter-spacing: var(--font-heading-letter-spacing, -0.02em);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    transition: letter-spacing 0.3s ease, line-height 0.3s ease;
+    /* PERF: dropped layout-triggering transitions (letter-spacing/line-height).
+       Theme changes still apply instantly without animating layout. */
   }
   .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -246,27 +253,36 @@
     -webkit-text-fill-color: transparent;
   }
 
-  /* Interactive Elements */
+  /* Interactive Elements
+     PERF: only `transform` is transitioned (compositor). will-change is scoped
+     to :hover so layers aren't permanently promoted (which would waste GPU memory). */
   .interactive {
     position: relative;
     cursor: pointer;
+    transform: translateZ(0); /* fallback GPU layer promotion */
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .interactive:hover {
-    transform: translateY(-1px);
+    transform: translate3d(0, -1px, 0);
+    will-change: transform;
   }
 
   .interactive:active {
-    transform: translateY(0) scale(0.98);
+    transform: translate3d(0, 0, 0) scale(0.98);
   }
 
-  /* Glass Input Utility */
+  /* Glass Input Utility
+     PERF: narrow transition from `all` to the few properties that actually change
+     on focus. `all` forces the browser to interpolate every property. */
   .glass-input {
     @apply backdrop-blur-lg backdrop-saturate-150;
     background-color: var(--glass-bg, rgba(255, 255, 255, 0.08));
     border: 1px solid var(--glass-border, hsl(var(--border)));
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+      border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     color: hsl(var(--foreground));
   }
 
@@ -302,6 +318,8 @@
    BUTTON STYLES — Premium Animated
    ============================================ */
 
+/* PERF: button transition narrowed from `all` to `color, background-color, box-shadow`.
+   `all` forced the browser to set up interpolation for every property. */
 .btn-animated, .btn-animated-secondary, .btn-animated-destructive {
   position: relative;
   display: inline-flex;
@@ -317,24 +335,40 @@
   font-weight: 600;
   cursor: pointer;
   overflow: hidden;
-  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  transition:
+    color 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
   font-family: var(--font-sans);
   text-decoration: none;
+  transform: translateZ(0); /* GPU layer promotion fallback */
 }
 
-/* Base elements for all premium buttons */
+/* PERF: arrows now animate `transform` instead of `right`/`left` (layout).
+   Position is set once with absolute coords, motion is compositor-only. */
 .btn-animated svg, .btn-animated-secondary svg, .btn-animated-destructive svg {
   position: absolute;
   width: 20px;
   height: 20px;
   fill: currentColor;
   z-index: 9;
-  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
 }
 
-.btn-animated .arr-1, .btn-animated-secondary .arr-1, .btn-animated-destructive .arr-1 { right: 16px; }
-.btn-animated .arr-2, .btn-animated-secondary .arr-2, .btn-animated-destructive .arr-2 { left: -25%; }
+.btn-animated .arr-1, .btn-animated-secondary .arr-1, .btn-animated-destructive .arr-1 {
+  right: 16px;
+  transform: translate3d(0, 0, 0);
+}
+.btn-animated .arr-2, .btn-animated-secondary .arr-2, .btn-animated-destructive .arr-2 {
+  left: 16px;
+  transform: translate3d(-200%, 0, 0); /* parked off-screen via transform, not `left` */
+}
 
+/* PERF: the hover circle previously animated width/height 20px → 800px on every
+   frame, which forces layout + paint repeatedly. Now it stays sized at a base
+   diameter and uses `transform: scale()` — purely compositor work. */
 .btn-animated .circle, .btn-animated-secondary .circle, .btn-animated-destructive .circle {
   position: absolute;
   top: 50%;
@@ -343,16 +377,19 @@
   height: 20px;
   border-radius: 50%;
   opacity: 0;
-  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%, 0) scale(1);
+  transition:
+    transform 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.4s ease;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 
 .btn-animated .text, .btn-animated-secondary .text, .btn-animated-destructive .text {
   position: relative;
   z-index: 1;
-  transform: translateX(-12px);
-  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translate3d(-12px, 0, 0);
+  transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* Hover States — Shared */
@@ -361,18 +398,24 @@
   border-radius: 100px;
 }
 
-.btn-animated:hover .arr-1, .btn-animated-secondary:hover .arr-1, .btn-animated-destructive:hover .arr-1 { right: -25%; }
-.btn-animated:hover .arr-2, .btn-animated-secondary:hover .arr-2, .btn-animated-destructive:hover .arr-2 { left: 16px; }
-.btn-animated:hover .text, .btn-animated-secondary:hover .text, .btn-animated-destructive:hover .text { transform: translateX(12px); }
+.btn-animated:hover .arr-1, .btn-animated-secondary:hover .arr-1, .btn-animated-destructive:hover .arr-1 {
+  transform: translate3d(200%, 0, 0); /* slides off the right via transform */
+}
+.btn-animated:hover .arr-2, .btn-animated-secondary:hover .arr-2, .btn-animated-destructive:hover .arr-2 {
+  transform: translate3d(0, 0, 0); /* slides into view */
+}
+.btn-animated:hover .text, .btn-animated-secondary:hover .text, .btn-animated-destructive:hover .text {
+  transform: translate3d(12px, 0, 0);
+}
 
+/* Scale 40x = covers an 800px area, same visual as before but compositor-only */
 .btn-animated:hover .circle, .btn-animated-secondary:hover .circle, .btn-animated-destructive:hover .circle {
-  width: 800px;
-  height: 800px;
+  transform: translate3d(-50%, -50%, 0) scale(40);
   opacity: 1;
 }
 
 .btn-animated:active, .btn-animated-secondary:active, .btn-animated-destructive:active {
-  scale: 0.96;
+  transform: translateZ(0) scale(0.96);
 }
 
 /* Primary Specifics */
@@ -434,13 +477,17 @@ section {
    ANIMATIONS
    ============================================ */
 
+/* PERF: pulse-dot already uses GPU-only properties (opacity + transform).
+   `animation-fill-mode: both` ensures no flicker on first/last frame. */
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+  0%, 100% { opacity: 1; transform: scale(1) translateZ(0); }
+  50% { opacity: 0.5; transform: scale(0.85) translateZ(0); }
 }
 
 .animate-pulse-dot {
   animation: pulse-dot 2s ease-in-out infinite;
+  animation-fill-mode: both;
+  will-change: transform, opacity;
 }
 
 /* ============================================
@@ -454,15 +501,24 @@ section {
   perspective: 1000px;
 }
 
+/* PERF: narrowed `transition: all` to only the properties that actually change
+   on hover. Easing changed to ease-out (more natural for hover-in) per UI motion guidelines. */
 .profile-card {
   @apply backdrop-blur-xl backdrop-saturate-150;
   height: 100%;
   border-radius: var(--radius);
   background: var(--glass-bg, rgba(255, 255, 255, 0.12));
   border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.15));
-  transition: all 0.5s ease-in-out;
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
   transform-style: preserve-3d;
   box-shadow: var(--base-shadow);
+}
+
+.profile-parent:hover .profile-card {
+  will-change: transform; /* scoped to hover, released after */
 }
 
 .profile-glass {
@@ -476,7 +532,8 @@ section {
   transform: translate3d(0px, 0px, 25px);
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.5s ease-in-out;
+  /* PERF: only `transform` changes on hover — interpolate just that. */
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .profile-content {
@@ -520,6 +577,8 @@ section {
   transform-style: preserve-3d;
 }
 
+/* PERF: switched defaultless transitions (`background 0.2s` was using `linear`)
+   to a natural ease curve. Linear feels mechanical for UI; cubic-bezier feels organic. */
 .profile-bottom .social-button {
   width: 40px;
   height: 40px;
@@ -529,7 +588,12 @@ section {
   display: grid;
   place-content: center;
   box-shadow: var(--base-shadow);
-  transition: transform 0.2s ease-in-out, background 0.2s, box-shadow 0.2s, color 0.2s;
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
   color: hsl(var(--foreground));
   cursor: pointer;
 }
@@ -551,6 +615,7 @@ section {
   transform-style: preserve-3d;
 }
 
+/* PERF: only transform changes on hover; narrow the transition. */
 .profile-logo .circle {
   display: block;
   position: absolute;
@@ -560,7 +625,7 @@ section {
   right: 0;
   background: hsl(var(--background) / 0.3);
   border: 1px solid hsl(var(--border) / 0.3);
-  transition: all 0.5s ease-in-out;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .profile-logo .circle1 { width: 170px; transform: translate3d(0, 0, 20px); top: 8px; right: 8px; }
@@ -706,8 +771,11 @@ section {
     border-radius: 16px;
     display: flex;
     flex-direction: column;
-    will-change: flex, transform;
-    transform: translateZ(0);
+    /* PERF: removed `flex` from will-change — it isn't a compositor property and
+       was telling the browser to prepare for something it can't optimize. Keep
+       `transform` only. translate3d() forces a GPU layer (fallback hack). */
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
     box-shadow: var(--base-shadow);
   }
 
@@ -729,18 +797,30 @@ section {
     height: 60%;
   }
 
+  /* PERF: filter transitions are expensive (paint on every frame) but visually
+     important here. Promote to its own GPU layer so the paint stays isolated
+     and doesn't invalidate surrounding content. */
   .project-image-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.5s ease;
+    transform: translateZ(0);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+      filter 0.5s ease;
     filter: grayscale(0.5) brightness(0.7);
+  }
+
+  .project-accordion-item.active .project-image-wrapper img {
+    will-change: transform, filter, opacity; /* hint only on the active item */
   }
 
   .active .project-image-wrapper img {
     opacity: 1;
-    transform: scale(1.05);
+    /* PERF: combine scale with translateZ(0) so the GPU layer hint isn't lost. */
+    transform: translateZ(0) scale(1.05);
     filter: grayscale(0) brightness(1);
   }
 
@@ -778,7 +858,9 @@ section {
     transform: rotate(180deg);
     opacity: 0.75;
     letter-spacing: 0.12em;
-    transition: all 0.3s ease;
+    /* PERF: only opacity changes on hover. `all` would interpolate every property
+       including `transform`, which is set static here. */
+    transition: opacity 0.3s ease;
   }
 
   .project-accordion-item:hover .project-collapsed-label h4 {
