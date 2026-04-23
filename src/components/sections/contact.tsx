@@ -52,7 +52,7 @@ export function Contact() {
       </div>
 
       {/* Contact details + form */}
-      <div className="py-24 md:py-36">
+      <div className="pt-24 md:pt-36 pb-12 md:pb-16">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
 
