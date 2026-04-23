@@ -36,13 +36,12 @@ function WordCycle() {
   );
 }
 
+// All hero items animate in simultaneously after the page-load overlay clears.
 const container = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    // Hold initial render until the page-load overlay finishes wiping off
-    // (~1.1s), then cascade the hero items in.
-    transition: { staggerChildren: 0.12, delayChildren: 1.1 },
+    transition: { delayChildren: 1.1, staggerChildren: 0 },
   },
 };
 
@@ -55,11 +54,10 @@ const item = {
   },
 };
 
-// Per-word stagger for the headline — translateY(60→0) + opacity, 80ms apart.
-// No own delayChildren: the parent's stagger already gates when this fires.
+// Headline words animate together — same timing as everything else.
 const headingContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
+  visible: { transition: { staggerChildren: 0 } },
 };
 const headingWord = {
   hidden: { opacity: 0, y: 60 },
