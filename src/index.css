@@ -1,5 +1,8 @@
-@import "tailwindcss";
+/* Google Fonts must come first — CSS spec requires all @import statements
+   to precede other rules, and `@import "tailwindcss"` inlines a large
+   ruleset so the font import has to sit above it. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
