@@ -64,20 +64,20 @@ export function Contact() {
               transition={{ duration: 0.7 }}
               className="lg:col-span-5"
             >
-              <div className="h-full rounded-2xl border border-border/60 backdrop-blur-2xl backdrop-saturate-150 p-6 sm:p-8 md:p-10 flex flex-col justify-between gap-8 bg-card/40" style={{ boxShadow: 'var(--base-shadow)' }}>
-              <div>
-                <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em] block mb-4">
+              <div className="h-full rounded-2xl border border-border/60 backdrop-blur-2xl backdrop-saturate-150 p-6 sm:p-8 md:p-10 flex flex-col bg-card/40" style={{ boxShadow: 'var(--base-shadow)' }}>
+              <div className="mb-10">
+                <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em] block mb-5">
                   Get in touch
                 </span>
-                <h3 className="font-display text-2xl md:text-3xl text-foreground mb-2">
+                <h3 className="font-display text-2xl md:text-3xl text-foreground mb-3 leading-tight">
                   Bharath Kumar S
                 </h3>
-                <p className="font-sans text-sm text-muted-foreground">
+                <p className="font-sans text-sm text-muted-foreground leading-relaxed">
                   Electronics &amp; Instrumentation Engineer · Developer
                 </p>
               </div>
 
-              <ul className="space-y-4" aria-label="Contact details">
+              <ul className="space-y-5" aria-label="Contact details">
                 <li>
                   <a
                     href="mailto:sbharathkumar1125@gmail.com"
