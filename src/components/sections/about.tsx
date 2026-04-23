@@ -34,16 +34,37 @@ export function About() {
           Engineer who thinks in systems, builds with intention.
         </SectionHeading>
 
-        {/* Main grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24">
-          {/* Left — bio + education */}
-          <motion.div {...fadeUp(0.1)} className="lg:col-span-5">
-            <p className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground leading-relaxed mb-10">
+        {/* Intro row — bio on the left, portrait on the right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 mb-16 md:mb-24 items-center">
+          <motion.div {...fadeUp(0.1)} className="lg:col-span-7 order-2 lg:order-1">
+            <p className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground leading-relaxed">
               I'm a fast-moving engineer who thinks in systems and builds with intention.
               I combine technical depth with creative problem-solving — whether I'm writing code,
               designing a solution, or understanding a manufacturing process.
             </p>
+          </motion.div>
 
+          {/* Portrait — right side */}
+          <motion.div {...fadeUp(0.15)} className="lg:col-span-5 order-1 lg:order-2 flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-[280px] md:max-w-[320px] group">
+              <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-accent/30 to-transparent blur-2xl opacity-60 group-hover:opacity-90 transition-opacity duration-500" aria-hidden="true" />
+              <div className="glass-card relative overflow-hidden rounded-2xl aspect-[4/5] p-0">
+                <img
+                  src="/images/profile.png"
+                  alt="Portrait of the author"
+                  loading="lazy"
+                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" aria-hidden="true" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Main grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24">
+          {/* Left — education */}
+          <motion.div {...fadeUp(0.1)} className="lg:col-span-5">
             {/* Education card */}
             <div className="glass-card p-6 space-y-3">
               <h3 className="text-sm font-sans uppercase tracking-widest text-accent font-medium">Education</h3>
