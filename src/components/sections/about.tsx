@@ -103,9 +103,9 @@ export function About() {
                     <h4 className="font-display font-semibold leading-tight">{ed.degree}</h4>
                     <p className="text-sm text-muted-foreground mt-1">{ed.institution}</p>
                   </div>
-                  <div className="flex sm:flex-col sm:items-end gap-2 sm:gap-1 shrink-0">
-                    <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium">{ed.period}</span>
-                    <span className="text-xs font-sans text-muted-foreground sm:text-right">{ed.score}</span>
+                  <div className="flex sm:flex-col sm:items-end gap-2 sm:gap-2 shrink-0">
+                    <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium whitespace-nowrap">{ed.period}</span>
+                    <span className="text-sm font-display font-semibold text-foreground sm:text-right whitespace-nowrap">{ed.score}</span>
                   </div>
                 </div>
               ))}
