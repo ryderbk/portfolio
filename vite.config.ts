@@ -18,14 +18,20 @@ export default defineConfig({
     dedupe: ["react", "react-dom"],
   },
   server: {
-    port: 5173,
-    host: true,
+    port: 5000,
+    host: "0.0.0.0",
+    allowedHosts: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
       },
     },
+  },
+  preview: {
+    port: 5000,
+    host: "0.0.0.0",
+    allowedHosts: true,
   },
   build: {
     outDir: "dist",
