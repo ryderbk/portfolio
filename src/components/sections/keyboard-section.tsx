@@ -9,7 +9,7 @@ export function KeyboardSection() {
   const [showChat, setShowChat] = useState(false);
 
   return (
-    <section id="keyboard" className="py-24 md:py-32 relative overflow-hidden" aria-label="Interactive Keyboard">
+    <section id="keyboard" className="py-24 md:py-36 relative overflow-hidden" aria-label="Interactive Keyboard">
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <motion.div {...fadeUp()} className="mb-16 text-center">
           <div className="flex items-center justify-center gap-4 mb-4">

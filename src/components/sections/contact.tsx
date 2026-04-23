@@ -21,7 +21,7 @@ export function Contact() {
     <section id="contact" className="" aria-label="Contact">
 
       {/* Top CTA banner — Translucent Glass Effect */}
-      <div className="py-16 md:py-24 border-y border-border/60 backdrop-blur-2xl backdrop-saturate-150 bg-card/40">
+      <div className="py-20 md:py-28 border-y border-border/60 backdrop-blur-2xl backdrop-saturate-150 bg-card/40">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -52,7 +52,7 @@ export function Contact() {
       </div>
 
       {/* Contact details + form */}
-      <div className="py-16 md:py-24">
+      <div className="py-24 md:py-36">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
 
