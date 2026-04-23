@@ -103,7 +103,7 @@ export function About() {
                     <h4 className="font-display font-semibold leading-tight">{ed.degree}</h4>
                     <p className="text-sm text-muted-foreground mt-1">{ed.institution}</p>
                   </div>
-                  <div className="flex sm:flex-col sm:items-end gap-2 sm:gap-1 shrink-0">
+                  <div className="flex sm:flex-col sm:items-center gap-2 sm:gap-1 shrink-0">
                     <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium whitespace-nowrap leading-tight">{ed.period}</span>
                     <span className="text-sm font-display font-semibold text-foreground whitespace-nowrap mt-1">{ed.score}</span>
                   </div>
