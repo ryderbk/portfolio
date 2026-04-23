@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { fadeUp } from "@/lib/animations";
+import { SectionHeading } from "@/components/section-heading";
 
 const technicalSkills = [
   { name: "Python" },
@@ -39,24 +40,9 @@ export function Skills() {
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
         {/* Header */}
-        <motion.div
-          {...fadeUp()}
-          className="mb-16 md:mb-24"
-        >
-          <div className="flex items-center gap-4 mb-4">
-            <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em]">03 — Technical Arsenal</span>
-          </div>
-          <h2
-            className="font-display font-semibold"
-            style={{
-              fontSize: "clamp(calc(2rem * var(--font-heading-scale, 1)), calc(5vw * var(--font-heading-scale, 1)), calc(4rem * var(--font-heading-scale, 1)))",
-              lineHeight: "var(--font-heading-line-height, 1.1)",
-              letterSpacing: "var(--font-heading-letter-spacing, -0.02em)",
-            }}
-          >
-            Tools & technologies I work with.
-          </h2>
-        </motion.div>
+        <SectionHeading eyebrow="03 — Technical Arsenal" className="mb-16 md:mb-24">
+          Tools &amp; technologies I work with.
+        </SectionHeading>
 
         {/* Bento grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -2,6 +2,8 @@ import { Switch, Route, Router as WouterRouter } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { PageLoadOverlay } from "@/components/page-load-overlay";
+import { CustomCursor } from "@/components/custom-cursor";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 
@@ -30,6 +32,10 @@ function AppContent() {
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
             <Router />
           </WouterRouter>
+          {/* Cinematic global UI: cursor + entrance overlay. Both no-op on
+              touch devices and when the user prefers reduced motion. */}
+          <CustomCursor />
+          <PageLoadOverlay />
           <Toaster />
         </TooltipProvider>
       </AuthProvider>

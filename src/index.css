@@ -1111,3 +1111,138 @@ section {
   --animation-speed-scale: 1.5;
 }
 
+
+/* ============================================================================
+   CINEMATIC GLOBAL UI — page-load overlay, custom cursor, section heading
+   underline, card lift hover, image curtain reveal, magnetic-safe transforms,
+   prefers-reduced-motion safeguards.
+   ============================================================================ */
+
+/* Page-load overlay: full-screen wipe that slides up off the page on mount.
+   Sits above everything via z-index. Pointer-events:none after animation
+   so it never intercepts clicks even before unmount. */
+.page-load-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: hsl(var(--background));
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Custom cursor — dot + trailing ring. Hidden on touch devices via media query
+   (the JS also short-circuits, but this guards initial paint). */
+.custom-cursor-dot,
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  will-change: transform;
+}
+.custom-cursor-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--accent));
+  mix-blend-mode: difference;
+}
+.custom-cursor-ring {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid hsl(var(--accent) / 0.6);
+  /* Smooth scale change on hover state via the JS-set --cursor-scale. */
+  transition: opacity 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+.custom-cursor-ring.is-hover {
+  border-color: hsl(var(--accent));
+  background: hsl(var(--accent) / 0.08);
+}
+@media (pointer: coarse) {
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none;
+  }
+}
+
+/* Section heading underline — scaleX(0 → 1) from left.
+   transform-origin pinned left so the line "draws" cleanly. */
+.section-heading {
+  margin-bottom: 4rem;
+}
+.section-heading-title {
+  margin-bottom: 1rem;
+}
+.section-heading-underline {
+  height: 2px;
+  width: 64px;
+  background: hsl(var(--accent));
+  transform-origin: left center;
+  border-radius: 2px;
+  will-change: transform;
+}
+
+/* Card lift hover — translateY(-8px) + scale(1.02) + deeper shadow.
+   Apply via the existing `.glass-card` class (already used across sections). */
+.glass-card {
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+  will-change: auto;
+}
+.glass-card:hover {
+  transform: translate3d(0, -8px, 0) scale(1.02);
+  box-shadow:
+    0 24px 48px -12px hsl(var(--foreground) / 0.18),
+    0 8px 16px -4px hsl(var(--foreground) / 0.08);
+  will-change: transform;
+}
+
+/* Image curtain reveal — apply `.image-curtain` to a wrapper, image inside.
+   The wrapper masks via clip-path which animates from right→left edge.
+   Triggered by adding `.is-revealed` (e.g. via Framer Motion's onViewportEnter
+   or a simple IntersectionObserver). */
+.image-curtain {
+  position: relative;
+  overflow: hidden;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.9s cubic-bezier(0.83, 0, 0.17, 1);
+  will-change: clip-path;
+}
+.image-curtain.is-revealed {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Magnetic targets: when the JS hook is driving transforms, inherited
+   transitions on the element shouldn't fight it. The hook sets transform
+   directly and relies on rAF lerp for smoothness. */
+.magnetic {
+  transition: transform 0s;
+}
+
+/* Reduced motion — disable cinematic globals and keep the UI usable. */
+@media (prefers-reduced-motion: reduce) {
+  .page-load-overlay {
+    display: none !important;
+  }
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none !important;
+  }
+  .section-heading-underline {
+    transform: scaleX(1) !important;
+  }
+  .image-curtain {
+    clip-path: inset(0 0 0 0) !important;
+    transition: none !important;
+  }
+  .glass-card:hover {
+    transform: none !important;
+  }
+}

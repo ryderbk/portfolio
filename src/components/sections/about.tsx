@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { fadeUp } from "@/lib/animations";
+import { SectionHeading } from "@/components/section-heading";
 
 const brings = [
   { title: "AI-Assisted Development", desc: "Leverage modern AI tools to ship real, working products faster — not just prototypes or concepts." },
@@ -28,22 +29,10 @@ export function About() {
     <section id="about" className="py-24 md:py-36" aria-label="About me">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
-        {/* Section header */}
-        <motion.div {...fadeUp()} className="mb-16 md:mb-24">
-          <div className="flex items-center gap-4 mb-4">
-            <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em]">02 — About</span>
-          </div>
-          <h2
-            className="font-display font-semibold max-w-2xl"
-            style={{
-              fontSize: "clamp(calc(2rem * var(--font-heading-scale, 1)), calc(5vw * var(--font-heading-scale, 1)), calc(4rem * var(--font-heading-scale, 1)))",
-              lineHeight: "var(--font-heading-line-height, 1.1)",
-              letterSpacing: "var(--font-heading-letter-spacing, -0.02em)",
-            }}
-          >
-            Engineer who thinks in systems, builds with intention.
-          </h2>
-        </motion.div>
+        {/* Section header — animated underline draws in after the title appears. */}
+        <SectionHeading eyebrow="02 — About" className="mb-16 md:mb-24 max-w-2xl">
+          Engineer who thinks in systems, builds with intention.
+        </SectionHeading>
 
         {/* Main grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24">

@@ -1,0 +1,64 @@
+Add bold, cinematic, and immersive animations to every element across the entire webpage. Every section, component, and interaction should feel alive and dramatic. Apply the following comprehensively:
+
+PAGE / ROUTE TRANSITIONS
+
+Wrap all page transitions in a full-screen overlay wipe (black or brand color) that slides in and out using transform: scaleX() or translateY() before new content appears.
+Fade + scale the entire page content from opacity: 0, scale: 0.96 to opacity: 1, scale: 1 on load using cubic-bezier(0.16, 1, 0.3, 1) over 700ms.
+
+HERO SECTION
+
+Animate the headline letter-by-letter or word-by-word using staggered translateY(60px) → 0 + opacity: 0 → 1, 80ms stagger per word.
+Subheadings and CTAs follow 200ms after the headline with the same motion.
+Hero background: subtle slow zoom scale(1.05 → 1) over 2s on load (Ken Burns effect).
+
+SCROLL-TRIGGERED REVEALS (every section)
+
+Every section, card, heading, image, and paragraph should animate in on scroll using IntersectionObserver (or Framer Motion whileInView).
+Default reveal: translateY(50px) + opacity: 0 → translateY(0) + opacity: 1, duration 600ms, cubic-bezier(0.16, 1, 0.3, 1).
+Stagger child elements (cards, list items, grid items) by 100ms each so they cascade in sequence.
+Images: reveal with a clip-path wipe — inset(0 100% 0 0) → inset(0 0% 0 0) for a cinematic curtain effect.
+
+HEADINGS & TEXT
+
+All h1, h2, h3 tags: animate with translateY(40px) → 0 + opacity: 0 → 1 on scroll entry.
+Add a thin underline that animates scaleX(0 → 1) from left to right on section headings after the text appears.
+
+CARDS & GRID ITEMS
+
+On hover: translateY(-8px) + scale(1.02) + box-shadow deepens — transition 300ms cubic-bezier(0.16, 1, 0.3, 1).
+On scroll entry: cards stagger in from translateY(60px) + opacity: 0, 100ms between each card.
+
+IMAGES
+
+On scroll: reveal using clip-path curtain inset(0 100% 0 0 → 0 0% 0 0) over 800ms.
+On hover: subtle scale(1.05) zoom inside a clipped container (overflow: hidden) over 400ms.
+
+BUTTONS & CTAs
+
+On hover: background slides in from left using a pseudo-element ::before with scaleX(0 → 1) transform origin left.
+On click/tap: quick scale(0.95) press feedback, 100ms, spring back.
+Magnetic effect: button subtly follows cursor position by ±8px using translate on mousemove.
+
+NAVBAR
+
+On load: slides down from translateY(-100%) with opacity: 0 → 1 over 500ms, delayed 300ms after page load.
+On scroll down: hide with translateY(-100%) smoothly. On scroll up: reappear. Use transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1).
+
+CURSOR (desktop)
+
+Add a custom cursor dot + trailing ring that follows with a slight lag using requestAnimationFrame and lerp() interpolation.
+On hovering interactive elements, the ring scales up scale(1 → 2.5) and changes color.
+
+FOOTER
+
+Animate footer links and content in on scroll with staggered translateY(30px) → 0 + opacity: 0 → 1.
+
+PERFORMANCE RULES (apply to all above)
+
+Only animate transform and opacity — never width, height, top, left, margin.
+Use will-change: transform only on hover/active states, not permanently.
+All JS animations use requestAnimationFrame with a ticking flag.
+Respect @media (prefers-reduced-motion: reduce) — disable all motion for accessibility.
+Use cubic-bezier(0.16, 1, 0.3, 1) as the default easing for all UI transitions.
+
+Apply all of the above to every element on the page. Do not leave any section, heading, image, card, button, or text block unanimated. The result should feel like a premium, cinematic, award-winning website."

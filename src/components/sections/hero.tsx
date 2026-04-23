@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useMotionValue, useSpring, motion, AnimatePresence } from "framer-motion";
 import { mouseManager } from "@/lib/mouse-manager";
 import { Button } from "@/components/ui/button";
+import { useMagnetic } from "@/hooks/useMagnetic";
 
 const words = ["experiences,", "products,", "solutions,"];
 
@@ -39,7 +40,9 @@ const container = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.1 },
+    // Hold initial render until the page-load overlay finishes wiping off
+    // (~1.1s), then cascade the hero items in.
+    transition: { staggerChildren: 0.12, delayChildren: 1.1 },
   },
 };
 
@@ -49,6 +52,21 @@ const item = {
     opacity: 1,
     y: 0,
     transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }
+  },
+};
+
+// Per-word stagger for the headline — translateY(60→0) + opacity, 80ms apart.
+// No own delayChildren: the parent's stagger already gates when this fires.
+const headingContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+const headingWord = {
+  hidden: { opacity: 0, y: 60 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
   },
 };
 
@@ -62,6 +80,10 @@ export function Hero() {
 
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+
+  // Magnetic hover refs for the two CTAs.
+  const ctaPrimaryRef = useMagnetic<HTMLButtonElement>(10);
+  const ctaSecondaryRef = useMagnetic<HTMLButtonElement>(10);
 
   useEffect(() => {
     const unsubscribe = mouseManager.subscribe((x, y) => {
@@ -77,12 +99,15 @@ export function Hero() {
       className="relative min-h-[100dvh] flex items-center overflow-hidden"
       aria-label="Introduction"
     >
-      {/* Accent glow */}
-      <div
+      {/* Accent glow — slow Ken Burns scale on entrance for cinematic depth. */}
+      <motion.div
         className="absolute top-1/4 right-[10%] w-[400px] h-[400px] rounded-full pointer-events-none"
         style={{
           background: "radial-gradient(circle, hsl(var(--accent) / 0.08) 0%, transparent 70%)",
         }}
+        initial={{ scale: 1.05, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 2, ease: [0.16, 1, 0.3, 1], delay: 1 }}
         aria-hidden="true"
       />
 
@@ -103,9 +128,9 @@ export function Hero() {
             </span>
           </motion.div>
 
-          {/* Main heading — LCP element */}
+          {/* Main heading — LCP element. Per-word stagger for cinematic entrance. */}
           <motion.h1
-            variants={item}
+            variants={headingContainer}
             className="font-display font-semibold mb-8"
             style={{
               fontSize: "clamp(calc(2.25rem * var(--font-heading-scale, 1)), calc(7vw * var(--font-heading-scale, 1)), calc(6.5rem * var(--font-heading-scale, 1)))",
@@ -113,12 +138,25 @@ export function Hero() {
               letterSpacing: "var(--font-heading-letter-spacing, -0.02em)",
             }}
           >
-            I craft{" "}
+            <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+              <motion.span variants={headingWord} className="inline-block">I</motion.span>
+            </span>
+            <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+              <motion.span variants={headingWord} className="inline-block">craft</motion.span>
+            </span>
             <span className="inline-block align-baseline italic font-light text-accent">
               <WordCycle />
             </span>
             <br />
-            not just code.
+            <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+              <motion.span variants={headingWord} className="inline-block">not</motion.span>
+            </span>
+            <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+              <motion.span variants={headingWord} className="inline-block">just</motion.span>
+            </span>
+            <span className="inline-block overflow-hidden align-bottom">
+              <motion.span variants={headingWord} className="inline-block">code.</motion.span>
+            </span>
           </motion.h1>
 
           {/* Subline */}
@@ -129,9 +167,10 @@ export function Hero() {
             <strong className="font-semibold text-foreground">Bharath Kumar S</strong> – UI/UX Designer who blends creativity and functionality to build smooth, user-friendly digital experiences.
           </motion.p>
 
-          {/* CTAs — Accent primary + Ghost secondary */}
+          {/* CTAs — magnetic hover on both. */}
           <motion.div variants={item} className="flex flex-wrap gap-4 items-center">
             <Button
+              ref={ctaPrimaryRef}
               variant="default"
               onClick={() => scrollTo("#work")}
               data-testid="btn-view-work"
@@ -141,6 +180,7 @@ export function Hero() {
             </Button>
 
             <Button
+              ref={ctaSecondaryRef}
               variant="default"
               onClick={() => scrollTo("#contact")}
               data-testid="btn-contact"

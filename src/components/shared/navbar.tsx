@@ -22,19 +22,30 @@ export function Navbar() {
     (config.themeMode === "system" && typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [active, setActive] = useState("");
 
   useEffect(() => {
     let ticking = false;
+    let lastY = window.scrollY;
     const onScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 40);
+          const y = window.scrollY;
+          setScrolled(y > 40);
+
+          // Hide on scroll down (past 120px), show on scroll up.
+          // Small threshold prevents jitter on micro-movements.
+          if (Math.abs(y - lastY) > 6) {
+            setHidden(y > lastY && y > 120);
+            lastY = y;
+          }
+
           const sections = navLinks.map(l => l.href.slice(1));
           for (const id of [...sections].reverse()) {
             const el = document.getElementById(id);
-            if (el && window.scrollY >= el.offsetTop - 120) {
+            if (el && y >= el.offsetTop - 120) {
               setActive(id);
               break;
             }
@@ -61,9 +72,9 @@ export function Navbar() {
     <>
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 ${
+        animate={{ y: hidden ? -120 : 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color] duration-300 py-4 ${
           scrolled
             ? "glass-nav border-b border-border/40"
             : "bg-transparent border-b border-transparent"
