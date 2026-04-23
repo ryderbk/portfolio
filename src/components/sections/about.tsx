@@ -53,7 +53,7 @@ export function About() {
           <motion.div {...fadeUp(0.15)} className="lg:col-span-4 order-1 lg:order-2 flex justify-center lg:justify-end w-full lg:mt-12">
             <div className="relative w-full max-w-[320px] md:max-w-[360px]">
               <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-accent/25 via-accent/10 to-transparent blur-2xl opacity-70" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-2xl aspect-[3/4] border border-border/60 bg-card/40 backdrop-blur-2xl backdrop-saturate-150 shadow-xl">
+              <div className="relative overflow-hidden rounded-2xl aspect-[3/4] border border-border/60 bg-card/40 backdrop-blur-2xl backdrop-saturate-150 [box-shadow:var(--base-shadow)]">
                 <img
                   src="/images/profile.png"
                   alt="Portrait of Bharath Kumar S"
@@ -74,7 +74,7 @@ export function About() {
               <Briefcase className="w-4 h-4 text-accent" aria-hidden="true" />
               <h3 className="text-sm font-sans uppercase tracking-[0.2em] text-muted-foreground font-medium">Experience</h3>
             </div>
-            <div className="p-6 md:p-7 flex-1 rounded-2xl border border-border/60 bg-card/40 backdrop-blur-2xl backdrop-saturate-150 shadow-xl">
+            <div className="p-6 md:p-7 flex-1 rounded-2xl border border-border/60 bg-card/40 backdrop-blur-2xl backdrop-saturate-150 [box-shadow:var(--base-shadow)]">
               <div className="flex items-start justify-between gap-4 mb-3">
                 <div>
                   <h4 className="font-display font-semibold text-lg leading-tight">{experience.company}</h4>
@@ -96,7 +96,7 @@ export function About() {
               <GraduationCap className="w-4 h-4 text-accent" aria-hidden="true" />
               <h3 className="text-sm font-sans uppercase tracking-[0.2em] text-muted-foreground font-medium">Education</h3>
             </div>
-            <div className="p-6 md:p-7 divide-y divide-border/60 rounded-2xl border border-border/60 bg-card/40 backdrop-blur-2xl backdrop-saturate-150 shadow-xl">
+            <div className="p-6 md:p-7 divide-y divide-border/60 rounded-2xl border border-border/60 bg-card/40 backdrop-blur-2xl backdrop-saturate-150 [box-shadow:var(--base-shadow)]">
               {education.map((ed, i) => (
                 <div key={ed.degree} className={`flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-6 ${i === 0 ? "pb-5" : i === education.length - 1 ? "pt-5" : "py-5"}`}>
                   <div className="min-w-0 flex-1">
