@@ -53,12 +53,12 @@ export function About() {
           <motion.div {...fadeUp(0.15)} className="lg:col-span-4 order-1 lg:order-2 flex justify-center lg:justify-end w-full lg:mt-12">
             <div className="relative w-full max-w-[320px] md:max-w-[360px] group">
               <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-accent/25 via-accent/10 to-transparent blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
-              <div className="glass-card relative overflow-hidden rounded-2xl aspect-square p-0">
+              <div className="glass-card relative overflow-hidden rounded-2xl aspect-[4/5] p-0">
                 <img
                   src="/images/profile.png"
                   alt="Portrait of Bharath Kumar S"
                   loading="lazy"
-                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
+                  className="w-full h-full object-contain object-center transition-transform duration-700 group-hover:scale-[1.03]"
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-transparent" aria-hidden="true" />
               </div>
