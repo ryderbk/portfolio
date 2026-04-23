@@ -62,8 +62,9 @@ export function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="lg:col-span-5 space-y-8"
+              className="lg:col-span-5"
             >
+              <div className="rounded-2xl border border-border/40 backdrop-blur-2xl backdrop-saturate-150 p-8 md:p-10 space-y-8 shadow-lg" style={{ background: 'var(--glass-bg)' }}>
               <div>
                 <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em] block mb-4">
                   Get in touch
@@ -122,7 +123,7 @@ export function Contact() {
                   <span>Perambur, Chennai, India</span>
                 </li>
               </ul>
-
+              </div>
             </motion.div>
 
             {/* Right — Contact Form */}
