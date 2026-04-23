@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Mail, Phone, MapPin, FileDown } from "lucide-react";
+import { FaLinkedin } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 
 export function Contact() {
@@ -52,13 +54,101 @@ export function Contact() {
       {/* Contact details + form */}
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="max-w-2xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+
+            {/* Left — Contact Info */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="lg:col-span-5 space-y-8"
+            >
+              <div>
+                <span className="font-sans text-xs text-muted-foreground uppercase tracking-[0.2em] block mb-4">
+                  Get in touch
+                </span>
+                <h3 className="font-display text-2xl md:text-3xl text-foreground mb-2">
+                  Bharath Kumar S
+                </h3>
+                <p className="font-sans text-sm text-muted-foreground">
+                  Electronics &amp; Instrumentation Engineer · Developer
+                </p>
+              </div>
+
+              <ul className="space-y-4" aria-label="Contact details">
+                <li>
+                  <a
+                    href="mailto:sbharathkumar1125@gmail.com"
+                    className="group flex items-center gap-4 text-sm font-sans text-foreground hover:text-accent transition-colors"
+                    data-testid="link-email"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full glass-input border border-border/40 group-hover:border-accent/60 transition-colors">
+                      <Mail size={16} aria-hidden="true" />
+                    </span>
+                    <span>sbharathkumar1125@gmail.com</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="tel:+919884326984"
+                    className="group flex items-center gap-4 text-sm font-sans text-foreground hover:text-accent transition-colors"
+                    data-testid="link-phone"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full glass-input border border-border/40 group-hover:border-accent/60 transition-colors">
+                      <Phone size={16} aria-hidden="true" />
+                    </span>
+                    <span>+91 98843 26984</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.linkedin.com/in/bharathkumarss"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-4 text-sm font-sans text-foreground hover:text-accent transition-colors"
+                    data-testid="link-linkedin"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full glass-input border border-border/40 group-hover:border-accent/60 transition-colors">
+                      <FaLinkedin size={16} aria-hidden="true" />
+                    </span>
+                    <span>linkedin.com/in/bharathkumarss</span>
+                  </a>
+                </li>
+                <li className="flex items-center gap-4 text-sm font-sans text-muted-foreground">
+                  <span className="flex items-center justify-center w-10 h-10 rounded-full glass-input border border-border/40">
+                    <MapPin size={16} aria-hidden="true" />
+                  </span>
+                  <span>Perambur, Chennai, India</span>
+                </li>
+              </ul>
+
+              <div className="pt-2">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="gap-2"
+                  data-testid="btn-download-resume"
+                >
+                  <a
+                    href="/Bharath_Kumar_S_Resume.pdf"
+                    download
+                    aria-label="Download resume PDF"
+                  >
+                    <FileDown size={16} aria-hidden="true" />
+                    Download Resume
+                  </a>
+                </Button>
+              </div>
+            </motion.div>
+
+            {/* Right — Contact Form */}
             <motion.form
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className="space-y-6"
+              className="lg:col-span-7 space-y-6"
               onSubmit={handleSubmit}
               aria-label="Contact form"
             >
