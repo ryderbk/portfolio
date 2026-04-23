@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+import { FaLinkedin } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 
 export function Contact() {
@@ -110,7 +111,7 @@ export function Contact() {
                     data-testid="link-linkedin"
                   >
                     <span className="flex items-center justify-center w-10 h-10 rounded-full glass-input border border-border/40 group-hover:border-accent/60 transition-colors">
-                      <Linkedin size={16} aria-hidden="true" />
+                      <FaLinkedin size={16} aria-hidden="true" />
                     </span>
                     <span>linkedin.com/in/bharathkumarss</span>
                   </a>
