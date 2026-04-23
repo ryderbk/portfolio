@@ -132,7 +132,7 @@ export function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className="lg:col-span-7 flex flex-col gap-6 h-full"
+              className="lg:col-span-7 h-full rounded-2xl border border-border/70 backdrop-blur-2xl backdrop-saturate-150 p-8 md:p-10 flex flex-col gap-6 shadow-lg bg-card/70"
               onSubmit={handleSubmit}
               aria-label="Contact form"
             >
