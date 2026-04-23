@@ -50,7 +50,7 @@ export function Skills() {
           {/* Technical Skills — Large tile */}
           <motion.div
             {...fadeUp(0.1)}
-            className="glass-card p-6 md:col-span-2 lg:col-span-2"
+            className="glass-card p-6 !border-border md:col-span-2 lg:col-span-2"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Technical
@@ -76,7 +76,7 @@ export function Skills() {
           {/* Hardware Skills */}
           <motion.div
             {...fadeUp(0.15)}
-            className="glass-card p-6"
+            className="glass-card p-6 !border-border"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Hardware
@@ -102,7 +102,7 @@ export function Skills() {
           {/* Creative Skills */}
           <motion.div
             {...fadeUp(0.2)}
-            className="glass-card p-6"
+            className="glass-card p-6 !border-border"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Creative
@@ -128,7 +128,7 @@ export function Skills() {
           {/* Soft Skills */}
           <motion.div
             {...fadeUp(0.25)}
-            className="glass-card p-6"
+            className="glass-card p-6 !border-border"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Soft Skills
@@ -154,7 +154,7 @@ export function Skills() {
           {/* Languages */}
           <motion.div
             {...fadeUp(0.3)}
-            className="glass-card p-6"
+            className="glass-card p-6 !border-border"
           >
             <h3 className="text-sm font-sans uppercase tracking-widest text-accent mb-6 font-medium">
               Languages

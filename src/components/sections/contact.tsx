@@ -65,7 +65,7 @@ export function Contact() {
               className="lg:col-span-5 flex items-center justify-center lg:justify-start"
             >
               <div className="profile-parent group" role="presentation">
-                <div className="profile-card">
+                <div className="profile-card !border-border">
                   <div className="profile-logo" aria-hidden="true">
                     <span className="circle circle1"></span>
                     <span className="circle circle2"></span>
