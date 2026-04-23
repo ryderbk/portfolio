@@ -116,7 +116,7 @@ export function Contact() {
                     <span>linkedin.com/in/bharathkumarss</span>
                   </a>
                 </li>
-                <li className="flex items-center gap-4 text-sm font-sans text-muted-foreground">
+                <li className="flex items-center gap-4 text-sm font-sans text-foreground">
                   <span className="flex items-center justify-center w-10 h-10 rounded-full glass-input border border-border/40">
                     <MapPin size={16} aria-hidden="true" />
                   </span>
