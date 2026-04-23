@@ -104,8 +104,8 @@ export function About() {
                     <p className="text-sm text-muted-foreground mt-1">{ed.institution}</p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium whitespace-nowrap">{ed.period}</span>
                     <span className="text-sm font-display font-semibold text-foreground whitespace-nowrap min-w-[5.5rem] text-right">{ed.score}</span>
+                    <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium whitespace-nowrap">{ed.period}</span>
                   </div>
                 </div>
               ))}
