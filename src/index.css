@@ -759,11 +759,15 @@ section {
     align-items: stretch;
   }
 
-  /* PERF: animate `flex-grow` directly via CSS with a smooth ease curve. Previously
-     the `flex` value snapped instantly while Framer Motion's `layout` prop ran a
-     JS-driven FLIP on every sibling — two systems fighting the same layout, which
-     produced the "stuck"/janky hover. CSS handles flex-grow interpolation natively
-     and stays on the compositor for sizing. */
+  /* PERF: previously each card had backdrop-filter: blur(40px) saturate(2), which
+     forced the GPU to re-blur a large region of the animated WebGL background on
+     EVERY frame as the cards resized. With 4 cards animating simultaneously, this
+     was the single biggest cause of the "stuck" hover. We use a solid translucent
+     background instead — visually nearly identical, but compositor-only.
+
+     `flex-grow` animates natively via CSS (snappier ease-out curve). `contain`
+     scopes layout/paint work so resizing one card doesn't invalidate the whole
+     page. */
   .project-accordion-item {
     height: 100%;
     flex: 1 1 0;
@@ -771,24 +775,23 @@ section {
     overflow: hidden;
     cursor: pointer;
     transition:
-      flex-grow 0.55s cubic-bezier(0.4, 0, 0.2, 1),
-      border-color 0.3s ease,
-      box-shadow 0.3s ease;
+      flex-grow 0.45s cubic-bezier(0.32, 0.72, 0, 1),
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
     position: relative;
-    @apply backdrop-blur-2xl backdrop-saturate-200;
+    background: hsl(var(--card) / 0.6);
     border: 1px solid hsl(var(--border));
-    background: var(--glass-bg);
     border-radius: 16px;
     display: flex;
     flex-direction: column;
-    transform: translate3d(0, 0, 0); /* GPU layer */
     box-shadow: var(--base-shadow);
-    contain: layout paint; /* isolate layout work to this card */
+    contain: layout style;
   }
 
   .project-accordion-item.active {
     flex-grow: 3.5;
     border-color: hsl(var(--accent) / 0.4);
+    background: hsl(var(--card) / 0.85);
     box-shadow: var(--base-shadow);
   }
 
@@ -800,10 +803,10 @@ section {
     overflow: hidden;
   }
 
-  /* PERF: smoothly transition the image-wrapper height alongside the flex-grow
-     change so the image area expands in sync with the card. */
+  /* PERF: image wrapper height transitions in sync with the card's flex-grow,
+     using the matched ease curve. */
   .project-image-wrapper {
-    transition: height 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: height 0.45s cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   .active .project-image-wrapper {
@@ -821,8 +824,8 @@ section {
     opacity: 0;
     transform: translateZ(0);
     transition:
-      opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity 0.45s cubic-bezier(0.32, 0.72, 0, 1),
+      transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
     filter: grayscale(0.5) brightness(0.7);
   }
 
