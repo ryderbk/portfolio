@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, FileDown } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 
@@ -123,23 +123,6 @@ export function Contact() {
                 </li>
               </ul>
 
-              <div className="pt-2">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="gap-2"
-                  data-testid="btn-download-resume"
-                >
-                  <a
-                    href="/Bharath_Kumar_S_Resume.pdf"
-                    download
-                    aria-label="Download resume PDF"
-                  >
-                    <FileDown size={16} aria-hidden="true" />
-                    Download Resume
-                  </a>
-                </Button>
-              </div>
             </motion.div>
 
             {/* Right — Contact Form */}
