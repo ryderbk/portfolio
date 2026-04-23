@@ -132,7 +132,7 @@ export function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className="lg:col-span-7 space-y-6"
+              className="lg:col-span-7 flex flex-col gap-6 h-full"
               onSubmit={handleSubmit}
               aria-label="Contact form"
             >
@@ -171,7 +171,7 @@ export function Contact() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 flex flex-col flex-1 min-h-0">
                 <label className="text-xs font-sans uppercase tracking-widest text-muted-foreground font-medium" htmlFor="contact-message">
                   Message
                 </label>
@@ -181,7 +181,7 @@ export function Contact() {
                   rows={6}
                   value={formState.message}
                   onChange={e => setFormState(s => ({ ...s, message: e.target.value }))}
-                  className="w-full px-4 py-3 glass-input rounded-xl text-sm font-sans resize-none"
+                  className="w-full flex-1 min-h-[160px] px-4 py-3 glass-input rounded-xl text-sm font-sans resize-none"
                   placeholder="Tell me about your project or idea..."
                   data-testid="input-message"
                 />
