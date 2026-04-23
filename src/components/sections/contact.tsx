@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaLinkedin } from "react-icons/fa";
-import { Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Contact() {
@@ -54,74 +52,13 @@ export function Contact() {
       {/* Contact details + form */}
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-
-            {/* Left — 3D Profile Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="lg:col-span-5 flex items-center justify-center lg:justify-start"
-            >
-              <div className="profile-parent group" role="presentation">
-                <div className="profile-card !border-border">
-                  <div className="profile-logo" aria-hidden="true">
-                    <span className="circle circle1"></span>
-                    <span className="circle circle2"></span>
-                    <span className="circle circle3"></span>
-                    <span className="circle circle4"></span>
-                    <span className="circle circle5">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    </span>
-                  </div>
-                  <div className="profile-glass"></div>
-                  <div className="profile-content">
-                    <span className="title">Bharath Kumar S</span>
-                    <span className="text block mt-8 mb-4">
-                      Chennai, India<br/>
-                      Response within 24 hours.
-                    </span>
-                  </div>
-                  <div className="profile-bottom">
-                    <div className="social-buttons-container">
-                      <a
-                        href="mailto:sbharathkumar1125@gmail.com"
-                        className="social-button"
-                        aria-label="Send email"
-                      >
-                        <Mail size={16} />
-                      </a>
-                      <a
-                        href="https://www.linkedin.com/in/bharathkumarss"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="social-button"
-                        aria-label="Visit LinkedIn profile"
-                      >
-                        <FaLinkedin size={16} />
-                      </a>
-                      <div
-                        className="social-button cursor-default"
-                        title="Location: Chennai, India"
-                        aria-label="Location: Chennai, India"
-                        role="img"
-                      >
-                        <MapPin size={16} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Right — Contact Form */}
+          <div className="max-w-2xl mx-auto">
             <motion.form
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className="lg:col-span-7 lg:col-start-6 space-y-6"
+              className="space-y-6"
               onSubmit={handleSubmit}
               aria-label="Contact form"
             >
