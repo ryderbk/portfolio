@@ -98,14 +98,14 @@ export function About() {
             </div>
             <div className="glass-card p-6 md:p-7 divide-y divide-border/60">
               {education.map((ed, i) => (
-                <div key={ed.degree} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-6 ${i === 0 ? "pb-5" : i === education.length - 1 ? "pt-5" : "py-5"}`}>
+                <div key={ed.degree} className={`flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-6 ${i === 0 ? "pb-5" : i === education.length - 1 ? "pt-5" : "py-5"}`}>
                   <div className="min-w-0 flex-1">
                     <h4 className="font-display font-semibold leading-tight">{ed.degree}</h4>
                     <p className="text-sm text-muted-foreground mt-1">{ed.institution}</p>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-sm font-display font-semibold text-foreground whitespace-nowrap min-w-[5.5rem] text-right">{ed.score}</span>
-                    <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium whitespace-nowrap">{ed.period}</span>
+                  <div className="flex sm:flex-col sm:items-end gap-2 sm:gap-1 shrink-0">
+                    <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium whitespace-nowrap leading-tight">{ed.period}</span>
+                    <span className="text-sm font-display font-semibold text-foreground whitespace-nowrap mt-1">{ed.score}</span>
                   </div>
                 </div>
               ))}
