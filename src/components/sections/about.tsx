@@ -52,7 +52,7 @@ export function About() {
           {/* Portrait — right side */}
           <motion.div {...fadeUp(0.15)} className="lg:col-span-4 order-1 lg:order-2 flex justify-center lg:justify-end w-full lg:mt-12">
             <div className="relative w-full max-w-[320px] md:max-w-[360px]">
-              <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-accent/25 via-accent/10 to-transparent blur-2xl opacity-70" aria-hidden="true" />
+              <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-accent/10 via-accent/5 to-transparent blur-xl opacity-50" aria-hidden="true" />
               <div className="relative overflow-hidden rounded-2xl aspect-[3/4] border border-border/60 bg-card/40 backdrop-blur-2xl backdrop-saturate-150 [box-shadow:var(--base-shadow)]">
                 <img
                   src="/images/profile.png"
