@@ -39,14 +39,16 @@ export function About() {
         {/* Intro row — heading + bio on the left, portrait on the right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-12 md:mb-16 items-start">
           <div className="lg:col-span-8 order-2 lg:order-1">
-            <SectionHeading eyebrow="02 — About" className="mb-8 md:mb-10 max-w-2xl">
-              Engineer who thinks in systems, builds with intention.
-            </SectionHeading>
-            <motion.p {...fadeUp(0.1)} className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground leading-relaxed max-w-xl">
-              A fast-learning, creative engineer eager to apply skills in coding, design, and problem-solving
-              to build real products. I combine technical depth with a proactive, adaptable mindset — thriving
-              in dynamic environments where hardware meets software.
-            </motion.p>
+            <div className="relative z-10 rounded-2xl bg-background p-6 md:p-10 border border-border/60">
+              <SectionHeading eyebrow="02 — About" className="mb-8 md:mb-10 max-w-2xl">
+                Engineer who thinks in systems, builds with intention.
+              </SectionHeading>
+              <motion.p {...fadeUp(0.1)} className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground leading-relaxed max-w-xl">
+                A fast-learning, creative engineer eager to apply skills in coding, design, and problem-solving
+                to build real products. I combine technical depth with a proactive, adaptable mindset — thriving
+                in dynamic environments where hardware meets software.
+              </motion.p>
+            </div>
           </div>
 
           {/* Portrait — right side */}
