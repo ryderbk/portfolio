@@ -41,7 +41,7 @@ const container = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { delayChildren: 1.1, staggerChildren: 0 },
+    transition: { delayChildren: 0.35, staggerChildren: 0 },
   },
 };
 

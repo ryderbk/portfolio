@@ -10,7 +10,7 @@ export function PageLoadOverlay() {
     <motion.div
       initial={{ y: 0 }}
       animate={{ y: "-100%" }}
-      transition={{ duration: 0.9, delay: 0.2, ease: [0.83, 0, 0.17, 1] }}
+      transition={{ duration: 0.45, delay: 0, ease: [0.83, 0, 0.17, 1] }}
       className="page-load-overlay"
       aria-hidden="true"
     />
