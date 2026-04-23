@@ -36,22 +36,8 @@ export function About() {
 
         {/* Main grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24">
-          {/* Left — photo + bio + education */}
+          {/* Left — bio + education */}
           <motion.div {...fadeUp(0.1)} className="lg:col-span-5">
-            {/* Profile photo */}
-            <div className="relative mb-10 group">
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-accent/30 via-accent/10 to-transparent opacity-60 blur-md group-hover:opacity-90 transition-opacity duration-500" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card aspect-[4/5] max-w-sm">
-                <img
-                  src="/images/profile.png"
-                  alt="Portrait of the engineer"
-                  loading="lazy"
-                  className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" aria-hidden="true" />
-              </div>
-            </div>
-
             <p className="text-[clamp(1rem,1.5vw,1.25rem)] font-light text-muted-foreground leading-relaxed mb-10">
               I'm a fast-moving engineer who thinks in systems and builds with intention.
               I combine technical depth with creative problem-solving — whether I'm writing code,
@@ -75,8 +61,22 @@ export function About() {
             </div>
           </motion.div>
 
-          {/* Right — what I bring + principles */}
+          {/* Right — photo + what I bring + principles */}
           <div className="lg:col-span-6 lg:col-start-7">
+            {/* Profile photo */}
+            <motion.div {...fadeUp(0.1)} className="relative mb-12 group">
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-accent/30 via-accent/10 to-transparent opacity-60 blur-md group-hover:opacity-90 transition-opacity duration-500" aria-hidden="true" />
+              <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card aspect-[4/5] max-w-sm ml-auto">
+                <img
+                  src="/images/profile.png"
+                  alt="Portrait of the engineer"
+                  loading="lazy"
+                  className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" aria-hidden="true" />
+              </div>
+            </motion.div>
+
             {/* What I Bring */}
             <motion.div {...fadeUp(0.15)} className="mb-12">
               <h3 className="text-sm font-sans uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-border font-medium">
