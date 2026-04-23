@@ -2,20 +2,6 @@ import { motion } from "framer-motion";
 import { fadeUp } from "@/lib/animations";
 import { SectionHeading } from "@/components/section-heading";
 
-const brings = [
-  { title: "AI-Assisted Development", desc: "Leverage modern AI tools to ship real, working products faster — not just prototypes or concepts." },
-  { title: "Systems Thinking", desc: "Fluent in both hardware and software. I design solutions at the intersection of disciplines." },
-  { title: "Cross-Disciplinary Approach", desc: "Electronics, robotics, web development, design — breadth creates deeper understanding." },
-  { title: "Proven Problem-Solving", desc: "Real projects, measurable outcomes. From autonomous robots to full-stack applications." },
-];
-
-const principles = [
-  { title: "Build With Purpose", desc: "Every line of code should serve a clear goal. I build to solve real problems." },
-  { title: "Learn by Doing", desc: "Mastery comes from shipping real projects and iterating fast." },
-  { title: "Simplicity Over Complexity", desc: "The best solutions are elegant, maintainable, and easy to extend." },
-  { title: "Embrace the Intersection", desc: "The most interesting work happens where hardware meets software, and design meets engineering." },
-];
-
 const education = {
   degree: "B.E. Electronics & Instrumentation",
   institution: "Velammal Engineering College, Chennai",
@@ -59,75 +45,23 @@ export function About() {
           </motion.div>
         </div>
 
-        {/* Main grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24">
-          {/* Left — education */}
-          <motion.div {...fadeUp(0.1)} className="lg:col-span-5">
-            {/* Education card */}
-            <div className="glass-card p-6 space-y-3">
-              <h3 className="text-sm font-sans uppercase tracking-widest text-accent font-medium">Education</h3>
-              <div>
-                <span className="block font-display font-semibold">{education.degree}</span>
-                <span className="block text-sm text-muted-foreground mt-1">{education.institution}</span>
-                <div className="flex items-center gap-4 mt-3">
-                  <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium">{education.period}</span>
-                  <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium">CGPA: {education.cgpa}</span>
-                </div>
+        {/* Education */}
+        <motion.div {...fadeUp(0.1)} className="max-w-xl">
+          <div className="glass-card p-6 space-y-3">
+            <h3 className="text-sm font-sans uppercase tracking-widest text-accent font-medium">Education</h3>
+            <div>
+              <span className="block font-display font-semibold">{education.degree}</span>
+              <span className="block text-sm text-muted-foreground mt-1">{education.institution}</span>
+              <div className="flex items-center gap-4 mt-3">
+                <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium">{education.period}</span>
+                <span className="text-xs font-sans px-3 py-1 bg-accent/10 text-accent rounded-full font-medium">CGPA: {education.cgpa}</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed pt-2 border-t border-border/50">
-                {education.experience}
-              </p>
             </div>
-          </motion.div>
-
-          {/* Right — what I bring + principles */}
-          <div className="lg:col-span-6 lg:col-start-7">
-            {/* What I Bring */}
-            <motion.div {...fadeUp(0.15)} className="mb-12">
-              <h3 className="text-sm font-sans uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-border font-medium">
-                What I Bring
-              </h3>
-              <div className="space-y-0">
-                {brings.map((b, i) => (
-                  <motion.div
-                    key={b.title}
-                    {...fadeUp(0.15 + i * 0.08)}
-                    className="flex gap-6 py-5 border-b border-border group"
-                  >
-                    <span className="font-sans text-xs text-accent shrink-0 mt-1 font-medium">0{i + 1}</span>
-                    <div>
-                      <h4 className="font-medium mb-1 group-hover:text-accent transition-colors duration-200">{b.title}</h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{b.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Core Principles (merged from Philosophy) */}
-            <motion.div {...fadeUp(0.3)}>
-              <h3 className="text-sm font-sans uppercase tracking-widest text-muted-foreground mb-6 pb-4 border-b border-border font-medium">
-                Core Principles
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {principles.map((p, i) => (
-                  <motion.div
-                    key={p.title}
-                    {...fadeUp(0.3 + i * 0.07)}
-                    className="p-5 border border-border rounded-xl hover:border-accent/40 transition-colors duration-300 group"
-                  >
-                    <h4 className="font-medium text-sm mb-2 group-hover:text-accent transition-colors duration-200">
-                      {p.title}
-                    </h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      {p.desc}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+            <p className="text-sm text-muted-foreground leading-relaxed pt-2 border-t border-border/50">
+              {education.experience}
+            </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
