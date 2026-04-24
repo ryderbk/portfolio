@@ -294,7 +294,7 @@ export function ChatInterface({
                 <button
                   key={prompt}
                   onClick={() => handleSendMessage(undefined, prompt)}
-                  className="text-left px-4 py-3 rounded-xl text-sm font-medium text-foreground/80 bg-foreground/[0.06] border border-border/50 hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 group"
+                  className="text-left px-4 py-3 rounded-xl text-sm font-medium text-foreground/80 bg-accent/10 border border-accent/20 hover:border-accent/40 hover:bg-accent/20 hover:text-accent transition-all duration-200 group"
                 >
                   <span className="opacity-50 group-hover:opacity-80 mr-1.5 transition-opacity">→</span>
                   {prompt}
