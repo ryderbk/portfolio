@@ -1,5 +1,5 @@
 import { collection, addDoc, getDocs, query, orderBy, Timestamp } from 'firebase/firestore';
-import { getFirestoreDb } from '../src/lib/firebase';
+import { getFirestoreDb } from '../src/lib/firebase.js';
 
 const db = getFirestoreDb();
 const MESSAGES_COLLECTION = "messages";

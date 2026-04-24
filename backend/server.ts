@@ -1,10 +1,8 @@
+import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { chatHandler } from './chat.js';
-
-// Load environment variables
-dotenv.config();
+import { contactHandler } from './contact.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -21,6 +19,8 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Routes
 app.post('/api/chat', chatHandler);
+app.post('/api/contact', contactHandler);
+app.get('/api/contact', contactHandler);
 
 // Error Handling
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
