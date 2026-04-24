@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
-import { getFirestore, Firestore, initializeFirestore } from "firebase/firestore";
+import { getFirestore, Firestore } from "firebase/firestore";
 import { getAnalytics, Analytics } from "firebase/analytics";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 
@@ -9,24 +9,14 @@ console.log("🔧 Firebase module loading...");
 
 // Firebase configuration
 // Get these values from Firebase Console > Project Settings
-const getEnv = (key: string) => {
-    if (typeof process !== 'undefined' && process.env?.[key]) return process.env[key];
-    if ((globalThis as any)?.process?.env?.[key]) return (globalThis as any).process.env[key];
-    try {
-        // @ts-ignore - import.meta.env is only available in Vite
-        if (import.meta.env?.[key]) return import.meta.env[key];
-    } catch (e) {}
-    return '';
-};
-
 const firebaseConfig = {
-    apiKey: getEnv('VITE_FIREBASE_API_KEY'),
-    authDomain: getEnv('VITE_FIREBASE_AUTH_DOMAIN'),
-    projectId: getEnv('VITE_FIREBASE_PROJECT_ID'),
-    storageBucket: getEnv('VITE_FIREBASE_STORAGE_BUCKET'),
-    messagingSenderId: getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-    appId: getEnv('VITE_FIREBASE_APP_ID'),
-    measurementId: getEnv('VITE_FIREBASE_MEASUREMENT_ID'),
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || '',
 };
 
 if (typeof window !== 'undefined') {
@@ -107,19 +97,8 @@ export function getFirebaseAuth(): Auth {
 export function getFirestoreDb(): Firestore {
     try {
         if (!db) {
-            const app = getFirebaseApp();
-            const isBrowser = typeof window !== 'undefined';
-            
-            if (isBrowser) {
-                db = getFirestore(app);
-                console.log("📚 Firestore initialized (Browser)");
-            } else {
-                // Using long polling only in Node/Vercel environments to prevent hanging
-                db = initializeFirestore(app, {
-                    experimentalForceLongPolling: true,
-                });
-                console.log("📚 Firestore initialized (Node/Long-polling)");
-            }
+            db = getFirestore(getFirebaseApp(), "default");
+            console.log("📚 Firestore database initialized");
         }
         return db!;
     } catch (error) {

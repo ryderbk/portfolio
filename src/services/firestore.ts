@@ -185,20 +185,14 @@ export const subscribeToSkills = (callback: (skills: any[]) => void) => {
 export const subscribeToMessages = (callback: (messages: any[]) => void) => {
   const q = query(collection(db, FIRESTORE_COLLECTIONS.MESSAGES), orderBy("createdAt", "desc"));
   return onSnapshot(q, (snapshot) => {
-    const messages = snapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt)
-      };
-    });
+    const messages = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: (doc.data() as any).createdAt?.toDate()
+    }));
     callback(messages);
   });
 };
-
-export const updateMessage = (id: string, data: any) => updateDocument(FIRESTORE_COLLECTIONS.MESSAGES, id, data);
-export const deleteMessage = (id: string) => removeDocument(FIRESTORE_COLLECTIONS.MESSAGES, id);
 
 /**
  * Portfolio Context for AI

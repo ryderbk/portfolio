@@ -1,8 +1,10 @@
-import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import { chatHandler } from './chat.js';
-import { contactHandler } from './contact.js';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -17,16 +19,8 @@ app.get('/health', (req: Request, res: Response) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Request Logging Middleware
-app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} | ${req.method} ${req.url}`);
-    next();
-});
-
 // Routes
 app.post('/api/chat', chatHandler);
-app.post('/api/contact', contactHandler);
-app.get('/api/contact', contactHandler);
 
 // Error Handling
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
@@ -37,7 +31,5 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 app.listen(PORT, () => {
     console.log(`🚀 Backend server running on http://localhost:${PORT}`);
     console.log(`- POST /api/chat`);
-    console.log(`- POST /api/contact`);
-    console.log(`- GET /api/contact`);
 });
 
