@@ -254,19 +254,12 @@ export function ChatInterface({
       {/* Header — Professional gradient bar */}
       <div className="chat-header p-5 border-b border-border/30 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
-          {/* Status indicator */}
-          <div className="relative">
-            <div className="w-9 h-9 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center">
-              <span className="text-accent font-display font-bold text-xs">BK</span>
-            </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-background chat-status-pulse" />
-          </div>
           <div>
-            <h3 className="font-display font-bold text-sm text-foreground leading-tight">
+            <h3 className="font-display font-bold text-base text-foreground leading-tight">
               Bharath Kumar
             </h3>
-            <p className="text-[10px] font-medium text-muted-foreground mt-0.5 tracking-wide uppercase">
-              Portfolio Assistant • Online
+            <p className="text-xs font-medium text-muted-foreground mt-0.5 tracking-wide uppercase">
+              Personal Chat • Online
             </p>
           </div>
         </div>
@@ -290,18 +283,9 @@ export function ChatInterface({
       >
         {/* Welcome state */}
         {messages.length === 0 && !isLoading && (
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-4 chat-welcome-fade">
-            {/* Welcome icon */}
-            <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-4">
-              <svg viewBox="0 0 24 24" className="w-6 h-6 text-accent" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <p className="text-sm font-medium text-foreground mb-1">
-              Welcome! 👋
-            </p>
-            <p className="text-xs text-muted-foreground leading-relaxed max-w-[240px] mb-5">
-              I'm Bharath's portfolio assistant. Feel free to ask about my projects, skills, or experience.
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-4 chat-welcome-fade gap-4">
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-[240px]">
+              Ask me anything about my projects or experience.
             </p>
             
             {/* Quick prompts */}
@@ -310,7 +294,7 @@ export function ChatInterface({
                 <button
                   key={prompt}
                   onClick={() => handleSendMessage(undefined, prompt)}
-                  className="text-left px-3.5 py-2.5 rounded-xl text-xs font-medium text-foreground/80 bg-foreground/[0.03] border border-border/50 hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 group"
+                  className="text-left px-4 py-3 rounded-xl text-sm font-medium text-foreground/80 bg-foreground/[0.03] border border-border/50 hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 group"
                 >
                   <span className="opacity-50 group-hover:opacity-80 mr-1.5 transition-opacity">→</span>
                   {prompt}
@@ -327,14 +311,8 @@ export function ChatInterface({
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} chat-message-enter`}
             style={{ animationDelay: `${idx * 0.05}s` }}
           >
-            {/* Assistant avatar */}
-            {msg.role === "assistant" && (
-              <div className="w-6 h-6 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0 mr-2 mt-1">
-                <span className="text-accent font-display font-bold text-[8px]">BK</span>
-              </div>
-            )}
             <div
-              className={`max-w-[82%] px-4 py-3 text-[13px] leading-relaxed ${msg.role === "user"
+              className={`max-w-[85%] px-5 py-4 text-base leading-relaxed ${msg.role === "user"
                   ? "chat-bubble-user rounded-2xl rounded-br-md"
                   : "chat-bubble-assistant rounded-2xl rounded-bl-md"
                 }`}
@@ -347,10 +325,7 @@ export function ChatInterface({
         {/* Typing indicator */}
         {isLoading && (
           <div className="flex justify-start chat-message-enter">
-            <div className="w-6 h-6 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0 mr-2 mt-1">
-              <span className="text-accent font-display font-bold text-[8px]">BK</span>
-            </div>
-            <div className="chat-bubble-assistant px-4 py-3 rounded-2xl rounded-bl-md">
+            <div className="chat-bubble-assistant px-5 py-4 rounded-2xl rounded-bl-md">
               <div className="flex gap-1.5 items-center h-5">
                 <div className="w-1.5 h-1.5 bg-accent/60 rounded-full chat-typing-dot" style={{ animationDelay: "0s" }} />
                 <div className="w-1.5 h-1.5 bg-accent/60 rounded-full chat-typing-dot" style={{ animationDelay: "0.15s" }} />
@@ -374,7 +349,7 @@ export function ChatInterface({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about my work..."
-            className="flex-1 px-4 py-3 rounded-xl bg-foreground/[0.03] border border-border/50 focus:border-accent/40 focus:bg-foreground/[0.05] outline-none text-sm font-medium transition-all duration-200 placeholder:text-muted-foreground/60"
+            className="flex-1 px-5 py-4 rounded-xl bg-foreground/[0.03] border border-border/50 focus:border-accent/40 focus:bg-foreground/[0.05] outline-none text-base font-medium transition-all duration-200 placeholder:text-muted-foreground/60"
             disabled={isLoading}
           />
           <button
