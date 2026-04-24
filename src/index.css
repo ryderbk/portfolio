@@ -377,11 +377,11 @@
 }
 
 .btn-animated .arr-1, .btn-animated-secondary .arr-1, .btn-animated-destructive .arr-1 {
-  right: 16px;
+  right: 22px;
   transform: translate3d(0, 0, 0);
 }
 .btn-animated .arr-2, .btn-animated-secondary .arr-2, .btn-animated-destructive .arr-2 {
-  left: 16px;
+  left: 22px;
   transform: translate3d(-200%, 0, 0); /* parked off-screen via transform, not `left` */
 }
 
@@ -407,7 +407,7 @@
 .btn-animated .text, .btn-animated-secondary .text, .btn-animated-destructive .text {
   position: relative;
   z-index: 1;
-  transform: translate3d(-12px, 0, 0);
+  transform: translate3d(-8px, 0, 0);
   transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -424,7 +424,7 @@
   transform: translate3d(0, 0, 0); /* slides into view */
 }
 .btn-animated:hover .text, .btn-animated-secondary:hover .text, .btn-animated-destructive:hover .text {
-  transform: translate3d(12px, 0, 0);
+  transform: translate3d(8px, 0, 0);
 }
 
 /* Scale 40x = covers an 800px area, same visual as before but compositor-only */
@@ -867,9 +867,12 @@ section {
     white-space: nowrap;
     writing-mode: vertical-rl;
     text-orientation: mixed;
-    transform: rotate(180deg);
+    transform: rotate(180deg) translateZ(0);
     opacity: 0.75;
     letter-spacing: 0.12em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    backface-visibility: hidden;
     /* PERF: only opacity changes on hover. `all` would interpolate every property
        including `transform`, which is set static here. */
     transition: opacity 0.3s ease;
