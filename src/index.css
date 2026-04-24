@@ -377,11 +377,11 @@
 }
 
 .btn-animated .arr-1, .btn-animated-secondary .arr-1, .btn-animated-destructive .arr-1 {
-  right: 22px;
+  right: 18px;
   transform: translate3d(0, 0, 0);
 }
 .btn-animated .arr-2, .btn-animated-secondary .arr-2, .btn-animated-destructive .arr-2 {
-  left: 22px;
+  left: 18px;
   transform: translate3d(-200%, 0, 0); /* parked off-screen via transform, not `left` */
 }
 
@@ -407,7 +407,7 @@
 .btn-animated .text, .btn-animated-secondary .text, .btn-animated-destructive .text {
   position: relative;
   z-index: 1;
-  transform: translate3d(-8px, 0, 0);
+  transform: translate3d(-10px, 0, 0);
   transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -424,7 +424,7 @@
   transform: translate3d(0, 0, 0); /* slides into view */
 }
 .btn-animated:hover .text, .btn-animated-secondary:hover .text, .btn-animated-destructive:hover .text {
-  transform: translate3d(8px, 0, 0);
+  transform: translate3d(10px, 0, 0);
 }
 
 /* Scale 40x = covers an 800px area, same visual as before but compositor-only */
@@ -702,7 +702,7 @@ section {
   height: 18px;
   display: block;
   flex-shrink: 0;
-  left: 15px;
+  left: 20px;
   position: absolute;
   color: hsl(var(--muted-foreground));
   transition: color 0.3s;
@@ -720,7 +720,7 @@ section {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
   display: block;
   text-align: center;
-  text-indent: 18px;
+  text-indent: 12px;
   width: 100%;
   font-size: 0.8rem;
   font-weight: 500;
