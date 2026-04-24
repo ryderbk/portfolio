@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
-import { getFirestore, Firestore } from "firebase/firestore";
+import { getFirestore, Firestore, initializeFirestore } from "firebase/firestore";
 import { getAnalytics, Analytics } from "firebase/analytics";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 
@@ -107,8 +107,11 @@ export function getFirebaseAuth(): Auth {
 export function getFirestoreDb(): Firestore {
     try {
         if (!db) {
-            db = getFirestore(getFirebaseApp(), "default");
-            console.log("📚 Firestore database initialized");
+            // Using initializeFirestore with long polling to prevent hanging in Node/Vercel environments
+            db = initializeFirestore(getFirebaseApp(), {
+                experimentalForceLongPolling: true,
+            });
+            console.log("📚 Firestore database initialized (with long-polling)");
         }
         return db!;
     } catch (error) {

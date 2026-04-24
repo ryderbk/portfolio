@@ -8,14 +8,18 @@ export async function contactHandler(req: any, res: any) {
   const method = req.method;
 
   try {
+    console.log(`📩 Received ${method} request to /api/contact`);
     if (method === 'POST') {
       const { name, email, message } = req.body;
+      console.log(`📝 Processing message from: ${name} (${email})`);
 
       if (!name || !email || !message) {
+        console.warn("⚠️ Missing fields in contact request");
         return res.status(400).json({ error: "Missing required fields: name, email, and message are required." });
       }
 
       // Save message to Firestore
+      console.log("🔥 Attempting to save to Firestore...");
       const docRef = await addDoc(collection(db, MESSAGES_COLLECTION), {
         name,
         email,
@@ -23,6 +27,7 @@ export async function contactHandler(req: any, res: any) {
         createdAt: Timestamp.now(),
         read: false
       });
+      console.log(`✅ Message saved with ID: ${docRef.id}`);
 
       return res.status(201).json({ success: true, id: docRef.id });
 
