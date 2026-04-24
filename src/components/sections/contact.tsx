@@ -8,13 +8,30 @@ export function Contact() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const subject = encodeURIComponent(`Portfolio Contact from ${formState.name}`);
-    const body = encodeURIComponent(`Name: ${formState.name}\nEmail: ${formState.email}\n\n${formState.message}`);
-    window.location.href = `mailto:sbharathkumar1125@gmail.com?subject=${subject}&body=${body}`;
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formState),
+      });
+
+      if (!response.ok) throw new Error("Failed to send message");
+
+      setSent(true);
+      setFormState({ name: "", email: "", message: "" });
+      setTimeout(() => setSent(false), 5000);
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Something went wrong. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -201,9 +218,10 @@ export function Contact() {
                 variant="default"
                 className="w-full"
                 data-testid="btn-send-message"
+                disabled={isSubmitting || sent}
                 aria-label={sent ? "Message sent" : "Send message"}
               >
-                {sent ? "Message sent! Check your email client." : "Send Message"}
+                {isSubmitting ? "Sending..." : sent ? "Message Sent!" : "Send Message"}
               </Button>
             </motion.form>
           </div>
