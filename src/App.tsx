@@ -1,25 +1,29 @@
+import { lazy, Suspense } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { PageLoadOverlay } from "@/components/page-load-overlay";
-import NotFound from "@/pages/not-found";
-import Home from "@/pages/home";
+
+// Lazy load pages for better initial performance
+const Home = lazy(() => import("@/pages/home"));
+const Admin = lazy(() => import("@/pages/admin"));
+const Login = lazy(() => import("@/pages/login"));
+const NotFound = lazy(() => import("@/pages/not-found"));
 
 import { AuthProvider } from "@/context/AuthContext";
-
-import Admin from "@/pages/admin";
-import Login from "@/pages/login";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/admin" component={Admin} />
-      <Route path="/admin/login" component={Login} />
-      <Route component={NotFound} />
-    </Switch>
+    <Suspense fallback={null}>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/admin" component={Admin} />
+        <Route path="/admin/login" component={Login} />
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 

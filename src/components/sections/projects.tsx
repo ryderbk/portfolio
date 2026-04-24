@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, memo } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef, memo, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Loader2 } from "lucide-react";
 import { fadeUp } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
@@ -10,20 +10,50 @@ interface ProjectCardProps {
   project: any;
   i: number;
   isActive: boolean;
-  currentImgIdx: number;
   onHover: (title: string) => void;
 }
 
-const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: ProjectCardProps) => {
-  const projectImages = project.image 
-    ? [project.image]
-    : project.images && project.images.length > 0 
-      ? project.images 
-      : ["/images/project-01.png"];
-  const projectTags = project.tags || [];
+const ProjectCard = memo(({ project, i, isActive, onHover }: ProjectCardProps) => {
+  const [currentImgIdx, setCurrentImgIdx] = useState(0);
+  const [isSectionVisible, setIsSectionVisible] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
+
+  const projectImages = useMemo(() => {
+    if (project.image) return [project.image];
+    if (project.images && project.images.length > 0) return project.images;
+    return ["/images/project-01.png"];
+  }, [project.image, project.images]);
+
+  const projectTags = useMemo(() => project.tags || [], [project.tags]);
+
+  // Track visibility to only cycle images when in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsSectionVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Cycle images only if active and visible
+  useEffect(() => {
+    if (!isActive || !isSectionVisible || projectImages.length <= 1) {
+      if (currentImgIdx !== 0) setCurrentImgIdx(0);
+      return;
+    }
+    
+    const interval = setInterval(() => {
+      setCurrentImgIdx(prev => (prev + 1) % projectImages.length);
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, [isActive, isSectionVisible, projectImages.length, currentImgIdx]);
 
   return (
     <motion.article
+      ref={cardRef}
       layout
       {...fadeUp(i * 0.1)}
       transition={{ duration: 0.5, ease: "easeOut" }}
@@ -31,17 +61,29 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: Proj
       onMouseEnter={() => onHover(project.title)}
     >
       <motion.div layout className="project-image-wrapper">
-        {projectImages.map((img: string, idx: number) => (
-          <img 
-            key={img + idx}
-            src={img} 
-            alt={`${project.title} - Preview ${idx + 1}`} 
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-              idx === currentImgIdx ? 'opacity-100' : 'opacity-0'
-            }`}
+        <AnimatePresence mode="popLayout">
+          <motion.img 
+            key={projectImages[currentImgIdx]}
+            src={projectImages[currentImgIdx]} 
+            alt={`${project.title} - Preview ${currentImgIdx + 1}`} 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="absolute inset-0 w-full h-full object-cover"
             loading={i === 0 ? "eager" : "lazy"}
+            decoding="async"
           />
-        ))}
+        </AnimatePresence>
+        
+        {/* Preload next image if active */}
+        {isActive && projectImages.length > 1 && (
+          <link 
+            rel="preload" 
+            as="image" 
+            href={projectImages[(currentImgIdx + 1) % projectImages.length]} 
+          />
+        )}
         
         <div className="project-collapsed-label">
           <h4 className="font-projects">{project.title}</h4>
@@ -96,18 +138,13 @@ export function Projects() {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState<string>("");
-  const [imgCycle, setImgCycle] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
 
   // Fetch projects from Firestore
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
-      // Use Firestore data if available, otherwise fallback to initialProjects
       const finalProjects = data.length > 0 ? data : initialProjects;
       setProjects(finalProjects);
       
-      // Set first project as active if none selected
       if (finalProjects.length > 0 && !activeId) {
         setActiveId(finalProjects[0].title);
       }
@@ -116,29 +153,8 @@ export function Projects() {
     return () => unsubscribe();
   }, [activeId]);
 
-  // Pause interval when not in view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { threshold: 0.1 }
-    );
-    
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isVisible) return;
-    
-    const interval = setInterval(() => {
-      setImgCycle(prev => (prev + 1));
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isVisible]);
-
   return (
     <section 
-      ref={sectionRef}
       id="work" 
       className="py-24 md:py-36" 
       aria-label="Selected work"
@@ -181,7 +197,6 @@ export function Projects() {
                 project={project}
                 i={i}
                 isActive={activeId === project.title}
-                currentImgIdx={imgCycle % (project.images?.length || 1)}
                 onHover={setActiveId}
               />
             ))}

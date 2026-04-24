@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect } from "react";
 const Hero = lazy(() => import("@/components/sections/hero").then(m => ({ default: m.Hero })));
 const About = lazy(() => import("@/components/sections/about").then(m => ({ default: m.About })));
 const Projects = lazy(() => import("@/components/sections/projects").then(m => ({ default: m.Projects })));
@@ -12,7 +12,7 @@ import { Background } from "@/components/background";
 export default function Home() {
 
   // Automatic fullscreen on first interaction
-  useState(() => {
+  useEffect(() => {
     const handleInteraction = () => {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {
@@ -23,11 +23,14 @@ export default function Home() {
       window.removeEventListener("touchstart", handleInteraction);
     };
 
-    if (typeof window !== "undefined") {
-      window.addEventListener("click", handleInteraction);
-      window.addEventListener("touchstart", handleInteraction);
-    }
-  });
+    window.addEventListener("click", handleInteraction);
+    window.addEventListener("touchstart", handleInteraction);
+    
+    return () => {
+      window.removeEventListener("click", handleInteraction);
+      window.removeEventListener("touchstart", handleInteraction);
+    };
+  }, []);
 
   return (
     <>
@@ -42,10 +45,25 @@ export default function Home() {
       <main id="main-content">
         <Suspense fallback={null}>
           <Hero />
+        </Suspense>
+        
+        <Suspense fallback={<div className="min-h-[400px]" />}>
           <Projects />
+        </Suspense>
+        
+        <Suspense fallback={<div className="min-h-[400px]" />}>
           <About />
+        </Suspense>
+        
+        <Suspense fallback={<div className="min-h-[300px]" />}>
           <KeyboardSection />
+        </Suspense>
+        
+        <Suspense fallback={<div className="min-h-[400px]" />}>
           <Skills />
+        </Suspense>
+        
+        <Suspense fallback={<div className="min-h-[400px]" />}>
           <Contact />
         </Suspense>
       </main>
