@@ -5,6 +5,7 @@ const Projects = lazy(() => import("@/components/sections/projects").then(m => (
 const KeyboardSection = lazy(() => import("@/components/sections/keyboard-section").then(m => ({ default: m.KeyboardSection })));
 const Skills = lazy(() => import("@/components/sections/skills").then(m => ({ default: m.Skills })));
 const Contact = lazy(() => import("@/components/sections/contact").then(m => ({ default: m.Contact })));
+const ChatWidget = lazy(() => import("@/components/shared/ChatWidget"));
 import { Navbar } from "@/components/shared/navbar";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { Background } from "@/components/background";
@@ -49,6 +50,11 @@ export default function Home() {
           <Contact />
         </Suspense>
       </main>
+
+      {/* Floating AI Chat Assistant */}
+      <Suspense fallback={null}>
+        <ChatWidget />
+      </Suspense>
     </>
   );
 }

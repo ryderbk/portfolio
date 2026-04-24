@@ -1,22 +1,25 @@
 import { getChatResponse } from '../src/services/ai';
 
 export const config = {
-  runtime: 'edge', // Using Edge for better Response API support
+  runtime: 'edge',
 };
 
 export default async function handler(req: Request) {
   try {
     const body = await req.json();
-    const { message, context } = body;
+    const { message, context, history } = body;
 
     if (!message) {
       return new Response(
-        JSON.stringify({ reply: "Message is required" }),
+        JSON.stringify({ reply: "Message is required." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const reply = await getChatResponse(message, context || {});
+    // Pass conversation history for multi-turn context
+    const conversationHistory = Array.isArray(history) ? history : [];
+    
+    const reply = await getChatResponse(message, context || {}, conversationHistory);
 
     return new Response(
       JSON.stringify({ reply }),
@@ -27,7 +30,7 @@ export default async function handler(req: Request) {
     console.error("API ERROR:", error);
     return new Response(
       JSON.stringify({
-        reply: "Server error",
+        reply: "I apologize, but the AI assistant is temporarily unavailable. Please try again shortly.",
         error: String(error)
       }),
       { 

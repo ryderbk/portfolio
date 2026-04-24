@@ -1168,6 +1168,143 @@ section {
   transition: transform 0s;
 }
 
+/* ============================================
+   CHAT UI — Premium Glassmorphic Chat System
+   ============================================ */
+
+/* Chat panel entrance animation */
+@keyframes chatPanelSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chat-panel-enter {
+  animation: chatPanelSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Chat trigger label fade */
+@keyframes chatLabelFadeIn {
+  from { opacity: 0; transform: translateX(6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Chat trigger button hover lift — separate from glass-card */
+.chat-trigger-btn {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.chat-trigger-btn:hover {
+  transform: translate3d(0, -2px, 0) !important;
+}
+.chat-trigger-btn:active {
+  transform: translate3d(0, 0, 0) scale(0.97) !important;
+}
+
+/* Chat header gradient bar */
+.chat-header {
+  background: linear-gradient(
+    180deg,
+    hsl(var(--card)) 0%,
+    hsl(var(--card) / 0.95) 100%
+  );
+}
+
+/* Online status pulse */
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+}
+
+.chat-status-pulse {
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+/* Message bubble styles */
+.chat-bubble-user {
+  background: hsl(var(--accent) / 0.12);
+  border: 1px solid hsl(var(--accent) / 0.15);
+  color: hsl(var(--foreground));
+}
+
+.chat-bubble-assistant {
+  background: hsl(var(--muted) / 0.35);
+  border: 1px solid hsl(var(--border) / 0.25);
+  color: hsl(var(--foreground));
+}
+
+/* Message entrance animation */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message-enter {
+  animation: messageSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Welcome state fade-in */
+@keyframes welcomeFade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.chat-welcome-fade {
+  animation: welcomeFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+/* Typing dots animation */
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+}
+
+.chat-typing-dot {
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+
+/* Chat input area subtle background */
+.chat-input-area {
+  background: linear-gradient(
+    0deg,
+    hsl(var(--card)) 0%,
+    hsl(var(--card) / 0.98) 100%
+  );
+}
+
+/* Chat messages scrollbar */
+.chat-messages-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border) / 0.3) transparent;
+}
+
+.chat-messages-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-messages-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages-scroll::-webkit-scrollbar-thumb {
+  background: hsl(var(--border) / 0.3);
+  border-radius: 4px;
+}
+
+.chat-messages-scroll::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.3);
+}
+
 /* Reduced motion — disable cinematic globals and keep the UI usable. */
 @media (prefers-reduced-motion: reduce) {
   .page-load-overlay {
@@ -1182,5 +1319,16 @@ section {
   }
   .glass-card:hover {
     transform: none !important;
+  }
+  .chat-panel-enter,
+  .chat-message-enter,
+  .chat-welcome-fade {
+    animation: none !important;
+  }
+  .chat-typing-dot {
+    animation: none !important;
+  }
+  .chat-status-pulse {
+    animation: none !important;
   }
 }

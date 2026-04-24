@@ -1,27 +1,42 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
 
+/**
+ * Formats AI response text into rendered React nodes.
+ * Supports: **bold**, hyperlinks, newlines, and bullet points.
+ */
 function formatMessage(content: string): React.ReactNode {
   const lines = content.split("\n");
-  const parts: React.ReactNode[] = [];
-  let lineIndex = 0;
+  const elements: React.ReactNode[] = [];
 
-  for (const line of lines) {
-    if (lineIndex > 0) parts.push(<br key={`br-${lineIndex}`} />);
+  for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    const line = lines[lineIndex];
+    
+    // Skip empty lines but add spacing
+    if (line.trim() === "") {
+      if (lineIndex > 0) elements.push(<div key={`sp-${lineIndex}`} className="h-2" />);
+      continue;
+    }
 
+    // Detect bullet points
+    const isBullet = /^\s*[-•*]\s+/.test(line);
+    const cleanLine = isBullet ? line.replace(/^\s*[-•*]\s+/, "") : line;
+
+    // Parse inline formatting: **bold** and URLs
+    const parts: React.ReactNode[] = [];
     const regex = /(https?:\/\/[^\s]+)|\*\*([^*]+)\*\*/g;
     let lastIndex = 0;
     let match;
     let keyIndex = 0;
 
-    while ((match = regex.exec(line)) !== null) {
+    while ((match = regex.exec(cleanLine)) !== null) {
       if (match.index > lastIndex) {
-        parts.push(line.slice(lastIndex, match.index));
+        parts.push(cleanLine.slice(lastIndex, match.index));
       }
 
       if (match[1]) {
@@ -31,31 +46,50 @@ function formatMessage(content: string): React.ReactNode {
             href={match[1]}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-violet-600 dark:text-violet-400 underline hover:text-violet-800"
+            className="text-accent underline underline-offset-2 hover:opacity-80 transition-opacity"
           >
             {match[1]}
-          </a>,
+          </a>
         );
       } else if (match[2]) {
         parts.push(
-          <span key={`${lineIndex}-${keyIndex++}`} className="font-semibold">
+          <span key={`${lineIndex}-${keyIndex++}`} className="font-semibold text-foreground">
             {match[2]}
-          </span>,
+          </span>
         );
       }
 
       lastIndex = match.index + match[0].length;
     }
 
-    if (lastIndex < line.length) {
-      parts.push(line.slice(lastIndex));
+    if (lastIndex < cleanLine.length) {
+      parts.push(cleanLine.slice(lastIndex));
     }
 
-    lineIndex++;
+    if (isBullet) {
+      elements.push(
+        <div key={`line-${lineIndex}`} className="flex gap-2 items-start pl-1">
+          <span className="text-accent mt-1.5 text-[6px] flex-shrink-0">●</span>
+          <span>{parts}</span>
+        </div>
+      );
+    } else {
+      elements.push(
+        <div key={`line-${lineIndex}`}>{parts}</div>
+      );
+    }
   }
 
-  return parts;
+  return <div className="flex flex-col gap-1">{elements}</div>;
 }
+
+/* Suggested quick-action prompts for visitors */
+const QUICK_PROMPTS = [
+  "What projects have you worked on?",
+  "What technologies do you use?",
+  "Tell me about your experience",
+  "Are you available for work?",
+];
 
 interface ChatInterfaceProps {
   className?: string;
@@ -137,38 +171,50 @@ export function ChatInterface({
     fetchContext();
   }, []);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (scrollContainerRef.current) {
       const container = scrollContainerRef.current;
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: "smooth",
+      // Use requestAnimationFrame for smooth scroll after DOM paint
+      requestAnimationFrame(() => {
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: "smooth",
+        });
       });
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (messages.length > 0) {
       scrollToBottom();
     }
-  }, [messages]);
+  }, [messages, scrollToBottom]);
 
-  const handleSendMessage = async (e?: React.FormEvent) => {
+  const handleSendMessage = async (e?: React.FormEvent, overrideMessage?: string) => {
     if (e) e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    const messageToSend = overrideMessage || input.trim();
+    if (!messageToSend || isLoading) return;
 
-    const userMessage = input.trim();
     setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+    
+    const userMessage: Message = { role: "user", content: messageToSend };
+    setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
     try {
+      // Build conversation history for multi-turn context
+      const history = messages.map(m => ({
+        role: m.role,
+        content: m.content,
+      }));
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: userMessage,
+          message: messageToSend,
           context: portfolioData,
+          history,
         }),
       });
 
@@ -191,7 +237,7 @@ export function ChatInterface({
       console.error("Chat error:", error);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "AI is temporarily unavailable." },
+        { role: "assistant", content: "I apologize, but I'm temporarily unavailable. Please try again shortly." },
       ]);
     } finally {
       setIsLoading(false);
@@ -202,25 +248,37 @@ export function ChatInterface({
     <div
       className={`flex flex-col overflow-hidden ${isInline
           ? "w-full h-full rounded-2xl bg-card/40 border border-border/60 backdrop-blur-2xl backdrop-saturate-150 [box-shadow:var(--base-shadow)]"
-          : "glass-card h-[500px] z-50 shadow-2xl"
+          : "h-full z-50"
         } ${className}`}
     >
-      {/* Header */}
-      <div className="p-6 border-b border-border/40 flex items-center justify-between">
-        <div>
-          <h3 className="font-display font-black text-2xl text-foreground">
-            Chat / AI
-          </h3>
-          <p className="text-xs font-medium text-muted-foreground mt-1">
-            Bharath's Portfolio Assistant
-          </p>
+      {/* Header — Professional gradient bar */}
+      <div className="chat-header p-5 border-b border-border/30 flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-3">
+          {/* Status indicator */}
+          <div className="relative">
+            <div className="w-9 h-9 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center">
+              <span className="text-accent font-display font-bold text-xs">BK</span>
+            </div>
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-background chat-status-pulse" />
+          </div>
+          <div>
+            <h3 className="font-display font-bold text-sm text-foreground leading-tight">
+              Bharath Kumar
+            </h3>
+            <p className="text-[10px] font-medium text-muted-foreground mt-0.5 tracking-wide uppercase">
+              Portfolio Assistant • Online
+            </p>
+          </div>
         </div>
         {onClose && (
           <button
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors border border-border/10"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/5 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Close chat"
           >
-            ✕
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
           </button>
         )}
       </div>
@@ -228,38 +286,75 @@ export function ChatInterface({
       {/* Messages */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar relative flex flex-col"
+        className="flex-1 overflow-y-auto p-5 space-y-4 chat-messages-scroll relative flex flex-col"
       >
+        {/* Welcome state */}
         {messages.length === 0 && !isLoading && (
-          <div className="flex-1 flex items-center justify-center text-center">
-            <div className="max-w-[90%] px-5 py-4 text-sm leading-relaxed text-muted-foreground">
-              Hi!👋 Ask me anything about my work.
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-4 chat-welcome-fade">
+            {/* Welcome icon */}
+            <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-4">
+              <svg viewBox="0 0 24 24" className="w-6 h-6 text-accent" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-foreground mb-1">
+              Welcome! 👋
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-[240px] mb-5">
+              I'm Bharath's portfolio assistant. Feel free to ask about my projects, skills, or experience.
+            </p>
+            
+            {/* Quick prompts */}
+            <div className="flex flex-col gap-2 w-full max-w-[280px]">
+              {QUICK_PROMPTS.map((prompt) => (
+                <button
+                  key={prompt}
+                  onClick={() => handleSendMessage(undefined, prompt)}
+                  className="text-left px-3.5 py-2.5 rounded-xl text-xs font-medium text-foreground/80 bg-foreground/[0.03] border border-border/50 hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 group"
+                >
+                  <span className="opacity-50 group-hover:opacity-80 mr-1.5 transition-opacity">→</span>
+                  {prompt}
+                </button>
+              ))}
             </div>
           </div>
         )}
+
+        {/* Message bubbles */}
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"
-              }`}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} chat-message-enter`}
+            style={{ animationDelay: `${idx * 0.05}s` }}
           >
+            {/* Assistant avatar */}
+            {msg.role === "assistant" && (
+              <div className="w-6 h-6 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0 mr-2 mt-1">
+                <span className="text-accent font-display font-bold text-[8px]">BK</span>
+              </div>
+            )}
             <div
-              className={`max-w-[90%] px-5 py-4 rounded-2xl text-sm leading-relaxed ${msg.role === "user"
-                  ? "bg-accent/10 border border-accent/20 text-foreground shadow-sm"
-                  : "bg-muted/30 border border-border/10 text-foreground"
+              className={`max-w-[82%] px-4 py-3 text-[13px] leading-relaxed ${msg.role === "user"
+                  ? "chat-bubble-user rounded-2xl rounded-br-md"
+                  : "chat-bubble-assistant rounded-2xl rounded-bl-md"
                 }`}
             >
               {formatMessage(msg.content)}
             </div>
           </div>
         ))}
+
+        {/* Typing indicator */}
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-muted/30 border border-border/10 px-5 py-4 rounded-2xl">
-              <div className="flex gap-1.5 item-center h-4">
-                <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce" />
-                <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce [animation-delay:0.2s]" />
-                <div className="w-1.5 h-1.5 bg-accent/60 rounded-full animate-bounce [animation-delay:0.4s]" />
+          <div className="flex justify-start chat-message-enter">
+            <div className="w-6 h-6 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0 mr-2 mt-1">
+              <span className="text-accent font-display font-bold text-[8px]">BK</span>
+            </div>
+            <div className="chat-bubble-assistant px-4 py-3 rounded-2xl rounded-bl-md">
+              <div className="flex gap-1.5 items-center h-5">
+                <div className="w-1.5 h-1.5 bg-accent/60 rounded-full chat-typing-dot" style={{ animationDelay: "0s" }} />
+                <div className="w-1.5 h-1.5 bg-accent/60 rounded-full chat-typing-dot" style={{ animationDelay: "0.15s" }} />
+                <div className="w-1.5 h-1.5 bg-accent/60 rounded-full chat-typing-dot" style={{ animationDelay: "0.3s" }} />
               </div>
             </div>
           </div>
@@ -267,29 +362,30 @@ export function ChatInterface({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
+      {/* Input Area */}
       <form
         onSubmit={handleSendMessage}
-        className="p-6 border-t border-border/40"
+        className="p-4 border-t border-border/30 flex-shrink-0 chat-input-area"
       >
-        <div className="flex gap-3">
+        <div className="flex gap-2.5 items-end">
           <input
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a message..."
-            className="flex-1 px-5 py-4 rounded-lg bg-background border border-border focus:border-accent/40 outline-none text-sm font-medium transition-all"
+            placeholder="Ask about my work..."
+            className="flex-1 px-4 py-3 rounded-xl bg-foreground/[0.03] border border-border/50 focus:border-accent/40 focus:bg-foreground/[0.05] outline-none text-sm font-medium transition-all duration-200 placeholder:text-muted-foreground/60"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="w-14 h-14 flex items-center justify-center rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-30 transition-all active:scale-95 group/send shadow-sm"
+            className="w-11 h-11 flex items-center justify-center rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200 active:scale-95 group/send flex-shrink-0"
+            aria-label="Send message"
           >
             <svg
               viewBox="0 0 24 24"
-              className={`w-6 h-6 fill-current transition-transform duration-300 ${isLoading
+              className={`w-[18px] h-[18px] fill-current transition-transform duration-300 ${isLoading
                   ? "animate-pulse"
                   : "group-hover/send:translate-x-0.5 group-hover/send:-translate-y-0.5"
                 }`}
