@@ -8,13 +8,19 @@ export function Contact() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const subject = encodeURIComponent(`Portfolio Contact from ${formState.name}`);
-    const body = encodeURIComponent(`Name: ${formState.name}\nEmail: ${formState.email}\n\n${formState.message}`);
-    window.location.href = `mailto:sbharathkumar1125@gmail.com?subject=${subject}&body=${body}`;
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
+    try {
+      const { sendMessage } = await import("@/services/firestore");
+      await sendMessage(formState);
+      
+      setSent(true);
+      setFormState({ name: "", email: "", message: "" });
+      setTimeout(() => setSent(false), 5000);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      alert("Something went wrong. Please try again later.");
+    }
   }
 
   return (
@@ -203,7 +209,7 @@ export function Contact() {
                 data-testid="btn-send-message"
                 aria-label={sent ? "Message sent" : "Send message"}
               >
-                {sent ? "Message sent! Check your email client." : "Send Message"}
+                {sent ? "Message sent! I'll get back to you soon." : "Send Message"}
               </Button>
             </motion.form>
           </div>

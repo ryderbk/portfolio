@@ -6,8 +6,10 @@ import {
   updateProject,
   deleteProject,
   batchUpdateProjectOrders,
+  subscribeToMessages,
+  deleteMessage,
 } from "@/services/firestore";
-import { Trash2, Edit2, Plus, RefreshCw, X, FolderKanban, Palette, Settings, LifeBuoy, ChevronUp, ChevronDown } from "lucide-react";
+import { Trash2, Edit2, Plus, RefreshCw, X, FolderKanban, Palette, Settings, LifeBuoy, ChevronUp, ChevronDown, Mail, Inbox } from "lucide-react";
 import ConfigPanel from "@/components/admin/ConfigPanel";
 import { useSiteConfig } from "@/hooks/useSiteConfig";
 
@@ -23,12 +25,14 @@ interface Project {
   [key: string]: any;
 }
 
-type Tab = "projects" | "appearance";
+type Tab = "projects" | "appearance" | "messages";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<Tab>("projects");
   const [projects, setProjects] = useState<Project[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [messagesLoading, setMessagesLoading] = useState(true);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false); /* Form state */
   const [formData, setFormData] = useState({
@@ -43,11 +47,20 @@ export default function AdminPage() {
   const { isSyncing } = useSiteConfig();
 
   useEffect(() => {
-    const unsubscribe = subscribeToProjects((data) => {
+    const unsubProjects = subscribeToProjects((data) => {
       setProjects(data as Project[]);
       setLoading(false);
     });
-    return () => unsubscribe();
+
+    const unsubMessages = subscribeToMessages((data) => {
+      setMessages(data);
+      setMessagesLoading(false);
+    });
+
+    return () => {
+      unsubProjects();
+      unsubMessages();
+    };
   }, []);
 
   const handleOpenForm = (project?: Project) => {
@@ -107,6 +120,16 @@ export default function AdminPage() {
         await deleteProject(id);
       } catch (error) {
         alert("Delete failed.");
+      }
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this message?")) {
+      try {
+        await deleteMessage(id);
+      } catch (error) {
+        alert("Failed to delete message.");
       }
     }
   };
@@ -182,6 +205,19 @@ export default function AdminPage() {
                 <Palette size={18} /> Appearance
               </button>
 
+              <button
+                onClick={() => setActiveTab("messages")}
+                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all shrink-0 ${activeTab === "messages" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+              >
+                <div className="relative">
+                  <Inbox size={18} />
+                  {messages.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-background" />
+                  )}
+                </div>
+                Messages
+              </button>
+
               <div className="hidden lg:block p-5 rounded-2xl bg-muted/30 border border-border/50">
                 <div className="flex items-center gap-2.5 text-primary mb-3">
                   <LifeBuoy size={18} />
@@ -197,12 +233,13 @@ export default function AdminPage() {
             <main className="min-h-[500px] pb-24">
               {activeTab === "projects" ? (
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                  {/* ... projects list remains largely same ... */}
                   <div className="flex items-center justify-between border-b border-border pb-4">
                     <h2 className="text-xl font-bold flex items-center gap-2">
                       All Projects <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{projects.length}</span>
                     </h2>
                   </div>
-
+                  {/* ... projects rendering ... */}
                   {loading ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
                       <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -308,8 +345,81 @@ export default function AdminPage() {
                     </div>
                   )}
                 </div>
-              ) : (
+              ) : activeTab === "appearance" ? (
                 <ConfigPanel />
+              ) : (
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                  <div className="flex items-center justify-between border-b border-border pb-4">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                      Inbound Messages <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{messages.length}</span>
+                    </h2>
+                  </div>
+
+                  {messagesLoading ? (
+                    <div className="flex flex-col items-center justify-center py-32 gap-4">
+                      <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                      <p className="text-sm font-medium text-muted-foreground">Checking for messages...</p>
+                    </div>
+                  ) : messages.length === 0 ? (
+                    <div className="text-center py-24 p-8 rounded-3xl border border-dashed border-border bg-muted/20">
+                      <div className="mb-4 flex justify-center text-muted-foreground opacity-50">
+                        <Mail size={48} />
+                      </div>
+                      <h3 className="text-lg font-bold">Inbox is Empty</h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        When someone contacts you, their message will appear here.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid gap-6">
+                      {messages.map((msg) => (
+                        <div
+                          key={msg.id}
+                          className="p-6 rounded-3xl border border-border bg-card relative overflow-hidden transition-all hover:border-primary/30"
+                          style={{ boxShadow: 'var(--base-shadow)' }}
+                        >
+                          <div className="flex flex-col md:flex-row gap-6">
+                            <div className="flex-1 space-y-4">
+                              <div className="flex items-start justify-between">
+                                <div className="space-y-1">
+                                  <h3 className="font-bold text-lg text-foreground flex items-center gap-2">
+                                    {msg.name} 
+                                    <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest">Inbound</span>
+                                  </h3>
+                                  <p className="text-sm text-muted-foreground">{msg.email}</p>
+                                </div>
+                                <span className="text-[11px] font-medium text-muted-foreground whitespace-nowrap bg-muted/50 px-3 py-1 rounded-full">
+                                  {msg.createdAt?.toLocaleString()}
+                                </span>
+                              </div>
+                              
+                              <div className="p-4 rounded-2xl bg-muted/30 border border-border/50">
+                                <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                                  {msg.message}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="flex md:flex-col justify-end gap-2 shrink-0">
+                               <a 
+                                 href={`mailto:${msg.email}`}
+                                 className="flex items-center justify-center gap-2 px-4 py-2.5 bg-foreground text-background rounded-xl text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all"
+                               >
+                                 <Mail size={14} /> Reply
+                               </a>
+                               <button 
+                                 onClick={() => handleDeleteMessage(msg.id)}
+                                 className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold hover:bg-red-500 hover:text-white transition-all"
+                               >
+                                 <Trash2 size={14} /> Delete
+                               </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )}
             </main>
           </div>
