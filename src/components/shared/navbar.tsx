@@ -65,7 +65,7 @@ export function Navbar() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 ${
           scrolled
-            ? "glass-nav border-b border-border/40"
+            ? "glass-nav border-b border-border/20"
             : "bg-transparent border-b border-transparent"
         }`}
         role="navigation"
@@ -97,7 +97,7 @@ export function Navbar() {
           </button>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center p-1.5 rounded-2xl gap-1 backdrop-blur-xl backdrop-saturate-150 bg-background/80 border border-border/50" style={{ boxShadow: 'var(--base-shadow)' }}>
+          <div className="hidden md:flex items-center p-1.5 rounded-2xl gap-1 backdrop-blur-xl backdrop-saturate-150 bg-background/80 border border-border/25" style={{ boxShadow: 'var(--base-shadow)' }}>
             {navLinks.map((link) => (
               <button
                 key={link.name}
