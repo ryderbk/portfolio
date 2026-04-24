@@ -107,11 +107,19 @@ export function getFirebaseAuth(): Auth {
 export function getFirestoreDb(): Firestore {
     try {
         if (!db) {
-            // Using initializeFirestore with long polling to prevent hanging in Node/Vercel environments
-            db = initializeFirestore(getFirebaseApp(), {
-                experimentalForceLongPolling: true,
-            });
-            console.log("📚 Firestore database initialized (with long-polling)");
+            const app = getFirebaseApp();
+            const isBrowser = typeof window !== 'undefined';
+            
+            if (isBrowser) {
+                db = getFirestore(app);
+                console.log("📚 Firestore initialized (Browser)");
+            } else {
+                // Using long polling only in Node/Vercel environments to prevent hanging
+                db = initializeFirestore(app, {
+                    experimentalForceLongPolling: true,
+                });
+                console.log("📚 Firestore initialized (Node/Long-polling)");
+            }
         }
         return db!;
     } catch (error) {
