@@ -10,16 +10,22 @@ export function Contact() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    
+    // Optimistic UI: Show success immediately
+    setSent(true);
+    const currentData = { ...formState };
+    setFormState({ name: "", email: "", message: "" });
+    
     try {
       const { sendMessage } = await import("@/services/firestore");
-      await sendMessage(formState);
+      await sendMessage(currentData);
       
-      setSent(true);
-      setFormState({ name: "", email: "", message: "" });
+      // Auto-reset "Sent" state after 5 seconds
       setTimeout(() => setSent(false), 5000);
     } catch (error) {
       console.error("Failed to send message:", error);
       alert("Something went wrong. Please try again later.");
+      setSent(false); // Revert if failed
     }
   }
 

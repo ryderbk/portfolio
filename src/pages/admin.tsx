@@ -115,22 +115,18 @@ export default function AdminPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
-      try {
-        await deleteProject(id);
-      } catch (error) {
-        alert("Delete failed.");
-      }
+    try {
+      await deleteProject(id);
+    } catch (error) {
+      alert("Delete failed.");
     }
   };
 
   const handleDeleteMessage = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this message?")) {
-      try {
-        await deleteMessage(id);
-      } catch (error) {
-        alert("Failed to delete message.");
-      }
+    try {
+      await deleteMessage(id);
+    } catch (error) {
+      alert("Failed to delete message.");
     }
   };
 
@@ -190,24 +186,24 @@ export default function AdminPage() {
           {/* Main Dashboard Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6 lg:gap-8">
             {/* Sidebar Navigation */}
-            <aside className="flex flex-row lg:flex-col gap-3 lg:gap-4 overflow-x-auto pb-2 lg:pb-0">
+            <aside className="flex flex-row lg:flex-col gap-2 lg:gap-2 overflow-x-auto pb-2 lg:pb-0">
               <button
                 onClick={() => setActiveTab("projects")}
-                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all shrink-0 ${activeTab === "projects" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all shrink-0 ${activeTab === "projects" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
               >
                 <FolderKanban size={18} /> Projects
               </button>
 
               <button
                 onClick={() => setActiveTab("appearance")}
-                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all shrink-0 ${activeTab === "appearance" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all shrink-0 ${activeTab === "appearance" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
               >
                 <Palette size={18} /> Appearance
               </button>
 
               <button
                 onClick={() => setActiveTab("messages")}
-                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all shrink-0 ${activeTab === "messages" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all shrink-0 ${activeTab === "messages" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
               >
                 <div className="relative">
                   <Inbox size={18} />
