@@ -106,14 +106,14 @@ export function ChatInterface({
   const [input, setInput] = useState("");
   const [portfolioData, setPortfolioData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
 
   // Auto-focus logic: Focus input when typing starts
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is already in an input or if it's a modifier key
       if (
         document.activeElement?.tagName === "INPUT" ||
         document.activeElement?.tagName === "TEXTAREA" ||
@@ -121,13 +121,10 @@ export function ChatInterface({
       ) {
         return;
       }
-
-      // If it's a printable character or backspace/enter, focus
       if (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter") {
         inputRef.current?.focus();
       }
     };
-
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, []);
@@ -136,14 +133,7 @@ export function ChatInterface({
   useEffect(() => {
     const handleVirtualKey = (e: any) => {
       const { key, isVirtual } = e.detail;
-
-      // We ONLY manually handle virtual keys (mouse clicks on the 3D keyboard).
-      // All physical typing is handled natively by the browser's input field,
-      // including the very first keystroke that triggers auto-focus.
-      if (!isVirtual) {
-        return;
-      }
-
+      if (!isVirtual) return;
       if (key === "Enter") {
         handleSendMessage();
       } else if (key === "Backspace") {
@@ -152,7 +142,6 @@ export function ChatInterface({
         setInput((prev) => prev + key);
       }
     };
-
     window.addEventListener("keyboard-press", handleVirtualKey);
     return () => window.removeEventListener("keyboard-press", handleVirtualKey);
   }, [input, isLoading]);
@@ -171,24 +160,36 @@ export function ChatInterface({
     fetchContext();
   }, []);
 
-  const scrollToBottom = useCallback(() => {
-    if (scrollContainerRef.current) {
+  const scrollToLastMessage = useCallback((isAssistant: boolean) => {
+    if (scrollContainerRef.current && lastMessageRef.current) {
       const container = scrollContainerRef.current;
-      // Use requestAnimationFrame for smooth scroll after DOM paint
+      const lastMsg = lastMessageRef.current;
+      
       requestAnimationFrame(() => {
-        container.scrollTo({
-          top: container.scrollHeight,
-          behavior: "smooth",
-        });
+        if (isAssistant) {
+          // Scroll to the top of the AI response
+          const topPos = lastMsg.offsetTop - 10;
+          container.scrollTo({
+            top: topPos,
+            behavior: "smooth",
+          });
+        } else {
+          // Scroll to bottom for user messages
+          container.scrollTo({
+            top: container.scrollHeight,
+            behavior: "smooth",
+          });
+        }
       });
     }
   }, []);
 
   useEffect(() => {
     if (messages.length > 0) {
-      scrollToBottom();
+      const lastMessage = messages[messages.length - 1];
+      scrollToLastMessage(lastMessage.role === "assistant");
     }
-  }, [messages, scrollToBottom]);
+  }, [messages, scrollToLastMessage]);
 
   const handleSendMessage = async (e?: React.FormEvent, overrideMessage?: string) => {
     if (e) e.preventDefault();
@@ -308,6 +309,7 @@ export function ChatInterface({
         {messages.map((msg, idx) => (
           <div
             key={idx}
+            ref={idx === messages.length - 1 ? lastMessageRef : null}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} chat-message-enter`}
             style={{ animationDelay: `${idx * 0.05}s` }}
           >

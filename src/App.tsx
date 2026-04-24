@@ -13,6 +13,7 @@ const NotFound = lazy(() => import("@/pages/not-found"));
 
 import { AuthProvider } from "@/context/AuthContext";
 import { SiteConfigProvider } from "@/context/SiteConfigContext";
+import { DataProvider } from "@/context/DataContext";
 
 function Router() {
   return (
@@ -30,16 +31,18 @@ function Router() {
 function AppContent() {
   return (
     <SiteConfigProvider>
-      <AuthProvider>
-        <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <Router />
-          </WouterRouter>
-          {/* Cinematic entrance overlay. No-op when the user prefers reduced motion. */}
-          <PageLoadOverlay />
-          <Toaster />
-        </TooltipProvider>
-      </AuthProvider>
+      <DataProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <Router />
+            </WouterRouter>
+            {/* Cinematic entrance overlay. No-op when the user prefers reduced motion. */}
+            <PageLoadOverlay />
+            <Toaster />
+          </TooltipProvider>
+        </AuthProvider>
+      </DataProvider>
     </SiteConfigProvider>
   );
 }

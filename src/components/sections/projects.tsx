@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Loader2 } from "lucide-react";
 import { fadeUp } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
-import { initialProjects } from "@/lib/initial-data";
-import { subscribeToProjects } from "@/services/firestore";
+import { useData } from "@/context/DataContext";
 
 interface ProjectCardProps {
   project: any;
@@ -62,18 +61,25 @@ const ProjectCard = memo(({ project, i, isActive, onHover }: ProjectCardProps) =
     >
       <motion.div layout className="project-image-wrapper">
         <AnimatePresence mode="popLayout">
-          <motion.img 
-            key={projectImages[currentImgIdx]}
-            src={projectImages[currentImgIdx]} 
-            alt={`${project.title} - Preview ${currentImgIdx + 1}`} 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="absolute inset-0 w-full h-full object-cover"
-            loading={i === 0 ? "eager" : "lazy"}
-            decoding="async"
-          />
+          {isActive && (
+            <motion.img 
+              layout
+              key={projectImages[currentImgIdx]}
+              src={projectImages[currentImgIdx]} 
+              alt={`${project.title} - Preview ${currentImgIdx + 1}`} 
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ 
+                opacity: { duration: 0 },
+                scale: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+                layout: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+              }}
+              className="absolute inset-0 w-full h-full object-cover origin-center"
+              loading={i === 0 ? "eager" : "lazy"}
+              decoding="async"
+            />
+          )}
         </AnimatePresence>
         
         {/* Preload next image if active */}
@@ -135,23 +141,15 @@ const ProjectCard = memo(({ project, i, isActive, onHover }: ProjectCardProps) =
 });
 
 export function Projects() {
-  const [projects, setProjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { projects, loading } = useData();
   const [activeId, setActiveId] = useState<string>("");
 
-  // Fetch projects from Firestore
+  // Set first project as active if none selected
   useEffect(() => {
-    const unsubscribe = subscribeToProjects((data) => {
-      const finalProjects = data.length > 0 ? data : initialProjects;
-      setProjects(finalProjects);
-      
-      if (finalProjects.length > 0 && !activeId) {
-        setActiveId(finalProjects[0].title);
-      }
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, [activeId]);
+    if (projects.length > 0 && !activeId) {
+      setActiveId(projects[0].title);
+    }
+  }, [projects, activeId]);
 
   return (
     <section 
