@@ -1226,15 +1226,28 @@ section {
 
 /* Message bubble styles */
 .chat-bubble-user {
-  background: hsl(var(--accent) / 0.12);
-  border: 1px solid hsl(var(--accent) / 0.15);
+  background: hsl(var(--accent) / 0.15);
+  border: 1px solid hsl(var(--accent) / 0.2);
   color: hsl(var(--foreground));
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .chat-bubble-user {
+  background: hsl(var(--accent) / 0.2);
+  border: 1px solid hsl(var(--accent) / 0.3);
 }
 
 .chat-bubble-assistant {
-  background: hsl(var(--muted) / 0.35);
-  border: 1px solid hsl(var(--border) / 0.25);
+  background: hsl(var(--muted) / 0.5);
+  border: 1px solid hsl(var(--border) / 0.4);
   color: hsl(var(--foreground));
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .chat-bubble-assistant {
+  background: hsl(var(--muted) / 0.8);
+  border: 1px solid hsl(var(--border) / 0.6);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.2);
 }
 
 /* Message entrance animation */

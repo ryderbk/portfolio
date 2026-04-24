@@ -294,7 +294,7 @@ export function ChatInterface({
                 <button
                   key={prompt}
                   onClick={() => handleSendMessage(undefined, prompt)}
-                  className="text-left px-4 py-3 rounded-xl text-sm font-medium text-foreground/80 bg-foreground/[0.03] border border-border/50 hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 group"
+                  className="text-left px-4 py-3 rounded-xl text-sm font-medium text-foreground/80 bg-foreground/[0.06] border border-border/50 hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 group"
                 >
                   <span className="opacity-50 group-hover:opacity-80 mr-1.5 transition-opacity">→</span>
                   {prompt}
@@ -349,7 +349,7 @@ export function ChatInterface({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about my work..."
-            className="flex-1 px-5 py-4 rounded-xl bg-foreground/[0.03] border border-border/50 focus:border-accent/40 focus:bg-foreground/[0.05] outline-none text-base font-medium transition-all duration-200 placeholder:text-muted-foreground/60"
+            className="flex-1 px-5 py-4 rounded-xl bg-foreground/[0.06] border border-border/50 focus:border-accent/40 focus:bg-foreground/[0.08] outline-none text-base font-medium transition-all duration-200 placeholder:text-muted-foreground/60"
             disabled={isLoading}
           />
           <button
