@@ -15,9 +15,11 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: ProjectCardProps) => {
-  const projectImages = project.images && project.images.length > 0 
-    ? project.images 
-    : ["/images/project-01.png"];
+  const projectImages = project.image 
+    ? [project.image]
+    : project.images && project.images.length > 0 
+      ? project.images 
+      : ["/images/project-01.png"];
   const projectTags = project.tags || [];
 
   return (
@@ -57,12 +59,12 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: Proj
           >
             {project.title}
           </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-xl">
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4 max-w-xl line-clamp-2 xl:line-clamp-3">
             {project.description}
           </p>
           
           <div className="flex flex-wrap gap-2">
-            {projectTags.slice(0, 3).map((tag: string) => (
+            {projectTags.map((tag: string) => (
               <span
                 key={tag}
                 className="text-[9px] font-sans px-2 py-1 border border-border/50 text-muted-foreground uppercase tracking-widest rounded-md bg-background/50"
@@ -74,9 +76,18 @@ const ProjectCard = memo(({ project, i, isActive, currentImgIdx, onHover }: Proj
         </div>
       </div>
 
-      <div className="absolute top-6 right-6 p-2 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-black/40 backdrop-blur-sm">
-        <ArrowUpRight size={18} className="text-white" />
-      </div>
+      {project.link && (
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="absolute top-6 right-6 group/btn inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-[0.15em] shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all opacity-0 group-hover:opacity-100 pointer-events-auto"
+        >
+          Visit
+          <ArrowUpRight size={14} className="transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 opacity-80" />
+        </a>
+      )}
     </motion.article>
   );
 });

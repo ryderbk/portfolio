@@ -2,6 +2,7 @@ import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 import { getAnalytics, Analytics } from "firebase/analytics";
+import { getStorage, FirebaseStorage } from "firebase/storage";
 
 // Debug: Log Firebase initialization start
 console.log("🔧 Firebase module loading...");
@@ -44,6 +45,7 @@ let app: FirebaseApp | null = null;
 let auth: Auth | undefined;
 let db: Firestore | undefined;
 let analytics: Analytics | undefined;
+let storage: FirebaseStorage | undefined;
 let initializationError: Error | null = null;
 
 function getFirebaseApp(): FirebaseApp {
@@ -101,6 +103,19 @@ export function getFirestoreDb(): Firestore {
         return db!;
     } catch (error) {
         console.error("❌ Firestore initialization failed:", error);
+        throw error;
+    }
+}
+
+export function getFirebaseStorage(): FirebaseStorage {
+    try {
+        if (!storage) {
+            storage = getStorage(getFirebaseApp());
+            console.log("📦 Firebase Storage initialized");
+        }
+        return storage!;
+    } catch (error) {
+        console.error("❌ Firebase Storage initialization failed:", error);
         throw error;
     }
 }

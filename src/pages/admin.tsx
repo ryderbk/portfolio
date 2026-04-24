@@ -5,8 +5,9 @@ import {
   addProject,
   updateProject,
   deleteProject,
+  batchUpdateProjectOrders,
 } from "@/services/firestore";
-import { Trash2, Edit2, Plus, RefreshCw, X, FolderKanban, Palette, Settings, LifeBuoy } from "lucide-react";
+import { Trash2, Edit2, Plus, RefreshCw, X, FolderKanban, Palette, Settings, LifeBuoy, ChevronUp, ChevronDown } from "lucide-react";
 import ConfigPanel from "@/components/admin/ConfigPanel";
 import { useSiteConfig } from "@/hooks/useSiteConfig";
 
@@ -18,6 +19,7 @@ interface Project {
   technologiesUsed?: string[];
   tags?: string[];
   image?: string;
+  link?: string;
   [key: string]: any;
 }
 
@@ -35,6 +37,7 @@ export default function AdminPage() {
     description: "",
     tags: "",
     image: "",
+    link: "",
   });
 
   const { isSyncing } = useSiteConfig();
@@ -56,6 +59,7 @@ export default function AdminPage() {
         description: project.description,
         tags: (project.tags || []).join(", "),
         image: project.image || "",
+        link: project.link || "",
       });
     } else {
       setEditingProject(null);
@@ -65,6 +69,7 @@ export default function AdminPage() {
         description: "",
         tags: "",
         image: "",
+        link: "",
       });
     }
     setIsFormOpen(true);
@@ -103,6 +108,26 @@ export default function AdminPage() {
       } catch (error) {
         alert("Delete failed.");
       }
+    }
+  };
+
+  const handleReorder = async (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === projects.length - 1) return;
+    
+    const newProjects = [...projects];
+    const swapIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    const temp = newProjects[index];
+    newProjects[index] = newProjects[swapIndex];
+    newProjects[swapIndex] = temp;
+    
+    setProjects(newProjects);
+    
+    try {
+      await batchUpdateProjectOrders(newProjects.map(p => ({ id: p.id })));
+    } catch (error) {
+      console.error("Failed to reorder:", error);
     }
   };
 
@@ -198,60 +223,86 @@ export default function AdminPage() {
                     </div>
                   ) : (
                     <div className="grid gap-4">
-                      {projects.map((project) => (
+                      {projects.map((project, i) => (
                         <div
                           key={project.id}
                           className="p-4 sm:p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group relative overflow-hidden"
                           style={{ boxShadow: 'var(--base-shadow)' }}
                         >
-                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-                            <div className="flex gap-4 min-w-0 flex-1">
-                               {project.image && (
-                                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-border bg-muted shrink-0">
-                                    <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-                                 </div>
-                               )}
-                               <div className="space-y-1 min-w-0 flex-1">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
-                                    {project.subtitle}
-                                  </span>
-                                </div>
-                                <h3 className="text-base sm:text-lg font-bold text-foreground break-words">
-                                  {project.title}
-                                </h3>
-                                <p className="text-muted-foreground text-sm line-clamp-2 sm:line-clamp-1 max-w-xl leading-relaxed">
-                                  {project.description}
-                                </p>
-                                {project.tags && (
-                                  <div className="flex flex-wrap gap-2 mt-4">
-                                    {project.tags.map((tag, i) => (
-                                      <span
-                                        key={tag + i}
-                                        className="px-2 py-0.5 text-[10px] font-medium bg-muted text-foreground rounded-md border border-border"
-                                      >
-                                        {tag}
-                                      </span>
-                                    ))}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                              <div className="flex items-center gap-5 min-w-0 flex-1">
+                                {project.image && (
+                                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-border bg-muted shrink-0 flex items-center justify-center text-center shadow-sm">
+                                     <img 
+                                        src={project.image} 
+                                        alt={project.title} 
+                                        className="w-full h-full object-cover" 
+                                        onError={(e) => {
+                                          const target = e.target as HTMLImageElement;
+                                          target.style.display = 'none';
+                                          if (target.parentElement) {
+                                            target.parentElement.innerHTML = '<span class="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">No<br/>Image</span>';
+                                          }
+                                        }}
+                                     />
                                   </div>
                                 )}
-                              </div>
-                            </div>
-                            <div className="flex gap-2 self-end sm:self-start shrink-0">
-                              <button
-                                onClick={() => handleOpenForm(project)}
-                                className="p-2 text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                              >
-                                <Edit2 size={18} />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(project.id)}
-                                className="p-2 text-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
-                              >
-                                <Trash2 size={18} />
-                              </button>
-                            </div>
-                          </div>
+                                <div className="space-y-2 min-w-0 flex-1">
+                                 <div className="flex items-center gap-2">
+                                   <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
+                                     {project.subtitle}
+                                   </span>
+                                 </div>
+                                 <h3 className="text-lg sm:text-xl font-black text-foreground break-words leading-none uppercase tracking-tight">
+                                   {project.title}
+                                 </h3>
+                                 <p className="text-muted-foreground text-xs line-clamp-2 max-w-2xl leading-relaxed">
+                                   {project.description}
+                                 </p>
+                                 {project.tags && (
+                                   <div className="flex flex-wrap gap-1.5 mt-2">
+                                     {project.tags.map((tag, i) => (
+                                       <span
+                                         key={tag + i}
+                                         className="px-2 py-0.5 text-[9px] font-bold bg-muted/50 text-foreground rounded-md border border-border/50 uppercase tracking-wider"
+                                       >
+                                         {tag}
+                                       </span>
+                                     ))}
+                                   </div>
+                                 )}
+                               </div>
+                             </div>
+                             <div className="flex gap-2 self-end sm:self-center shrink-0 items-center bg-muted/20 p-1.5 rounded-2xl border border-border/50">
+                               <button
+                                 onClick={() => handleReorder(i, 'up')}
+                                 disabled={i === 0}
+                                 className="p-2 text-foreground hover:text-primary hover:bg-background rounded-xl transition-all disabled:opacity-20 disabled:hover:bg-transparent"
+                               >
+                                 <ChevronUp size={18} />
+                               </button>
+                               <button
+                                 onClick={() => handleReorder(i, 'down')}
+                                 disabled={i === projects.length - 1}
+                                 className="p-2 text-foreground hover:text-primary hover:bg-background rounded-xl transition-all disabled:opacity-20 disabled:hover:bg-transparent"
+                               >
+                                 <ChevronDown size={18} />
+                               </button>
+                               <div className="w-px h-4 bg-border/50 mx-1" />
+                               <button
+                                 onClick={() => handleOpenForm(project)}
+                                 className="p-2 text-foreground hover:text-primary hover:bg-background rounded-xl transition-all"
+                               >
+                                 <Edit2 size={18} />
+                               </button>
+                               <button
+                                 onClick={() => handleDelete(project.id)}
+                                 className="p-2 text-foreground hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                               >
+                                 <Trash2 size={18} />
+                               </button>
+                             </div>
+                           </div>
                         </div>
                       ))}
                     </div>
@@ -336,7 +387,7 @@ export default function AdminPage() {
               <div className="space-y-2">
                 <label className="text-sm font-bold ml-1">Image URL</label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.image}
                   onChange={(e) =>
                     setFormData({ ...formData, image: e.target.value })
@@ -345,17 +396,36 @@ export default function AdminPage() {
                   placeholder="https://images.unsplash.com/..."
                 />
                 {formData.image && (
-                  <div className="mt-4 rounded-2xl overflow-hidden border border-border bg-muted aspect-video relative group">
+                  <div className="mt-4 rounded-2xl overflow-hidden border border-border bg-muted aspect-video relative group flex items-center justify-center">
                     <img
                       src={formData.image}
                       alt="Preview"
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        if (target.parentElement) {
+                          target.parentElement.innerHTML = '<span class="text-sm font-bold text-muted-foreground">Invalid Image URL</span>';
+                        }
+                      }}
                     />
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                        <span className="text-white text-xs font-bold bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm">Image Preview</span>
                     </div>
                   </div>
                 )}
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold ml-1">Website URL (Optional)</label>
+                <input
+                  type="text"
+                  value={formData.link}
+                  onChange={(e) =>
+                    setFormData({ ...formData, link: e.target.value })
+                  }
+                  className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary focus:bg-background outline-none transition-all"
+                  placeholder="https://example.com"
+                />
               </div>
               <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end pt-6 border-t border-border mt-8">
                 <button
