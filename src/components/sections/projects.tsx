@@ -61,35 +61,33 @@ const ProjectCard = memo(({ project, i, isActive, onHover }: ProjectCardProps) =
     >
       <motion.div layout className="project-image-wrapper">
         <AnimatePresence mode="popLayout">
-          {isActive && (
+          {isActive && projectImages.map((imgSrc: string, idx: number) => (
             <motion.img 
               layout
-              key={projectImages[currentImgIdx]}
-              src={projectImages[currentImgIdx]} 
-              alt={`${project.title} - Preview ${currentImgIdx + 1}`} 
+              key={`${imgSrc}-${idx}`}
+              src={imgSrc} 
+              alt={`${project.title} - Preview ${idx + 1}`} 
               initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ 
+                opacity: currentImgIdx === idx ? 1 : 0, 
+                scale: currentImgIdx === idx ? 1 : 1.05 
+              }}
               exit={{ opacity: 0, scale: 1.05 }}
               transition={{ 
-                opacity: { duration: 0 },
+                opacity: { duration: 0.4, ease: "easeInOut" },
                 scale: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
                 layout: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
               }}
               className="absolute inset-0 w-full h-full object-cover origin-center"
-              loading={i === 0 ? "eager" : "lazy"}
+              loading={i === 0 || idx === 0 ? "eager" : "lazy"}
               decoding="async"
+              style={{
+                zIndex: currentImgIdx === idx ? 1 : 0,
+                pointerEvents: currentImgIdx === idx ? "auto" : "none"
+              }}
             />
-          )}
+          ))}
         </AnimatePresence>
-        
-        {/* Preload next image if active */}
-        {isActive && projectImages.length > 1 && (
-          <link 
-            rel="preload" 
-            as="image" 
-            href={projectImages[(currentImgIdx + 1) % projectImages.length]} 
-          />
-        )}
         
         <div className="project-collapsed-label">
           <h4 className="font-projects">{project.title}</h4>
