@@ -26,28 +26,44 @@ export function Navbar() {
   const [active, setActive] = useState("");
 
   useEffect(() => {
-    let ticking = false;
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 40);
-          const sections = navLinks.map(l => l.href.slice(1));
-          let current = "";
-          for (const id of [...sections].reverse()) {
-            const el = document.getElementById(id);
-            if (el && window.scrollY >= el.offsetTop - 200) {
-              current = id;
-              break;
-            }
-          }
-          setActive(current);
-          ticking = false;
-        });
-        ticking = true;
-      }
+    // 1. Handle background scroll state (throttled)
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 20;
+      setScrolled(prev => prev !== isScrolled ? isScrolled : prev);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    // 2. Efficient section tracking using IntersectionObserver
+    // This avoids layout thrashing caused by el.offsetTop in scroll events
+    const observerOptions = {
+      root: null,
+      rootMargin: "-25% 0px -65% 0px", // Focus on the upper-middle of the viewport
+      threshold: 0
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          setActive(id === "hero" ? "" : id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    
+    // Observe all sections including hero to clear active state at top
+    const targetIds = ["hero", ...navLinks.map(l => l.href.slice(1))];
+    targetIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
+    };
   }, []);
 
   const toggleTheme = () => updateConfig({ themeMode: isDark ? "light" : "dark" });
@@ -65,7 +81,7 @@ export function Navbar() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter,padding,box-shadow] duration-500 py-4 ${
           scrolled
             ? "glass-nav border-b border-border/20"
             : "bg-transparent border-b border-transparent"
