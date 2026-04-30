@@ -32,13 +32,15 @@ export function Navbar() {
         window.requestAnimationFrame(() => {
           setScrolled(window.scrollY > 40);
           const sections = navLinks.map(l => l.href.slice(1));
+          let current = "";
           for (const id of [...sections].reverse()) {
             const el = document.getElementById(id);
-            if (el && window.scrollY >= el.offsetTop - 120) {
-              setActive(id);
+            if (el && window.scrollY >= el.offsetTop - 200) {
+              current = id;
               break;
             }
           }
+          setActive(current);
           ticking = false;
         });
         ticking = true;
