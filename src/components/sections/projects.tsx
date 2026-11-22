@@ -50,8 +50,7 @@ export function Projects() {
         const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
         const tween = gsap.to(track, {
           x: () => -dist(), ease: "none",
-          scrollTrigger: { trigger: ".c-work-pin", pin: true, scrub: 0.6, start: "top top", end: () => "+=" + dist(), invalidateOnRefresh: true, anticipatePin: 1,
-            onUpdate: (s) => gsap.set(".c-work-progress i", { scaleX: s.progress }) },
+          scrollTrigger: { trigger: ".c-work-pin", pin: true, scrub: 0.6, start: "top top", end: () => "+=" + dist(), invalidateOnRefresh: true, anticipatePin: 1 },
         });
         gsap.utils.toArray<HTMLElement>(".c-panel-media").forEach((m) => {
           gsap.fromTo(m.querySelector("img"), { xPercent: -7 }, {
@@ -95,22 +94,27 @@ export function Projects() {
                 {p.year && <span className="c-panel-year mono">{p.year}</span>}
               </div>
               <div className="c-panel-body">
-                <div className="c-panel-head">
+                <div className="c-panel-left">
                   <span className="mono acc">{p.subtitle}</span>
                   <h3 className="c-panel-title">{p.title}</h3>
+                  <div className="c-tags">
+                    {(p.tags || []).slice(0, 5).map((t: string) => (
+                      <span key={t} className="c-tag">{t}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="c-panel-right">
+                  <p className="c-panel-desc">{p.description}</p>
                   <div className="c-panel-actions">
-                    <button className="c-btn" onClick={() => setOpen(p)}>Case study <Arrow /></button>
+                    <button className="c-btn solid" onClick={() => setOpen(p)}>Case study <Arrow /></button>
                     {p.link && <a className="c-btn" href={p.link} target="_blank" rel="noopener noreferrer">Visit <Arrow /></a>}
                   </div>
-                  <div className="c-tags">{(p.tags || []).slice(0, 5).map((t: string) => <span key={t} className="c-tag">{t}</span>)}</div>
                 </div>
-                <p className="c-panel-desc">{p.description}</p>
               </div>
             </article>
           ))}
           <div className="c-end-panel mono">Next up ↓</div>
         </div>
-        <div className="c-work-progress" aria-hidden="true"><i /></div>
       </div>
       <AnimatePresence>{open && <CaseStudy project={open} onClose={() => setOpen(null)} />}</AnimatePresence>
     </section>

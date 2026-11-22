@@ -13,8 +13,8 @@ export const FIRESTORE_COLLECTIONS = {
 
 export const GEMINI_CONFIG = {
   MODELS: [
-    "gemini-3.1-flash-lite",
     "gemini-3.5-flash-lite",
+    "gemini-3.1-flash-lite",
     "gemini-3.5-flash",
   ],
   API_URL: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
@@ -32,7 +32,7 @@ export const GROQ_CONFIG = {
 
 // Default configuration for AI
 export const AI_CONFIG = {
-  MODEL: "gemini-3.1-flash-lite",
+  MODEL: "gemini-3.5-flash-lite",
   API_URL: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
 } as const;
 

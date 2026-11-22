@@ -261,6 +261,9 @@ export async function getChatResponse(
 
   for (let i = 0; i < queue.length; i++) {
     const attempt = queue[i];
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
     try {
       console.log(`Sending chat request via ${attempt.provider} with model ${attempt.model}...`);
       const response = await fetch(attempt.apiUrl, {
@@ -272,10 +275,12 @@ export async function getChatResponse(
         body: JSON.stringify({
           model: attempt.model,
           messages,
-          temperature: 0.6,
-          max_tokens: 300, 
-        })
+          temperature: 0.5,
+          max_tokens: 220, 
+        }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -309,6 +314,8 @@ export async function getChatResponse(
         continue;
       }
       throw error;
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 

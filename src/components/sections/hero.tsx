@@ -40,17 +40,39 @@ export function Hero({ ready }: { ready: boolean }) {
   // Word cycle
   useEffect(() => {
     if (prefersReducedMotion()) return;
-    const els = gsap.utils.toArray<HTMLElement>(".c-cycle-word", cycle.current!);
-    gsap.set(els, { yPercent: 140, autoAlpha: 0 });
-    gsap.set(els[0], { yPercent: 0, autoAlpha: 1 });
-    const tl = gsap.timeline({ repeat: -1, delay: 3 });
-    els.forEach((el, i) => {
-      const next = els[(i + 1) % els.length];
-      tl.to(el, { yPercent: -140, duration: 0.8, ease: "expo.inOut" }, "+=2")
-        .fromTo(next, { yPercent: 140, autoAlpha: 1 }, { yPercent: 0, duration: 0.8, ease: "expo.inOut", immediateRender: false }, "<")
-        .set(el, { autoAlpha: 0 });
-    });
-    return () => { tl.kill(); };
+    const container = cycle.current;
+    if (!container) return;
+
+    const ctx = gsap.context(() => {
+      const els = gsap.utils.toArray<HTMLElement>(".c-cycle-word", container);
+      if (els.length === 0) return;
+
+      gsap.set(els, { yPercent: 120, autoAlpha: 0 });
+      gsap.set(els[0], { yPercent: 0, autoAlpha: 1 });
+
+      const tl = gsap.timeline({ repeat: -1 });
+
+      els.forEach((el, i) => {
+        const next = els[(i + 1) % els.length];
+        tl.to(el, {
+          yPercent: -120,
+          autoAlpha: 0,
+          duration: 0.75,
+          ease: "power2.inOut",
+        }, "+=2.4")
+        .fromTo(next, {
+          yPercent: 120,
+          autoAlpha: 0,
+        }, {
+          yPercent: 0,
+          autoAlpha: 1,
+          duration: 0.75,
+          ease: "power2.inOut",
+        }, "<");
+      });
+    }, container);
+
+    return () => ctx.revert();
   }, []);
 
   // Scroll choreography + pointer parallax

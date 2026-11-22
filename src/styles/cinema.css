@@ -207,30 +207,29 @@ html.lenis, html.lenis body { height: auto; }
 .c-panel-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(var(--bg-rgb),0.75)); pointer-events: none; }
 .c-panel-num { position: absolute; z-index: 2; left: 1.4rem; bottom: 1.1rem; font-family: var(--f-display); font-weight: 700; font-size: clamp(3rem, 7vw, 6rem); letter-spacing: -0.06em; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(var(--fg-rgb),0.7); }
 .c-panel-year { position: absolute; z-index: 2; right: 1.4rem; top: 1.3rem; padding: 0.4rem 0.85rem; border-radius: 99px; background: rgba(var(--bg-rgb),0.6); backdrop-filter: blur(10px); border: 1px solid var(--line); }
-.c-panel-body { padding-top: 1.4rem; display: grid; gap: 1rem; }
-.c-panel-head { display: grid; gap: 0.9rem; align-content: start; }
-.c-panel-title { font-size: clamp(2rem, 4vw, 3.6rem); }
-.c-panel-desc { color: var(--mute); line-height: 1.6; font-weight: 300; max-width: 46ch; }
-.c-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
-.c-tag { font-family: var(--f-mono); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 0.75rem; border-radius: 99px; border: 1px solid var(--line); color: var(--mute); }
-.c-panel-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; align-items: center; }
+.c-panel-body { padding-top: 1.4rem; display: grid; gap: 1.25rem; }
+.c-panel-left { display: flex; flex-direction: column; gap: 0.6rem; }
+.c-panel-title { font-size: clamp(2rem, 4vw, 3.6rem); letter-spacing: -0.04em; line-height: 1.05; }
+.c-panel-right { display: flex; flex-direction: column; gap: 1.25rem; justify-content: space-between; }
+.c-panel-desc { color: var(--mute); line-height: 1.65; font-weight: 300; font-size: clamp(0.95rem, 1.15vw, 1.05rem); max-width: 48ch; }
+.c-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.4rem; }
+.c-tag { font-family: var(--f-mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.35rem 0.75rem; border-radius: 99px; border: 1px solid var(--line); color: var(--mute); background: rgba(var(--fg-rgb), 0.02); transition: border-color .3s, color .3s; }
+.c-tag:hover { border-color: rgba(var(--fg-rgb), 0.3); color: var(--fg); }
+.c-panel-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+.c-panel-actions .c-btn { padding: 0.8rem 1.45rem; font-size: 0.9rem; }
 .c-intro-panel { display: flex; flex-direction: column; gap: 1.5rem; padding-top: clamp(5rem, 12vw, 9rem); }
 @media (min-width: 1024px) {
   .c-work-pin { height: 100vh; display: flex; align-items: center; overflow: hidden; }
   .c-work-track { flex-direction: row; gap: clamp(2rem, 4vw, 4rem); align-items: center; padding: 0 var(--pad); width: max-content; }
   .c-panel { width: min(62vw, 980px); }
   .c-panel-media { aspect-ratio: 16 / 9.4; max-height: 58vh; width: 100%; }
-  .c-panel-body { grid-template-columns: 1.1fr 1fr; gap: 0.6rem 2.5rem; align-items: start; padding-top: 1.2rem; }
-  .c-panel-body .c-panel-head { grid-column: 1; grid-row: 1; }
-  .c-panel-body .c-panel-desc { grid-column: 2; grid-row: 1; }
-  .c-panel-body .c-panel-head { grid-column: 1; grid-row: 1 / span 3; }
+  .c-panel-body { grid-template-columns: 1.15fr 1fr; gap: 1.2rem 3rem; align-items: start; padding-top: 1.4rem; }
   .c-panel-title { font-size: clamp(2rem, 3.2vw, 3.2rem); }
+  .c-panel-right { min-height: 100%; }
+  .c-panel-actions { margin-top: auto; padding-top: 0.5rem; }
   .c-intro-panel { flex: none; width: min(34vw, 520px); justify-content: center; padding-top: 0; }
   .c-work-head.in-pin { display: none; }
-  .c-work-progress { position: absolute; left: var(--pad); right: var(--pad); bottom: 2.2rem; height: 1px; background: var(--line); }
-  .c-work-progress i { display: block; height: 100%; background: var(--acc); transform-origin: 0 50%; transform: scaleX(0); }
 }
-@media (max-width: 1023px) { .c-work-progress { display: none; } }
 .c-end-panel { flex: none; display: none; }
 @media (min-width: 1024px) { .c-end-panel { display: flex; width: 22vw; align-items: center; justify-content: center; } }
 
