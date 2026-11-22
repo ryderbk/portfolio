@@ -18,20 +18,20 @@ interface ConversationMessage {
   content: string;
 }
 
-interface ResolvedAIConfig {
+interface AIProviderAttempt {
   provider: "gemini" | "groq";
   apiKey: string;
   apiUrl: string;
-  models: string[];
+  model: string;
 }
 
 /**
- * Resolves the active AI provider, credentials, and models.
+ * Builds an ordered list of providers and models to attempt.
  * Automatically supports:
  * 1. Google Gemini (via GEMINI_API_KEY, AI_API_KEY, or GROQ_API_KEY if key starts with AQ. / AIza)
  * 2. Groq (via GROQ_API_KEY or AI_API_KEY if key starts with gsk_)
  */
-function resolveAIConfig(): ResolvedAIConfig {
+function getProviderExecutionQueue(): AIProviderAttempt[] {
   const env = (typeof process !== "undefined" && process.env)
     ? process.env
     : (globalThis as any)?.process?.env || {};
@@ -40,57 +40,42 @@ function resolveAIConfig(): ResolvedAIConfig {
   const groqKey = env.GROQ_API_KEY || env.VITE_GROQ_API_KEY;
   const genericKey = env.AI_API_KEY || env.VITE_AI_API_KEY;
 
-  let apiKey = "";
-  let provider: "gemini" | "groq" = "gemini";
+  const queue: AIProviderAttempt[] = [];
 
-  if (geminiKey) {
-    apiKey = geminiKey;
-    provider = "gemini";
-  } else if (groqKey) {
-    apiKey = groqKey;
-    // Auto-detect: if the key is a Gemini key (AQ.* or AIza*), use Gemini provider
-    if (groqKey.startsWith("AQ.") || groqKey.startsWith("AIza")) {
-      provider = "gemini";
-    } else {
-      provider = "groq";
+  // Determine Gemini key
+  let resolvedGeminiKey = geminiKey;
+  if (!resolvedGeminiKey && groqKey && (groqKey.startsWith("AQ.") || groqKey.startsWith("AIza"))) {
+    resolvedGeminiKey = groqKey;
+  }
+  if (!resolvedGeminiKey && genericKey && (genericKey.startsWith("AQ.") || genericKey.startsWith("AIza"))) {
+    resolvedGeminiKey = genericKey;
+  }
+
+  // 1. Google Gemini attempts (Primary provider)
+  if (resolvedGeminiKey) {
+    for (const model of GEMINI_CONFIG.MODELS) {
+      queue.push({
+        provider: "gemini",
+        apiKey: resolvedGeminiKey,
+        apiUrl: GEMINI_CONFIG.API_URL,
+        model,
+      });
     }
-  } else if (genericKey) {
-    apiKey = genericKey;
-    if (genericKey.startsWith("gsk_")) {
-      provider = "groq";
-    } else {
-      provider = "gemini";
+  }
+
+  // 2. Groq attempts (Secondary provider, with modern active models)
+  if (groqKey && !groqKey.startsWith("AQ.") && !groqKey.startsWith("AIza")) {
+    for (const model of GROQ_CONFIG.MODELS) {
+      queue.push({
+        provider: "groq",
+        apiKey: groqKey,
+        apiUrl: GROQ_CONFIG.API_URL,
+        model,
+      });
     }
   }
 
-  if (!apiKey) {
-    console.error("AI CONFIG ERROR: Neither GEMINI_API_KEY nor GROQ_API_KEY was found in environment.");
-    throw new Error(
-      "Missing AI API key. Please configure GEMINI_API_KEY (or GROQ_API_KEY) in your environment variables."
-    );
-  }
-
-  if (provider === "gemini") {
-    const customModel = env.GEMINI_MODEL || env.AI_MODEL;
-    const candidateModels = customModel
-      ? [customModel, ...GEMINI_CONFIG.MODELS.filter((m) => m !== customModel)]
-      : [...GEMINI_CONFIG.MODELS];
-
-    return {
-      provider: "gemini",
-      apiKey,
-      apiUrl: GEMINI_CONFIG.API_URL,
-      models: candidateModels,
-    };
-  }
-
-  const groqModel = env.GROQ_MODEL || env.AI_MODEL || GROQ_CONFIG.MODEL;
-  return {
-    provider: "groq",
-    apiKey,
-    apiUrl: GROQ_CONFIG.API_URL,
-    models: [groqModel],
-  };
+  return queue;
 }
 
 /**
@@ -246,14 +231,21 @@ END`;
 /**
  * Main AI Chat service handler.
  * Supports multi-turn conversation history for contextual responses.
- * Includes automatic model fallback for maximum uptime.
+ * Iterates through candidate providers/models with automatic fallback.
  */
 export async function getChatResponse(
   message: string, 
   context: PortfolioContext,
   conversationHistory: ConversationMessage[] = []
 ): Promise<string> {
-  const { provider, apiKey, apiUrl, models } = resolveAIConfig();
+  const queue = getProviderExecutionQueue();
+
+  if (queue.length === 0) {
+    console.error("AI CONFIG ERROR: No valid AI provider credentials found.");
+    throw new Error(
+      "Missing AI API key. Please configure GEMINI_API_KEY in your environment variables."
+    );
+  }
 
   const formattedContext = formatPortfolioContext(context);
   const systemPrompt = getSystemPrompt(formattedContext);
@@ -267,18 +259,18 @@ export async function getChatResponse(
 
   let lastError: Error | null = null;
 
-  for (let i = 0; i < models.length; i++) {
-    const model = models[i];
+  for (let i = 0; i < queue.length; i++) {
+    const attempt = queue[i];
     try {
-      console.log(`Sending chat request via ${provider} with model ${model}...`);
-      const response = await fetch(apiUrl, {
+      console.log(`Sending chat request via ${attempt.provider} with model ${attempt.model}...`);
+      const response = await fetch(attempt.apiUrl, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
+          "Authorization": `Bearer ${attempt.apiKey}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model,
+          model: attempt.model,
           messages,
           temperature: 0.6,
           max_tokens: 300, 
@@ -287,30 +279,33 @@ export async function getChatResponse(
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.warn(`${provider} API warning with model ${model} (status ${response.status}):`, errorText);
+        console.warn(`${attempt.provider} API warning with model ${attempt.model} (status ${response.status}):`, errorText);
 
-        // If the model had high demand (503), rate limit (429), or was deprecated/not found (404), try next model
-        if ((response.status === 503 || response.status === 429 || response.status === 404) && i < models.length - 1) {
-          lastError = new Error(`${provider} Error (${response.status}): ${errorText}`);
+        lastError = new Error(`${attempt.provider} Error (${response.status}): ${errorText}`);
+
+        // Try the next provider or model in the queue
+        if (i < queue.length - 1) {
           continue;
         }
-
-        throw new Error(`${provider} Error (${response.status}): ${errorText}`);
+        throw lastError;
       }
 
       const data = await response.json();
       const content = data?.choices?.[0]?.message?.content;
       
-      if (!content) return "I don't have a response at this moment. Please try again.";
+      if (!content) {
+        if (i < queue.length - 1) continue;
+        return "I don't have a response at this moment. Please try again.";
+      }
 
       return content.trim();
 
     } catch (error: any) {
-      console.error(`AI execution error with model ${model}:`, error.message || error);
+      console.error(`AI execution error with ${attempt.provider} (${attempt.model}):`, error.message || error);
       lastError = error;
 
-      if (i < models.length - 1) {
-        console.log(`Retrying with next model: ${models[i + 1]}...`);
+      if (i < queue.length - 1) {
+        console.log(`Retrying with next option in queue...`);
         continue;
       }
       throw error;
