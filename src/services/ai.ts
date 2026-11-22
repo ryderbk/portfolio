@@ -1,8 +1,8 @@
-import { AI_CONFIG } from "../lib/constants";
+import { GEMINI_CONFIG, GROQ_CONFIG } from "../lib/constants";
 
 /**
  * AI Service
- * Handles interaction with GROQ API for the portfolio chatbot.
+ * Handles interaction with AI APIs (Google Gemini & Groq) for the portfolio chatbot.
  * Persona: Bharath Kumar S — Professional, composed, interview-ready.
  */
 
@@ -16,6 +16,81 @@ interface PortfolioContext {
 interface ConversationMessage {
   role: "user" | "assistant" | "system";
   content: string;
+}
+
+interface ResolvedAIConfig {
+  provider: "gemini" | "groq";
+  apiKey: string;
+  apiUrl: string;
+  models: string[];
+}
+
+/**
+ * Resolves the active AI provider, credentials, and models.
+ * Automatically supports:
+ * 1. Google Gemini (via GEMINI_API_KEY, AI_API_KEY, or GROQ_API_KEY if key starts with AQ. / AIza)
+ * 2. Groq (via GROQ_API_KEY or AI_API_KEY if key starts with gsk_)
+ */
+function resolveAIConfig(): ResolvedAIConfig {
+  const env = (typeof process !== "undefined" && process.env)
+    ? process.env
+    : (globalThis as any)?.process?.env || {};
+
+  const geminiKey = env.GEMINI_API_KEY || env.VITE_GEMINI_API_KEY;
+  const groqKey = env.GROQ_API_KEY || env.VITE_GROQ_API_KEY;
+  const genericKey = env.AI_API_KEY || env.VITE_AI_API_KEY;
+
+  let apiKey = "";
+  let provider: "gemini" | "groq" = "gemini";
+
+  if (geminiKey) {
+    apiKey = geminiKey;
+    provider = "gemini";
+  } else if (groqKey) {
+    apiKey = groqKey;
+    // Auto-detect: if the key is a Gemini key (AQ.* or AIza*), use Gemini provider
+    if (groqKey.startsWith("AQ.") || groqKey.startsWith("AIza")) {
+      provider = "gemini";
+    } else {
+      provider = "groq";
+    }
+  } else if (genericKey) {
+    apiKey = genericKey;
+    if (genericKey.startsWith("gsk_")) {
+      provider = "groq";
+    } else {
+      provider = "gemini";
+    }
+  }
+
+  if (!apiKey) {
+    console.error("AI CONFIG ERROR: Neither GEMINI_API_KEY nor GROQ_API_KEY was found in environment.");
+    throw new Error(
+      "Missing AI API key. Please configure GEMINI_API_KEY (or GROQ_API_KEY) in your environment variables."
+    );
+  }
+
+  if (provider === "gemini") {
+    const customModel = env.GEMINI_MODEL || env.AI_MODEL;
+    const candidateModels = customModel
+      ? [customModel, ...GEMINI_CONFIG.MODELS.filter((m) => m !== customModel)]
+      : [...GEMINI_CONFIG.MODELS];
+
+    return {
+      provider: "gemini",
+      apiKey,
+      apiUrl: GEMINI_CONFIG.API_URL,
+      models: candidateModels,
+    };
+  }
+
+  const groqModel = env.GROQ_MODEL || env.AI_MODEL || GROQ_CONFIG.MODEL;
+  return {
+    provider: "groq",
+    apiKey,
+    apiUrl: GROQ_CONFIG.API_URL,
+    models: [groqModel],
+  };
 }
 
 /**
@@ -171,21 +246,14 @@ END`;
 /**
  * Main AI Chat service handler.
  * Supports multi-turn conversation history for contextual responses.
+ * Includes automatic model fallback for maximum uptime.
  */
 export async function getChatResponse(
   message: string, 
   context: PortfolioContext,
   conversationHistory: ConversationMessage[] = []
 ): Promise<string> {
-  // Safe environment variable detection for Node.js (Vercel/Local)
-  const apiKey = (typeof process !== "undefined" && process.env) 
-    ? process.env.GROQ_API_KEY 
-    : (globalThis as any)?.process?.env?.GROQ_API_KEY;
-  
-  if (!apiKey) {
-    console.error("AI CONFIG ERROR: GROQ_API_KEY is missing.");
-    throw new Error("GROQ_API_KEY not found in environment.");
-  }
+  const { provider, apiKey, apiUrl, models } = resolveAIConfig();
 
   const formattedContext = formatPortfolioContext(context);
   const systemPrompt = getSystemPrompt(formattedContext);
@@ -197,37 +265,57 @@ export async function getChatResponse(
     { role: "user", content: message }
   ];
 
-  try {
-    console.log("Sending request to Groq...");
-    const response = await fetch(AI_CONFIG.API_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: AI_CONFIG.MODEL,
-        messages,
-        temperature: 0.6,
-        max_tokens: 300, 
-      })
-    });
+  let lastError: Error | null = null;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Groq API failed:", errorText);
-      throw new Error(`Groq Error: ${errorText}`);
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i];
+    try {
+      console.log(`Sending chat request via ${provider} with model ${model}...`);
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature: 0.6,
+          max_tokens: 300, 
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.warn(`${provider} API warning with model ${model} (status ${response.status}):`, errorText);
+
+        // If the model had high demand (503), rate limit (429), or was deprecated/not found (404), try next model
+        if ((response.status === 503 || response.status === 429 || response.status === 404) && i < models.length - 1) {
+          lastError = new Error(`${provider} Error (${response.status}): ${errorText}`);
+          continue;
+        }
+
+        throw new Error(`${provider} Error (${response.status}): ${errorText}`);
+      }
+
+      const data = await response.json();
+      const content = data?.choices?.[0]?.message?.content;
+      
+      if (!content) return "I don't have a response at this moment. Please try again.";
+
+      return content.trim();
+
+    } catch (error: any) {
+      console.error(`AI execution error with model ${model}:`, error.message || error);
+      lastError = error;
+
+      if (i < models.length - 1) {
+        console.log(`Retrying with next model: ${models[i + 1]}...`);
+        continue;
+      }
+      throw error;
     }
-
-    const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
-    
-    if (!content) return "I don't have a response at this moment. Please try again.";
-
-    return content.trim();
-
-  } catch (error: any) {
-    console.error("AI EXECUTION ERROR:", error.message);
-    throw error;
   }
+
+  throw lastError || new Error("Failed to get response from AI service.");
 }

@@ -18,9 +18,10 @@ export async function chatHandler(req: any, res: any) {
     return res.status(200).json({ reply });
 
   } catch (error: any) {
-    console.error("BACKEND CHAT ERROR:", error.message || error);
+    console.error("BACKEND CHAT ERROR:", error?.message || error);
     return res.status(500).json({
-      reply: "I apologize, but the AI assistant is temporarily unavailable. Please try again shortly."
+      reply: "I apologize, but the AI assistant is temporarily unavailable. Please try again shortly.",
+      error: error?.message || String(error)
     });
   }
 }

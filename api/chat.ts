@@ -5,6 +5,13 @@ export const config = {
 };
 
 export default async function handler(req: Request) {
+  if (req.method !== 'POST') {
+    return new Response(
+      JSON.stringify({ reply: "Method not allowed." }),
+      { status: 405, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   try {
     const body = await req.json();
     const { message, context, history } = body;
@@ -31,7 +38,7 @@ export default async function handler(req: Request) {
     return new Response(
       JSON.stringify({
         reply: "I apologize, but the AI assistant is temporarily unavailable. Please try again shortly.",
-        error: String(error)
+        error: error?.message || String(error)
       }),
       { 
         status: 500, 
