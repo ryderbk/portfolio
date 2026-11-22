@@ -34,6 +34,8 @@ export interface SiteConfig {
   themeStamp: number;
   /** Config schema version (2 = Cinema theme, dark by default) */
   configVersion: number;
+  /** Fit-to-screen mode for 16:9 viewports (clamps vertical scales) */
+  fitViewport: boolean;
 }
 
 export const CONFIG_VERSION = 2;
@@ -65,6 +67,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   selectedFont: "original",
   themeStamp: 0,
   configVersion: CONFIG_VERSION,
+  fitViewport: true,
 };
 
 /** Merge any stored/remote config with defaults and migrate legacy values. */
@@ -75,6 +78,7 @@ export function normalizeConfig(raw: any): SiteConfig {
     merged.themeMode = "dark";
     merged.selectedPalette = DEFAULT_PALETTE_ID;
     merged.configVersion = CONFIG_VERSION;
+    merged.fitViewport = true;
   }
   if (!merged.selectedPalette || merged.selectedPalette === "original" ||
       !COLOR_PALETTES.some((p) => p.id === merged.selectedPalette)) {
@@ -82,6 +86,7 @@ export function normalizeConfig(raw: any): SiteConfig {
   }
   if (!["dark", "light", "system"].includes(merged.themeMode)) merged.themeMode = "dark";
   if (typeof merged.themeStamp !== "number") merged.themeStamp = 0;
+  if (typeof merged.fitViewport !== "boolean") merged.fitViewport = true;
   return merged;
 }
 
@@ -163,41 +168,41 @@ export const COLOR_PALETTES: ColorPalette[] = [
     name: "Obsidian Gold",
     nativeMode: "dark",
     dark:  { bg: "#0A0A0B", surface: "#1A1812", accent: "#C9A96E", text: "#F5F0E8", muted: "#B5A090" },
-    light: { bg: "#F5F0E8", surface: "#EDE5D8", accent: "#A07840", text: "#0A0A0B", muted: "#6B5E50" },
+    light: { bg: "#F5F0E8", surface: "#EDE5D8", accent: "#8A6428", text: "#0A0A0B", muted: "#6B5E50" },
   },
   {
     id: "alabaster-noir",
     name: "Alabaster Noir",
     nativeMode: "light",
-    light: { bg: "#F7F4EF", surface: "#E8E2D9", accent: "#2C2825", text: "#0F0E0C", muted: "#B5A898" },
-    dark:  { bg: "#0F0E0C", surface: "#1E1A17", accent: "#E8D9B8", text: "#F7F4EF", muted: "#7A6E64" },
+    light: { bg: "#F7F4EF", surface: "#E8E2D9", accent: "#8A5A2B", text: "#0F0E0C", muted: "#6F6558" },
+    dark:  { bg: "#0F0E0C", surface: "#1E1A17", accent: "#E8D9B8", text: "#F7F4EF", muted: "#A39786" },
   },
   {
     id: "midnight-cobalt",
     name: "Midnight Cobalt",
     nativeMode: "dark",
-    dark:  { bg: "#07090F", surface: "#0D1526", accent: "#4A7FCC", text: "#E8EEF8", muted: "#5A6A88" },
-    light: { bg: "#E8EEF8", surface: "#D0DBF0", accent: "#1A3A6B", text: "#07090F", muted: "#607090" },
+    dark:  { bg: "#07090F", surface: "#0D1526", accent: "#6B9BE8", text: "#E8EEF8", muted: "#8FA0C0" },
+    light: { bg: "#E8EEF8", surface: "#D0DBF0", accent: "#1A3A6B", text: "#07090F", muted: "#4A5A78" },
   },
   {
     id: "sage-cream",
     name: "Sage & Cream",
     nativeMode: "light",
-    light: { bg: "#F9F6F0", surface: "#DFE8DE", accent: "#3D6B47", text: "#1A2E1C", muted: "#8AAB87" },
-    dark:  { bg: "#1A2E1C", surface: "#223825", accent: "#8AAB87", text: "#F9F6F0", muted: "#5A7A5D" },
+    light: { bg: "#F9F6F0", surface: "#DFE8DE", accent: "#2F6B3B", text: "#1A2E1C", muted: "#587A5B" },
+    dark:  { bg: "#142319", surface: "#1E3223", accent: "#9CCB9F", text: "#F9F6F0", muted: "#8FB092" },
   },
   {
     id: "smoked-mauve",
     name: "Smoked Mauve",
     nativeMode: "dark",
-    dark:  { bg: "#120E12", surface: "#2A1F2A", accent: "#C4A0C4", text: "#F2EAF2", muted: "#7A5C7A" },
-    light: { bg: "#F2EAF2", surface: "#E0D0E0", accent: "#7A5C7A", text: "#120E12", muted: "#A880A8" },
+    dark:  { bg: "#120E12", surface: "#2A1F2A", accent: "#D9B3D9", text: "#F2EAF2", muted: "#B497B4" },
+    light: { bg: "#F2EAF2", surface: "#E0D0E0", accent: "#6B4A6B", text: "#120E12", muted: "#6F5470" },
   },
   {
     id: "spiderman",
     name: "Spider-Man",
     nativeMode: "dark",
-    dark:  { bg: "#000000", surface: "#0F0F10", accent: "#E31212", text: "#FFFFFF", muted: "#888888" },
+    dark:  { bg: "#000000", surface: "#0F0F10", accent: "#FF2A2A", text: "#FFFFFF", muted: "#A0A0A0" },
     light: { bg: "#F5F5F5", surface: "#E8E8E8", accent: "#B30F0F", text: "#000000", muted: "#555555" },
   },
 ];

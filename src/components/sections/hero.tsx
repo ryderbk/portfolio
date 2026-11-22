@@ -41,13 +41,14 @@ export function Hero({ ready }: { ready: boolean }) {
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const els = gsap.utils.toArray<HTMLElement>(".c-cycle-word", cycle.current!);
-    gsap.set(els, { yPercent: 110 });
-    gsap.set(els[0], { yPercent: 0 });
+    gsap.set(els, { yPercent: 140, autoAlpha: 0 });
+    gsap.set(els[0], { yPercent: 0, autoAlpha: 1 });
     const tl = gsap.timeline({ repeat: -1, delay: 3 });
     els.forEach((el, i) => {
       const next = els[(i + 1) % els.length];
-      tl.to(el, { yPercent: -110, duration: 0.8, ease: "expo.inOut" }, "+=2")
-        .fromTo(next, { yPercent: 110 }, { yPercent: 0, duration: 0.8, ease: "expo.inOut", immediateRender: false }, "<");
+      tl.to(el, { yPercent: -140, duration: 0.8, ease: "expo.inOut" }, "+=2")
+        .fromTo(next, { yPercent: 140, autoAlpha: 1 }, { yPercent: 0, duration: 0.8, ease: "expo.inOut", immediateRender: false }, "<")
+        .set(el, { autoAlpha: 0 });
     });
     return () => { tl.kill(); };
   }, []);

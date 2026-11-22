@@ -97,14 +97,14 @@ export function Projects() {
               <div className="c-panel-body">
                 <div className="c-panel-head">
                   <span className="mono acc">{p.subtitle}</span>
-                  <h3 className="c-panel-title" style={{ marginTop: "0.7rem" }}>{p.title}</h3>
+                  <h3 className="c-panel-title">{p.title}</h3>
+                  <div className="c-panel-actions">
+                    <button className="c-btn" onClick={() => setOpen(p)}>Case study <Arrow /></button>
+                    {p.link && <a className="c-btn" href={p.link} target="_blank" rel="noopener noreferrer">Visit <Arrow /></a>}
+                  </div>
+                  <div className="c-tags">{(p.tags || []).slice(0, 5).map((t: string) => <span key={t} className="c-tag">{t}</span>)}</div>
                 </div>
                 <p className="c-panel-desc">{p.description}</p>
-                <div className="c-tags">{(p.tags || []).slice(0, 5).map((t: string) => <span key={t} className="c-tag">{t}</span>)}</div>
-                <div className="c-panel-actions">
-                  <button className="c-btn" onClick={() => setOpen(p)}>Case study <Arrow /></button>
-                  {p.link && <a className="c-btn" href={p.link} target="_blank" rel="noopener noreferrer">Visit <Arrow /></a>}
-                </div>
               </div>
             </article>
           ))}

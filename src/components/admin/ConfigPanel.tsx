@@ -179,6 +179,21 @@ export default function ConfigPanel() {
           </ControlItem>
         </ControlGroup>
 
+        <ControlGroup title="Display & Layout" icon={Monitor}>
+          <Toggle
+            value={config.fitViewport}
+            label="Fit to Screen (16:9 layout)"
+            desc="Scale vertical spacing on widescreen displays so full sections fit in view"
+            onChange={() => {
+              updateConfig({ fitViewport: !config.fitViewport });
+              toast({
+                title: `Fit to Screen ${!config.fitViewport ? "Enabled" : "Disabled"}`,
+                description: "Viewport scaling has been updated.",
+              });
+            }}
+          />
+        </ControlGroup>
+
         <ControlGroup title="Typography & Font" icon={Type}>
           <ControlItem label="Font Family" description="Select a premium font for the site" fullWidth>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">

@@ -120,6 +120,23 @@ function luminance(hex: string): number {
   return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 }
 
+function relLuminance(hex: string): number {
+  const [r8, g8, b8] = hexToRGB(hex);
+  const toLinear = (v: number) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  };
+  return 0.2126 * toLinear(r8) + 0.7152 * toLinear(g8) + 0.0722 * toLinear(b8);
+}
+
+function contrast(hexA: string, hexB: string): number {
+  const l1 = relLuminance(hexA);
+  const l2 = relLuminance(hexB);
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 /** Derive full CSS token map from 5 palette core colors */
 function deriveCSSTokens(colors: PaletteColors, isDark: boolean): Record<string, string> {
   const cardColor = blendHex(colors.bg, colors.surface, 0.35);
@@ -166,21 +183,43 @@ function deriveCSSTokens(colors: PaletteColors, isDark: boolean): Record<string,
   return tokens;
 }
 
-/** Derive the website (.cin) variables from palette colours. */
+/** Derive the website (.cin) variables from palette colours with contrast guards. */
 function deriveCinTokens(colors: PaletteColors, isDark: boolean): Record<string, string> {
   const [fr, fg, fb] = hexToRGB(colors.text);
   const [br, bg, bb] = hexToRGB(colors.bg);
   const [sr, sg, sb] = hexToRGB(colors.surface);
-  const [ar, ag, ab] = hexToRGB(colors.accent);
-  const accInk = luminance(colors.accent) > 0.5 ? "#0a0b04" : "#ffffff";
+
+  // 1. Nudge accent toward text color until contrast against bg is at least 3.5:1
+  let guardedAccent = colors.accent;
+  let accentStep = 0;
+  while (contrast(guardedAccent, colors.bg) < 3.5 && accentStep < 15) {
+    accentStep++;
+    guardedAccent = blendHex(guardedAccent, colors.text, 0.08);
+  }
+  const [ar, ag, ab] = hexToRGB(guardedAccent);
+
+  // 2. Pick black or white --acc-ink, whichever contrasts more with the accent
+  const blackContrast = contrast(guardedAccent, "#000000");
+  const whiteContrast = contrast(guardedAccent, "#ffffff");
+  const accInk = blackContrast >= whiteContrast ? "#0a0b04" : "#ffffff";
+
+  // 3. Raise muted alpha until text on bg reaches at least 4.5:1 contrast
+  let muteAlpha = isDark ? 0.56 : 0.65;
+  let muteStep = 0;
+  while (contrast(blendHex(colors.bg, colors.text, muteAlpha), colors.bg) < 4.5 && muteAlpha < 0.96 && muteStep < 20) {
+    muteStep++;
+    muteAlpha += 0.03;
+  }
+  muteAlpha = Math.min(0.96, Math.round(muteAlpha * 100) / 100);
+
   const t: Record<string, string> = {
     "--cin-bg": colors.bg,
     "--cin-bg-2": colors.surface,
     "--cin-fg": colors.text,
-    "--cin-mute": `rgba(${fr}, ${fg}, ${fb}, 0.56)`,
+    "--cin-mute": `rgba(${fr}, ${fg}, ${fb}, ${muteAlpha})`,
     "--cin-faint": `rgba(${fr}, ${fg}, ${fb}, 0.3)`,
     "--cin-line": `rgba(${fr}, ${fg}, ${fb}, ${isDark ? 0.12 : 0.16})`,
-    "--cin-acc": colors.accent,
+    "--cin-acc": guardedAccent,
     "--cin-acc-ink": accInk,
     "--cin-bg-rgb": `${br}, ${bg}, ${bb}`,
     "--cin-bg2-rgb": `${sr}, ${sg}, ${sb}`,
@@ -266,6 +305,7 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     if (fontId === "original") {
       removeGoogleFont();
+      root.setAttribute("data-font", "original");
       root.style.removeProperty("--font-family-sans");
       root.style.removeProperty("--font-family-display");
       root.style.removeProperty("--font-family-projects");
@@ -286,6 +326,7 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const font = FONT_OPTIONS.find((f) => f.id === fontId);
     if (!font) return;
 
+    root.setAttribute("data-font", fontId);
     loadGoogleFont(font.importParam);
     const fontValue = font.family;
     
@@ -434,6 +475,36 @@ export const SiteConfigProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   useEffect(() => {
     applyConfigToDOM(config, effectiveMode(config, visitor));
   }, [config, visitor, applyConfigToDOM]);
+
+  // Fit-to-screen (16:9) viewport scaling
+  useEffect(() => {
+    const root = document.documentElement;
+    if (config.fitViewport === false) {
+      root.removeAttribute("data-fit");
+      root.style.removeProperty("--fit");
+      return;
+    }
+    const update = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (w >= 900 && w > h) {
+        root.setAttribute("data-fit", "on");
+        const idealH = (w * 9) / 16;
+        const scale = Math.max(0.55, Math.min(1, h / idealH));
+        root.style.setProperty("--fit", scale.toFixed(4));
+      } else {
+        root.removeAttribute("data-fit");
+        root.style.removeProperty("--fit");
+      }
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      root.removeAttribute("data-fit");
+      root.style.removeProperty("--fit");
+    };
+  }, [config.fitViewport]);
 
   // Remote (admin) changes → website, live
   useEffect(() => {
