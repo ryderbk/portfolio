@@ -25,7 +25,7 @@ const groups = [
   },
   {
     n: "03",
-    name: "Tools & Platforms",
+    name: "Toolkit",
     items: [
       "Firebase",
       "Git & GitHub",
