@@ -146,7 +146,7 @@ html.lenis, html.lenis body { height: auto; }
 .c-btn:hover svg { transform: translate(3px, -3px); }
 
 /* ---------- hero ---------- */
-.c-hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 8rem 0 7rem; }
+.c-hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 8rem 0 clamp(7rem, 15vh, 9rem); }
 .c-hero-bg { position: absolute; inset: 0; pointer-events: none; }
 .c-hero-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 72px 72px; opacity: 0.45; mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%); }
 .c-orb { position: absolute; border-radius: 50%; filter: blur(80px); will-change: transform; }
@@ -172,7 +172,10 @@ html.lenis, html.lenis body { height: auto; }
 .c-hero-ctas { display: flex; flex-wrap: wrap; gap: 0.9rem; }
 @media (min-width: 900px) { .c-hero-ctas { justify-content: flex-end; } }
 .c-hero-name { position: absolute; left: 0; bottom: -0.12em; white-space: nowrap; font-family: var(--f-display); font-weight: 700; font-size: clamp(6rem, 22vw, 26rem); letter-spacing: -0.06em; line-height: 0.8; color: transparent; -webkit-text-stroke: 1px rgba(var(--fg-rgb),0.14); pointer-events: none; user-select: none; will-change: transform; }
-.c-scroll-hint { position: absolute; left: var(--pad); bottom: 4.5rem; display: flex; align-items: center; gap: 0.8rem; z-index: 2; }
+.c-scroll-hint { position: absolute; left: var(--pad); bottom: clamp(1.2rem, 3.5vh, 4rem); display: flex; align-items: center; gap: 0.8rem; z-index: 2; }
+@media (max-height: 740px) {
+  .c-scroll-hint { display: none; }
+}
 .c-scroll-hint i { display: block; width: 1px; height: 44px; background: var(--line); position: relative; overflow: hidden; }
 .c-scroll-hint i::after { content: ""; position: absolute; left: 0; top: 0; width: 1px; height: 18px; background: var(--acc); animation: c-drip 1.8s cubic-bezier(.7,0,.3,1) infinite; }
 @keyframes c-drip { from { transform: translateY(-20px); } to { transform: translateY(46px); } }
