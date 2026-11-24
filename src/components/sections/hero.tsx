@@ -45,39 +45,30 @@ export function Hero({ ready }: { ready: boolean }) {
 
     const ctx = gsap.context(() => {
       const els = gsap.utils.toArray<HTMLElement>(".c-cycle-word", container);
-      if (els.length <= 1) return;
+      if (els.length === 0) return;
 
-      // Ensure clean initial state: first word visible in position, others prepared below
-      gsap.set(els, { yPercent: 100, autoAlpha: 0 });
+      gsap.set(els, { yPercent: 120, autoAlpha: 0 });
       gsap.set(els[0], { yPercent: 0, autoAlpha: 1 });
 
       const tl = gsap.timeline({ repeat: -1 });
 
       els.forEach((el, i) => {
         const next = els[(i + 1) % els.length];
-        const step = `step_${i}`;
-
-        // Pause on current word, then start transition
-        tl.add(step, `+=2.4`);
-
-        // Prepare incoming word just before animating in so it is never stuck or mispositioned
-        tl.set(next, { yPercent: 100, autoAlpha: 0 }, step);
-
-        // Incoming word starts rising and fading in
-        tl.to(next, {
+        tl.to(el, {
+          yPercent: -120,
+          autoAlpha: 0,
+          duration: 0.75,
+          ease: "power2.inOut",
+        }, "+=2.4")
+        .fromTo(next, {
+          yPercent: 120,
+          autoAlpha: 0,
+        }, {
           yPercent: 0,
           autoAlpha: 1,
-          duration: 0.8,
-          ease: "power2.out",
-        }, step);
-
-        // Outgoing word transitions out simultaneously with slight offset/overlap
-        tl.to(el, {
-          yPercent: -100,
-          autoAlpha: 0,
-          duration: 0.8,
-          ease: "power2.in",
-        }, step);
+          duration: 0.75,
+          ease: "power2.inOut",
+        }, "<");
       });
     }, container);
 
