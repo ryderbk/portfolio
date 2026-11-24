@@ -80,43 +80,112 @@ function getProviderExecutionQueue(): AIProviderAttempt[] {
 
 /**
  * Formats full portfolio context into a structured string for the AI.
+ * Merges dynamic Firestore context with complete grounded website data.
  */
-export function formatPortfolioContext(context: PortfolioContext): string {
+export function formatPortfolioContext(context: PortfolioContext = {}): string {
   const { projects = [], skills = [], experiences = [], education = [] } = context;
-  
-  let contextualString = "=== MY PORTFOLIO DATA ===\n\n";
 
-  if (projects.length > 0) {
-    contextualString += "PROJECTS:\n" + projects.slice(0, 10).map((p) => {
+  // Curated project dataset (matching Firebase & website live portfolio)
+  const defaultProjects = [
+    {
+      title: "MARKIFY",
+      category: "WEB APPLICATION — ACADEMIC ANALYTICS",
+      description: "A full-stack academic web app built to calculate internal marks, predict GPAs, and project target scores through instant, data-driven insights.",
+      tech: "React, TypeScript, Tailwind CSS",
+    },
+    {
+      title: "INSTRUAX",
+      category: "WEB APPLICATION — SYMPOSIUM WEBSITE",
+      description: "A modern symposium website built to centralize event details, schedules, and registrations through an interactive and visually engaging interface.",
+      tech: "React, TypeScript, Tailwind CSS, Framer Motion",
+    },
+    {
+      title: "FIRE FIGHTING ROBOT",
+      category: "HARDWARE — ROBOTICS & SAFETY SYSTEMS",
+      description: "An autonomous safety system engineered to detect and extinguish flames using sensor-based navigation for safe, human-free fire suppression.",
+      tech: "Arduino, Embedded Systems, Sensor-Based, Automation",
+    },
+    {
+      title: "SOUND-ACTIVATED CONTROL",
+      category: "HARDWARE — HOME AUTOMATION",
+      description: "A hands-free automation system designed to control a fan using clap detection through simple audio signal processing and efficient electronic circuitry.",
+      tech: "Home Automation, Relay Circuit, Signal Processing",
+    },
+    {
+      title: "SWEETALK",
+      category: "WEB APPLICATION — MESSAGING APP",
+      description: "A real-time web messaging app that combines live personal chatting with synchronized interactive mini-games and custom visual themes.",
+      tech: "React, TypeScript, Firebase, Progressive Web App",
+    },
+  ];
+
+  let contextualString = `=== BHARATH KUMAR S — PORTFOLIO DATA ===
+
+ABOUT ME:
+- Name: Bharath Kumar S
+- Role: Electronics & Instrumentation Engineer who writes software
+- Location: Perambur, Chennai, India (IST timezone)
+- Core Focus: I build things that sense, think, and feel good to use — from Arduinos, sensors, and flow meters on the factory floor to web applications, cross-platform tools, and embedded automation.
+- Current Status: Available for opportunities
+- Education:
+  * B.E. in Electronics & Instrumentation Engineering at Velammal Engineering College, Chennai (2023 — 2027) | Current CGPA: 7.89
+  * Higher Secondary (HSC) at Kaligi Ranganathan Montford Matric Hr. Sec. School (2021 — 2023) | 78.33%
+  * Secondary (SSLC) at SKNS PMC Vivekananda Vidyalaya Junior College (2009 — 2021) | 70.17%
+- Experience & Internships:
+  * Toshniwal Hyvac Pvt. Ltd. (July 2024): Developed an Arduino testing setup for flow meters and gained hands-on industrial automation experience.
+  * Brakes India Private Limited (Dec 2024): Explored automotive manufacturing, braking systems engineering, and precision quality standards.
+  * INSTRAUX'24: Led the editing team, created promotional reels and posters, and developed the official symposium website.
+- Technical Skills & Toolbox:
+  * 01 — Code: Python, C++, HTML, CSS, TypeScript, JavaScript, React, Flutter
+  * 02 — Hardware: Arduino, Microcontrollers, Sensors & Actuators, Industrial Automation
+  * 03 — Tools & Platforms: Firebase, Git & GitHub, Vercel, VS Code, OpenAI Codex, Antigravity
+  * 04 — Creative: Canva, Video Editing, Poster Design, Promotional Media
+- Strengths: Problem solving, Communication, Teamwork, Adaptability, Curiosity
+- Languages Known: English, Tamil
+- Contact Details:
+  * Phone: +91 98843 26984
+  * Email: sbharathkumarrr@gmail.com
+  * LinkedIn: https://www.linkedin.com/in/bharathkumarss
+  * GitHub: https://github.com/ryderbk
+  * Location: Perambur, Chennai, India
+
+PROJECTS:\n`;
+
+  // Merge projects from context if present or use default curated list
+  if (projects && projects.length > 0) {
+    contextualString += projects.map((p) => {
       let entry = `- ${p.title}`;
-      if (p.subtitle) entry += ` (${p.subtitle})`;
-      entry += `: ${p.description || 'No description available'}`;
-      const tech = p.technologiesUsed?.join(", ") || p.tags?.join(", ");
-      if (tech) entry += ` | Technologies: ${tech}`;
-      if (p.liveUrl) entry += ` | Live: ${p.liveUrl}`;
-      if (p.githubUrl) entry += ` | GitHub: ${p.githubUrl}`;
+      const cat = p.category || p.subtitle;
+      if (cat) entry += ` (${cat})`;
+      entry += `: ${p.description || "No description available"}`;
+      const tech = p.technologiesUsed?.join(", ") || (Array.isArray(p.tags) ? p.tags.join(", ") : p.tech);
+      if (tech) entry += ` | Tech Stack: ${tech}`;
       return entry;
     }).join("\n") + "\n\n";
+  } else {
+    contextualString += defaultProjects.map((p) => 
+      `- ${p.title} (${p.category}): ${p.description} | Tech Stack: ${p.tech}`
+    ).join("\n") + "\n\n";
   }
 
-  if (skills.length > 0) {
-    contextualString += "SKILLS:\n" + skills.map(s => {
-      let entry = s.name;
+  // Include any extra dynamic Firestore data if passed
+  if (skills && skills.length > 0) {
+    contextualString += "ADDITIONAL SKILLS:\n" + skills.map((s) => {
+      let entry = s.name || s.title;
       if (s.category) entry += ` (${s.category})`;
-      if (s.level) entry += ` — ${s.level}`;
       return `- ${entry}`;
     }).join("\n") + "\n\n";
   }
 
-  if (experiences.length > 0) {
-    contextualString += "EXPERIENCE:\n" + experiences.map(e => 
+  if (experiences && experiences.length > 0) {
+    contextualString += "ADDITIONAL EXPERIENCES:\n" + experiences.map((e) =>
       `- ${e.role || e.title} at ${e.company} (${e.period || e.duration}): ${e.description}`
     ).join("\n") + "\n\n";
   }
 
-  if (education.length > 0) {
-    contextualString += "EDUCATION:\n" + education.map(e =>
-      `- ${e.degree || e.title} from ${e.institution || e.school} (${e.year || e.period})`
+  if (education && education.length > 0) {
+    contextualString += "ADDITIONAL EDUCATION:\n" + education.map((ed) =>
+      `- ${ed.degree || ed.title} from ${ed.institution || ed.school} (${ed.year || ed.period})`
     ).join("\n") + "\n\n";
   }
 
