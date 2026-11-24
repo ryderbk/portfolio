@@ -254,8 +254,8 @@ html.lenis, html.lenis body { height: auto; }
 .c-portrait-wrap { position: relative; }
 @media (min-width: 1024px) { .c-portrait-wrap { position: sticky; top: 7rem; } }
 .c-portrait { position: relative; border-radius: 1.5rem; overflow: hidden; aspect-ratio: 3 / 4; background: var(--bg-2); border: 1px solid var(--line); clip-path: inset(0 0 0 0 round 1.5rem); }
-.c-portrait img { width: 100%; height: 118%; object-fit: cover; object-position: center top; filter: grayscale(0.25) contrast(1.05); will-change: transform; }
-.c-portrait::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(var(--bg-rgb),.7)); }
+.c-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; filter: grayscale(0.15) contrast(1.02); will-change: transform; }
+.c-portrait::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 75%, rgba(var(--bg-rgb), 0.85) 100%); }
 .c-portrait-tag { position: absolute; left: 1.2rem; bottom: 1.1rem; z-index: 2; }
 .c-portrait-glow { position: absolute; inset: -12%; z-index: -1; background: radial-gradient(circle at 70% 30%, rgba(var(--acc-rgb),.22), transparent 60%); filter: blur(50px); }
 .c-bio { font-size: clamp(1.15rem, 1.8vw, 1.6rem); line-height: 1.5; font-weight: 300; color: var(--mute); max-width: 34em; }

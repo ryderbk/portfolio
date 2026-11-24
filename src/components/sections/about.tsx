@@ -50,8 +50,8 @@ export function About() {
         clipPath: "inset(0% 0 0 0 round 24px)", duration: 1.6, ease: "expo.out",
         scrollTrigger: { trigger: ".c-portrait", start: "top 85%", once: true },
       });
-      gsap.fromTo(".c-portrait img", { yPercent: -8, scale: 1.25 }, {
-        yPercent: 8, scale: 1, ease: "none",
+      gsap.fromTo(".c-portrait img", { yPercent: -4, scale: 1.05 }, {
+        yPercent: 4, scale: 1, ease: "none",
         scrollTrigger: { trigger: ".c-portrait", start: "top bottom", end: "bottom top", scrub: true },
       });
       gsap.utils.toArray<HTMLElement>("[data-timeline]").forEach((tl) => {
