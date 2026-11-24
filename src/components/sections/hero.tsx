@@ -45,8 +45,9 @@ export function Hero({ ready }: { ready: boolean }) {
 
     const ctx = gsap.context(() => {
       const els = gsap.utils.toArray<HTMLElement>(".c-cycle-word", container);
-      if (els.length === 0) return;
+      if (els.length <= 1) return;
 
+      // Start: word 0 visible, all others below and hidden
       gsap.set(els, { yPercent: 120, autoAlpha: 0 });
       gsap.set(els[0], { yPercent: 0, autoAlpha: 1 });
 
@@ -54,13 +55,18 @@ export function Hero({ ready }: { ready: boolean }) {
 
       els.forEach((el, i) => {
         const next = els[(i + 1) % els.length];
+
+        // 1. Dwell on current word for 2.5s
+        // 2. Outgoing word slides out up: yPercent 0 -> -120
         tl.to(el, {
           yPercent: -120,
           autoAlpha: 0,
           duration: 0.75,
           ease: "power2.inOut",
-        }, "+=2.4")
-        .fromTo(next, {
+        }, "+=2.5");
+
+        // 3. Incoming word slides in from below: yPercent 120 -> 0 (in sync with outgoing)
+        tl.fromTo(next, {
           yPercent: 120,
           autoAlpha: 0,
         }, {
@@ -69,6 +75,9 @@ export function Hero({ ready }: { ready: boolean }) {
           duration: 0.75,
           ease: "power2.inOut",
         }, "<");
+
+        // 4. Once outgoing word has exited, reset it back below (yPercent: 120) so it is ready for its next entry
+        tl.set(el, { yPercent: 120, autoAlpha: 0 });
       });
     }, container);
 
