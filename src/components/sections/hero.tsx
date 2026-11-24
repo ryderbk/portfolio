@@ -4,7 +4,6 @@ import { scrollToTarget } from "@/lib/smooth-scroll";
 import { Magnetic } from "@/components/cinema/Magnetic";
 
 const words = ["experiences", "products", "systems", "machines"];
-const tickerWords = ["Python", "C++", "React", "Flutter", "Embedded Systems", "Industrial Automation", "Sensor Design", "Arduino", "TypeScript"];
 
 function useIstClock() {
   const [t, setT] = useState("");
@@ -126,17 +125,6 @@ export function Hero({ ready }: { ready: boolean }) {
             <Magnetic><button className="c-btn solid" onClick={() => scrollToTarget("#work")}>See my work <Arrow /></button></Magnetic>
             <Magnetic><button className="c-btn" onClick={() => scrollToTarget("#contact")}>Let’s talk <Arrow /></button></Magnetic>
           </div>
-        </div>
-      </div>
-      <div className="c-hero-ticker mono" role="group" aria-label={tickerWords.join(", ")} data-in style={hide}>
-        <div className="c-hero-ticker-track" aria-hidden="true">
-          {[0, 1].map((copy) => (
-            <div className={`c-hero-ticker-group${copy ? " is-clone" : ""}`} key={copy}>
-              {tickerWords.map((word) => (
-                <span className="c-hero-ticker-item" key={word}>{word}<i>✦</i></span>
-              ))}
-            </div>
-          ))}
         </div>
       </div>
       <div className="c-scroll-hint mono" data-in style={hide}><i /> Scroll</div>
