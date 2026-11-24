@@ -1,0 +1,33 @@
+import { useEffect } from "react";
+import { useLocation } from "wouter";
+import { useAuth } from "@/context/AuthContext";
+interface AuthGuardProps {
+  children: React.ReactNode;
+}
+export default function AuthGuard({ children }: AuthGuardProps) {
+  const { user, loading } = useAuth();
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    if (!loading && !user) {
+      setLocation("/admin/login");
+    }
+  }, [user, loading, setLocation]);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background dark:bg-background">
+        {" "}
+        <div className="flex flex-col items-center gap-4">
+          {" "}
+          <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />{" "}
+          <p className="text-foreground dark:text-foreground">
+            Loading...
+          </p>{" "}
+        </div>{" "}
+      </div>
+    );
+  }
+  if (!user) {
+    return null;
+  }
+  return <>{children}</>;
+}
