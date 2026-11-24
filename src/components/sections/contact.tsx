@@ -53,7 +53,6 @@ export function Contact() {
           <div data-reveal>
             <span className="mono">Elsewhere</span>
             <ul className="c-links">
-              <li><a href={`mailto:${EMAIL}`}>Email <small>{EMAIL}</small></a></li>
               <li><a href="tel:+919884326984">+91 98843 26984 <small>Call</small></a></li>
               <li><a href="https://www.linkedin.com/in/bharathkumarss" target="_blank" rel="noopener noreferrer">LinkedIn <small>↗</small></a></li>
               <li><a href="https://github.com/ryderbk" target="_blank" rel="noopener noreferrer">GitHub <small>↗</small></a></li>
