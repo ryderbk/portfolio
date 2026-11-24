@@ -37,51 +37,52 @@ export function Hero({ ready }: { ready: boolean }) {
     return () => ctx.revert();
   }, [ready]);
 
-  // Word cycle
+  // Word cycle: event-driven sequential transition to guarantee seamless looping without timeline-repeat conflicts
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const container = cycle.current;
     if (!container) return;
 
+    let activeIndex = 0;
+    let timer: ReturnType<typeof setTimeout>;
+
     const ctx = gsap.context(() => {
       const els = gsap.utils.toArray<HTMLElement>(".c-cycle-word", container);
       if (els.length <= 1) return;
 
-      // Start: word 0 visible, all others below and hidden
+      // Initial state: word 0 perfectly in place, all others hidden below
       gsap.set(els, { yPercent: 120, autoAlpha: 0 });
       gsap.set(els[0], { yPercent: 0, autoAlpha: 1 });
 
-      const tl = gsap.timeline({ repeat: -1 });
+      const cycleNext = () => {
+        const current = els[activeIndex];
+        const nextIndex = (activeIndex + 1) % els.length;
+        const next = els[nextIndex];
 
-      els.forEach((el, i) => {
-        const next = els[(i + 1) % els.length];
+        // Ensure next element starts cleanly from below
+        gsap.set(next, { yPercent: 120, autoAlpha: 0 });
 
-        // 1. Dwell on current word for 2.5s
-        // 2. Outgoing word slides out up: yPercent 0 -> -120
-        tl.to(el, {
-          yPercent: -120,
-          autoAlpha: 0,
-          duration: 0.75,
-          ease: "power2.inOut",
-        }, "+=2.5");
+        const tl = gsap.timeline({
+          defaults: { duration: 0.75, ease: "power2.inOut" },
+          onComplete: () => {
+            // Once outgoing has exited, reset it silently below
+            gsap.set(current, { yPercent: 120, autoAlpha: 0 });
+            activeIndex = nextIndex;
+            timer = setTimeout(cycleNext, 2500);
+          },
+        });
 
-        // 3. Incoming word slides in from below: yPercent 120 -> 0 (in sync with outgoing)
-        tl.fromTo(next, {
-          yPercent: 120,
-          autoAlpha: 0,
-        }, {
-          yPercent: 0,
-          autoAlpha: 1,
-          duration: 0.75,
-          ease: "power2.inOut",
-        }, "<");
+        tl.to(current, { yPercent: -120, autoAlpha: 0 }, 0)
+          .to(next, { yPercent: 0, autoAlpha: 1 }, 0);
+      };
 
-        // 4. Once outgoing word has exited, reset it back below (yPercent: 120) so it is ready for its next entry
-        tl.set(el, { yPercent: 120, autoAlpha: 0 });
-      });
+      timer = setTimeout(cycleNext, 2500);
     }, container);
 
-    return () => ctx.revert();
+    return () => {
+      clearTimeout(timer);
+      ctx.revert();
+    };
   }, []);
 
   // Scroll choreography + pointer parallax
