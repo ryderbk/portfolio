@@ -1,7 +1,17 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
 
-const items = ["products", "applications", "systems"];
+const items = [
+  "Python",
+  "C++",
+  "React",
+  "Flutter",
+  "Embedded Systems",
+  "Industrial Automation",
+  "Sensor Design",
+  "Arduino",
+  "TypeScript",
+];
 
 const Star = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c.8 6.7 5.3 11.2 12 12-6.7.8-11.2 5.3-12 12-.8-6.7-5.3-11.2-12-12C6.7 11.2 11.2 6.7 12 0z" /></svg>
