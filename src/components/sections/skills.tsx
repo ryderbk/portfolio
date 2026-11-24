@@ -1,7 +1,7 @@
 const groups = [
   { n: "01", name: "Code", items: ["Python", "C++", "HTML", "CSS", "TypeScript", "JavaScript", "React", "Flutter", "Firebase", "Git & GitHub", "Vercel", "VS Code"] },
   { n: "02", name: "Hardware", items: ["Arduino", "Microcontrollers", "Sensors & Actuators", "Industrial Automation"] },
-  { n: "03", name: "Tools & Platforms", items: ["Git", "GitHub", "VS Code", "Firebase", "Vercel", "OpenAI Codex", "Antigravity"] },
+  { n: "03", name: "Platforms", items: ["Git", "GitHub", "VS Code", "Firebase", "Vercel", "OpenAI Codex", "Antigravity"] },
   { n: "04", name: "Creative", items: ["Canva", "Video Editing", "Poster Design", "Promotional Media"] },
 ];
 const soft = ["Problem solving", "Communication", "Teamwork", "Adaptability", "Curiosity"];
