@@ -331,7 +331,7 @@ export async function getChatResponse(
   for (let i = 0; i < queue.length; i++) {
     const attempt = queue[i];
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
 
     try {
       console.log(`Sending chat request via ${attempt.provider} with model ${attempt.model}...`);
@@ -345,7 +345,7 @@ export async function getChatResponse(
           model: attempt.model,
           messages,
           temperature: 0.5,
-          max_tokens: 220, 
+          max_tokens: 700, 
         }),
         signal: controller.signal,
       });
