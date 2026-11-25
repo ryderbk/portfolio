@@ -27,9 +27,9 @@ interface AIProviderAttempt {
 
 /**
  * Builds an ordered list of providers and models to attempt.
- * Automatically supports:
- * 1. Google Gemini (via GEMINI_API_KEY, AI_API_KEY, or GROQ_API_KEY if key starts with AQ. / AIza)
- * 2. Groq (via GROQ_API_KEY or AI_API_KEY if key starts with gsk_)
+ * Priority: Groq first (fast, ~1000 t/s), Gemini as fallback.
+ * 1. Groq (via GROQ_API_KEY or AI_API_KEY if key starts with gsk_)
+ * 2. Google Gemini (via GEMINI_API_KEY or AI_API_KEY)
  */
 function getProviderExecutionQueue(): AIProviderAttempt[] {
   const env = (typeof process !== "undefined" && process.env)
@@ -51,25 +51,31 @@ function getProviderExecutionQueue(): AIProviderAttempt[] {
     resolvedGeminiKey = genericKey;
   }
 
-  // 1. Google Gemini attempts (Primary provider)
+  // Resolve Groq key (gsk_ prefix)
+  let resolvedGroqKey = groqKey;
+  if (!resolvedGroqKey && genericKey && genericKey.startsWith("gsk_")) {
+    resolvedGroqKey = genericKey;
+  }
+
+  // 1. Groq first — fastest provider (~1000 t/s, sub-2s responses)
+  if (resolvedGroqKey && !resolvedGroqKey.startsWith("AQ.") && !resolvedGroqKey.startsWith("AIza")) {
+    for (const model of GROQ_CONFIG.MODELS) {
+      queue.push({
+        provider: "groq",
+        apiKey: resolvedGroqKey,
+        apiUrl: GROQ_CONFIG.API_URL,
+        model,
+      });
+    }
+  }
+
+  // 2. Gemini fallback
   if (resolvedGeminiKey) {
     for (const model of GEMINI_CONFIG.MODELS) {
       queue.push({
         provider: "gemini",
         apiKey: resolvedGeminiKey,
         apiUrl: GEMINI_CONFIG.API_URL,
-        model,
-      });
-    }
-  }
-
-  // 2. Groq attempts (Secondary provider, with modern active models)
-  if (groqKey && !groqKey.startsWith("AQ.") && !groqKey.startsWith("AIza")) {
-    for (const model of GROQ_CONFIG.MODELS) {
-      queue.push({
-        provider: "groq",
-        apiKey: groqKey,
-        apiUrl: GROQ_CONFIG.API_URL,
         model,
       });
     }
