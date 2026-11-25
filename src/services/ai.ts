@@ -345,7 +345,7 @@ export async function getChatResponse(
           model: attempt.model,
           messages,
           temperature: 0.5,
-          max_tokens: 700,
+          max_tokens: 1500,
         }),
         signal: controller.signal,
       });
