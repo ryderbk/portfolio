@@ -860,19 +860,30 @@ const Key = ({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         className={cn(
-          "flex h-6 w-6 cursor-pointer items-center justify-center rounded-[3.5px] bg-card border border-border shadow-[0px_1px_1px_0px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(255,255,255,0.1)_inset] transition-transform duration-75 active:scale-[0.98]",
+          "flex h-6 w-6 cursor-pointer items-center justify-center rounded-[3.5px] bg-card border border-border shadow-[0px_1px_1px_0px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(255,255,255,0.1)_inset] transition-all duration-75 active:scale-[0.98]",
           isPressed &&
-            "scale-[0.98] bg-primary text-primary-foreground shadow-inner",
+            "scale-[0.98] border-[var(--acc,#d4ff3a)] shadow-[0_0_12px_rgba(var(--acc-rgb,212,255,58),0.4)]",
           className,
         )}
+        style={
+          isPressed
+            ? {
+                backgroundColor: "var(--acc, #d4ff3a)",
+                color: "var(--acc-ink, #0a0b04)",
+              }
+            : undefined
+        }
       >
         <div
           className={cn(
             "flex h-full w-full flex-col items-center justify-center gap-[2px] font-bold leading-none uppercase whitespace-nowrap",
-            isPressed ? "text-primary-foreground" : "text-foreground/90",
+            isPressed ? "" : "text-foreground/90",
             childrenClassName,
           )}
-          style={{ fontSize: "4.5px" }}
+          style={{
+            fontSize: "4.5px",
+            color: isPressed ? "var(--acc-ink, #0a0b04)" : undefined,
+          }}
         >
           {children}
         </div>
@@ -924,16 +935,30 @@ const ModifierKey = ({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         className={cn(
-          "flex h-6 w-6 cursor-pointer items-center justify-center rounded-[3.5px] bg-card border border-border shadow-[0px_1px_1px_0px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(255,255,255,0.1)_inset] transition-transform duration-75 active:scale-[0.98]",
+          "flex h-6 w-6 cursor-pointer items-center justify-center rounded-[3.5px] bg-card border border-border shadow-[0px_1px_1px_0px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(255,255,255,0.1)_inset] transition-all duration-75 active:scale-[0.98]",
           isPressed &&
-            "scale-[0.98] bg-primary text-primary-foreground shadow-inner",
+            "scale-[0.98] border-[var(--acc,#d4ff3a)] shadow-[0_0_12px_rgba(var(--acc-rgb,212,255,58),0.4)]",
           className,
         )}
+        style={
+          isPressed
+            ? {
+                backgroundColor: "var(--acc, #d4ff3a)",
+                color: "var(--acc-ink, #0a0b04)",
+              }
+            : undefined
+        }
       >
-        <div className={cn(
-          "flex h-full w-full flex-col items-start justify-between px-[2px] py-[3px] font-bold leading-none uppercase whitespace-nowrap",
-          isPressed ? "text-primary-foreground" : "text-foreground/90"
-        )} style={{ fontSize: "3.5px" }}>
+        <div
+          className={cn(
+            "flex h-full w-full flex-col items-start justify-between px-[2px] py-[3px] font-bold leading-none uppercase whitespace-nowrap",
+            isPressed ? "" : "text-foreground/90",
+          )}
+          style={{
+            fontSize: "3.5px",
+            color: isPressed ? "var(--acc-ink, #0a0b04)" : undefined,
+          }}
+        >
           {children}
         </div>
       </button>
