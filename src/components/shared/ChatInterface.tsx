@@ -254,16 +254,11 @@ export function ChatInterface({
         } ${className}`}
     >
       {/* Header — Professional gradient bar */}
-      <div className="chat-header p-5 border-b border-border/30 flex items-center justify-between flex-shrink-0">
+      <div className="chat-header px-5 py-4 border-b border-border/30 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div>
-            <h3 className="font-display font-bold text-base text-foreground leading-tight">
-              Bharath Kumar
-            </h3>
-            <p className="text-xs font-medium text-muted-foreground mt-0.5 tracking-wide uppercase">
-              Personal Chat • Online
-            </p>
-          </div>
+          <h3 className="font-display font-semibold text-base text-foreground leading-none">
+            Ask Anything
+          </h3>
         </div>
         {onClose && (
           <button
