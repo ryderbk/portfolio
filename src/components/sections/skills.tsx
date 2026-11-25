@@ -1,5 +1,3 @@
-import { Magnetic } from "@/components/cinema/Magnetic";
-
 const groups = [
   {
     n: "01",
@@ -63,13 +61,7 @@ export function Skills() {
           {groups.map((g) => (
             <div key={g.name} className="c-skill-row" data-reveal>
               <h3 className="c-skill-name"><span className="mono">{g.n}</span>{g.name}</h3>
-              <div className="c-pills">
-                {g.items.map((s) => (
-                  <Magnetic key={s} strength={0.25}>
-                    <span className="c-pill cursor-pointer">{s}</span>
-                  </Magnetic>
-                ))}
-              </div>
+              <div className="c-pills">{g.items.map((s) => <span key={s} className="c-pill">{s}</span>)}</div>
             </div>
           ))}
         </div>

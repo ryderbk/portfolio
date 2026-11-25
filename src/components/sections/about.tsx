@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
-import { Card3D } from "@/components/cinema/Card3D";
 
 const experience = [
   {
@@ -72,18 +71,16 @@ export function About() {
         <div className="c-about-grid">
           <div className="c-portrait-wrap">
             <div className="c-portrait-glow" />
-            <Card3D depth={16} className="w-full">
-              <div className="c-portrait">
-                <img
-                  src="/images/profile.png"
-                  alt="Portrait of Bharath Kumar S"
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                />
-                <span className="c-portrait-tag mono">Bharath Kumar S — Chennai</span>
-              </div>
-            </Card3D>
+            <div className="c-portrait">
+              <img
+                src="/images/profile.png"
+                alt="Portrait of Bharath Kumar S"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
+              <span className="c-portrait-tag mono">Bharath Kumar S — Chennai</span>
+            </div>
           </div>
           <div>
             <h2 className="c-h2" data-split style={{ fontSize: "clamp(2.6rem,6vw,6rem)", marginBottom: "2.5rem" }}>
