@@ -287,7 +287,7 @@ export function ChatInterface({
               {QUICK_PROMPTS.map((prompt) => (
                 <button
                   key={prompt}
-                  onClick={() => handleSendMessage(undefined, prompt)}
+                  onClick={() => handleSendMessage(undefined, "Hi")}
                   className="text-left px-4 py-3 rounded-xl text-sm font-medium text-foreground/80 bg-accent/10 border border-accent/20 hover:border-accent/40 hover:bg-accent/20 hover:text-accent transition-all duration-200 group"
                 >
                   <span className="opacity-50 group-hover:opacity-80 mr-1.5 transition-opacity">→</span>
