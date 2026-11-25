@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { scrollToTarget } from "@/lib/smooth-scroll";
 import { Magnetic } from "@/components/cinema/Magnetic";
+import { HeroScene3D } from "@/components/visuals/HeroScene3D";
 
 const words = ["experiences", "products", "systems"];
 
@@ -106,7 +107,8 @@ export function Hero({ ready }: { ready: boolean }) {
 
   const hide = ready ? undefined : { visibility: "hidden" as const };
   return (
-    <section ref={root} id="top" className="c-hero" aria-label="Introduction">
+    <section ref={root} id="top" className="c-hero relative overflow-hidden" aria-label="Introduction">
+      <HeroScene3D interactive={true} />
       <div className="c-hero-bg" aria-hidden="true">
         <div className="c-hero-grid" /><div className="c-orb a" /><div className="c-orb b" />
       </div>

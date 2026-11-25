@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
 import { useData } from "@/context/DataContext";
 import { getLenis, lockScroll } from "@/lib/smooth-scroll";
+import { Card3D } from "@/components/cinema/Card3D";
 import { Arrow } from "./hero";
 
 const imgOf = (p: any): string => p.image || p.images?.[0] || "/images/project-01.png";
@@ -84,17 +85,19 @@ export function Projects() {
           </div>
           {projects.map((p, i) => (
             <article key={p.id || p.title} className="c-panel">
-              <div className="c-panel-media" data-cursor="Expand" onClick={() => setOpen(p)}>
-                <img
-                  src={imgOf(p)}
-                  alt={`${p.title} preview`}
-                  loading={i < 2 ? "eager" : "lazy"}
-                  decoding="async"
-                  fetchPriority={i === 0 ? "high" : "auto"}
-                />
-                <span className="c-panel-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-                {p.year && <span className="c-panel-year mono">{p.year}</span>}
-              </div>
+              <Card3D depth={14} className="w-full">
+                <div className="c-panel-media" data-cursor="Expand" onClick={() => setOpen(p)}>
+                  <img
+                    src={imgOf(p)}
+                    alt={`${p.title} preview`}
+                    loading={i < 2 ? "eager" : "lazy"}
+                    decoding="async"
+                    fetchPriority={i === 0 ? "high" : "auto"}
+                  />
+                  <span className="c-panel-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                  {p.year && <span className="c-panel-year mono">{p.year}</span>}
+                </div>
+              </Card3D>
               <div className="c-panel-body">
                 <div className="c-panel-left">
                   <span className="mono acc">{p.subtitle}</span>

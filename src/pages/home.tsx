@@ -4,6 +4,7 @@ import { destroySmoothScroll, initSmoothScroll, lockScroll } from "@/lib/smooth-
 import { useSiteConfig } from "@/hooks/useSiteConfig";
 import { Preloader } from "@/components/cinema/Preloader";
 import { Cursor } from "@/components/cinema/Cursor";
+import { SpotlightCanvas } from "@/components/visuals/SpotlightCanvas";
 import { Nav } from "@/components/cinema/Nav";
 import { ScrollProgress } from "@/components/cinema/ScrollProgress";
 import { Marquee } from "@/components/cinema/Marquee";
@@ -70,6 +71,7 @@ export default function Home() {
   return (
     <div ref={root} className="cin" data-theme={resolvedTheme}>
       <div className="c-grain" aria-hidden="true" />
+      <SpotlightCanvas />
       <a href="#main-content" className="skip-nav">Skip to main content</a>
       {!loaded && <Preloader onExitStart={onExitStart} onDone={onDone} />}
       <Cursor />
