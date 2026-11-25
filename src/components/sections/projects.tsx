@@ -16,20 +16,11 @@ function CaseStudy({ project, onClose }: { project: any; onClose: () => void }) 
   }, [onClose]);
   return (
     <motion.div className="c-modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} role="dialog" aria-modal="true" aria-label={project.title}>
-      <motion.div className="c-modal-card" data-lenis-prevent initial={{ y: 60, scale: 0.97 }} animate={{ y: 0, scale: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} onClick={(e) => e.stopPropagation()}>
+      <motion.div className="c-modal-card c-modal-card-expanded" data-lenis-prevent initial={{ y: 60, scale: 0.97 }} animate={{ y: 0, scale: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} onClick={(e) => e.stopPropagation()}>
         <button className="c-close" onClick={onClose} aria-label="Close">✕</button>
         <img className="c-modal-img" src={imgOf(project)} alt={project.title} />
-        <div className="c-modal-body">
-          <div>
-            <span className="mono acc">{project.subtitle}</span>
-            <h3 style={{ fontSize: "clamp(2rem,5vw,3.6rem)", marginTop: "0.8rem" }}>{project.title}</h3>
-          </div>
-          <div className="c-modal-grid">
-            {project.problem && <div><h4>Problem</h4><p>{project.problem}</p></div>}
-            {project.approach && <div><h4>Approach</h4><p>{project.approach}</p></div>}
-            {project.result && <div><h4>Result</h4><p>{project.result}</p></div>}
-          </div>
-          <div className="c-tags">{(project.tags || []).map((t: string) => <span key={t} className="c-tag">{t}</span>)}</div>
+        <div className="c-modal-expanded-header">
+          <h3 className="c-modal-title">{project.title}</h3>
         </div>
       </motion.div>
     </motion.div>
@@ -88,7 +79,7 @@ export function Projects() {
           </div>
           {projects.map((p, i) => (
             <article key={p.id || p.title} className="c-panel">
-              <div className="c-panel-media" data-cursor="Case study" onClick={() => setOpen(p)}>
+              <div className="c-panel-media" data-cursor="Expand" onClick={() => setOpen(p)}>
                 <img src={imgOf(p)} alt={`${p.title} preview`} loading="lazy" />
                 <span className="c-panel-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                 {p.year && <span className="c-panel-year mono">{p.year}</span>}
@@ -106,7 +97,7 @@ export function Projects() {
                 <div className="c-panel-right">
                   <p className="c-panel-desc">{p.description}</p>
                   <div className="c-panel-actions">
-                    <button className="c-btn solid" onClick={() => setOpen(p)}>Case study <Arrow /></button>
+                    <button className="c-btn solid" onClick={() => setOpen(p)}>Expand <Arrow /></button>
                     {p.link && <a className="c-btn" href={p.link} target="_blank" rel="noopener noreferrer">Visit <Arrow /></a>}
                   </div>
                 </div>
