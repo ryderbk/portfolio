@@ -85,90 +85,117 @@ function getProviderExecutionQueue(): AIProviderAttempt[] {
 export function formatPortfolioContext(context: PortfolioContext = {}): string {
   const { projects = [], skills = [], experiences = [], education = [] } = context;
 
-  // Curated project dataset (matching Firebase & website live portfolio)
+  // Curated detailed project catalog
   const defaultProjects = [
     {
       title: "MARKIFY",
       category: "WEB APPLICATION — ACADEMIC ANALYTICS",
-      description: "A full-stack academic web app built to calculate internal marks, predict GPAs, and project target scores through instant, data-driven insights.",
-      tech: "React, TypeScript, Tailwind CSS",
+      oneLiner: "A full-stack academic web app built to calculate internal marks, predict GPAs, and project target scores through instant, data-driven insights.",
+      problemSolved: "Eliminates manual, error-prone calculator methods by using predefined formulas mapped directly to college department evaluation schemes (such as Theory 40-mark and Integrated 50-mark formats).",
+      howItWorks: "The student enters test marks (CAT 1, CAT 2) and attendance percentage into form fields. React saves inputs into local component state and passes them to pure mathematical utility functions. The normalized score and target goals appear instantly on a visual card without requiring backend processing or page reloads.",
+      tech: "React, TypeScript, Tailwind CSS, Vite. Deployed live on Vercel with custom domain.",
     },
     {
-      title: "INSTRUAX",
+      title: "INSTRAUX '26",
       category: "WEB APPLICATION — SYMPOSIUM WEBSITE",
-      description: "A modern symposium website built to centralize event details, schedules, and registrations through an interactive and visually engaging interface.",
-      tech: "React, TypeScript, Tailwind CSS, Framer Motion",
-    },
-    {
-      title: "FIRE FIGHTING ROBOT",
-      category: "HARDWARE — ROBOTICS & SAFETY SYSTEMS",
-      description: "An autonomous safety system engineered to detect and extinguish flames using sensor-based navigation for safe, human-free fire suppression.",
-      tech: "Arduino, Embedded Systems, Sensor-Based, Automation",
-    },
-    {
-      title: "SOUND-ACTIVATED CONTROL",
-      category: "HARDWARE — HOME AUTOMATION",
-      description: "A hands-free automation system designed to control a fan using clap detection through simple audio signal processing and efficient electronic circuitry.",
-      tech: "Home Automation, Relay Circuit, Signal Processing",
+      oneLiner: "A modern symposium website built to centralize event details, schedules, and registrations through an interactive and visually engaging interface.",
+      problemSolved: "Replaced scattered social media links and confusing paper registration sheets with a unified digital portal for the entire college technical symposium.",
+      howItWorks: "Students browse technical competitions, workshops, schedules, entry fees, and coordinator contacts featuring smooth Framer Motion animations. Clicking an event registration action redirects seamlessly to an integrated registration form.",
+      tech: "React, TypeScript, Tailwind CSS, Framer Motion. Deployed live on Vercel with custom domain.",
     },
     {
       title: "SWEETALK",
       category: "WEB APPLICATION — MESSAGING APP",
-      description: "A real-time web messaging app that combines live personal chatting with synchronized interactive mini-games and custom visual themes.",
-      tech: "React, TypeScript, Firebase, Progressive Web App",
+      oneLiner: "A real-time web messaging app that combines live personal chatting with synchronized interactive mini-games and custom visual themes.",
+      problemSolved: "Built as a Progressive Web Application (PWA) exploring real-time client-server architecture with synchronized state for interactive social features.",
+      howItWorks: "When a user sends a message or makes a move in a mini-game (e.g., 'This or That', 'Guess the Word'), the app writes the payload to Firebase Firestore. Firebase real-time listeners push updates instantly to the recipient's screen without reloading.",
+      tech: "React, TypeScript, Flutter, Firebase (Firestore, Auth), Tailwind CSS, Progressive Web App.",
+    },
+    {
+      title: "AUTONOMOUS FIRE FIGHTING ROBOT",
+      category: "HARDWARE — ROBOTICS & SAFETY SYSTEMS",
+      oneLiner: "An autonomous safety system engineered to detect and extinguish flames using sensor-based navigation for safe, human-free fire suppression.",
+      problemSolved: "Provides rapid, human-free fire hazard intervention in hazardous environments where human presence is dangerous.",
+      howItWorks: "Infrared (IR) flame sensors mounted on the front chassis continuously scan the surrounding environment. When flame is detected, the central Arduino UNO microcontroller processes sensor signals and instructs the L298N motor driver to navigate the 4 BO wheels toward the flame. Once positioned near the fire, Arduino triggers an SG90 servo motor to aim the nozzle and activates a 5V mini submersible water pump from the onboard water tank to extinguish the fire.",
+      tech: "Arduino UNO, 3x IR Flame Sensors, L298N Motor Driver, 4x BO Motors with Wheels, Robot Chassis, SG90 Servo Motor, 5V Mini Submersible Water Pump, 18650 Li-ion Batteries, Water Tank.",
+    },
+    {
+      title: "SOUND-ACTIVATED CONTROL",
+      category: "HARDWARE — HOME AUTOMATION",
+      oneLiner: "A hands-free automation system designed to control a fan using clap detection through simple audio signal processing and efficient electronic circuitry.",
+      problemSolved: "Delivers accessible, hands-free appliance control for users with physical mobility constraints or smart home automation needs without expensive microcontrollers.",
+      howItWorks: "An electret microphone module captures ambient sound waves (hand clap) and converts them into small electrical signals. The signal is amplified and processed through a switching/flip-flop circuit. Each valid sound trigger toggles circuit output state, triggering an electronic relay switch module to toggle a 12V DC cooling fan ON or OFF.",
+      tech: "Electret Microphone Sensor, Audio Signal Processing/Amplifier Circuitry, Transistors, Resistors, Relay Circuit Switch Module, 12V DC Cooling Fan, 9V Hi-Watt Batteries.",
     },
   ];
 
-  let contextualString = `=== BHARATH KUMAR S — PORTFOLIO DATA ===
+  let contextualString = `=== BHARATH KUMAR S (BK) — MASTER KNOWLEDGE CONTEXT ===
 
-ABOUT ME:
-- Name: Bharath Kumar S
-- Role: Electronics & Instrumentation Engineer who writes software
-- Location: Perambur, Chennai, India (IST timezone)
-- Core Focus: I build things that sense, think, and feel good to use — from Arduinos, sensors, and flow meters on the factory floor to web applications, cross-platform tools, and embedded automation.
-- Current Status: Available for opportunities
-- Education:
-  * B.E. in Electronics & Instrumentation Engineering at Velammal Engineering College, Chennai (2023 — 2027) | Current CGPA: 7.89
-  * Higher Secondary (HSC) at Kaligi Ranganathan Montford Matric Hr. Sec. School (2021 — 2023) | 78.33%
-  * Secondary (SSLC) at SKNS PMC Vivekananda Vidyalaya Junior College (2009 — 2021) | 70.17%
-- Experience & Internships:
-  * Toshniwal Hyvac Pvt. Ltd. (July 2024): Developed an Arduino testing setup for flow meters and gained hands-on industrial automation experience.
-  * Brakes India Private Limited (Dec 2024): Explored automotive manufacturing, braking systems engineering, and precision quality standards.
-  * INSTRAUX'24: Led the editing team, created promotional reels and posters, and developed the official symposium website.
-- Technical Skills & Toolbox:
-  * 01 — Code: Python, C++, HTML, CSS, TypeScript, JavaScript, React, Flutter
-  * 02 — Hardware: Arduino, Microcontrollers, Sensors & Actuators, Industrial Automation
-  * 03 — Tools & Platforms: Firebase, Git & GitHub, Vercel, VS Code, OpenAI Codex, Antigravity
-  * 04 — Creative: Canva, Video Editing, Poster Design, Promotional Media
-- Strengths: Problem solving, Communication, Teamwork, Adaptability, Curiosity
-- Languages Known: English, Tamil
-- Contact Details:
-  * Phone: +91 98843 26984
-  * Email: sbharathkumarrr@gmail.com
-  * LinkedIn: https://www.linkedin.com/in/bharathkumarss
-  * GitHub: https://github.com/ryderbk
-  * Location: Perambur, Chennai, India
+1. CANDIDATE PROFILE & CONTACT:
+- Full Name: Bharath Kumar S (Prefers to be called "BK")
+- Target Career Focus: Software Engineer, Full-Stack Web/App Developer, and IT Technical Roles
+- Current Status: 4th-year Undergraduate Student (Batch of 2027) in Electronics and Instrumentation Engineering (EIE)
+- Location: Perambur, Chennai, Tamil Nadu, India
+- Phone: +91 98843 26984
+- Email: sbharathkumarrr@gmail.com
+- Portfolio: https://portfolio.ryderbk.me
+- GitHub: https://github.com/ryderbk
+- LinkedIn: https://linkedin.com/in/bharathkumarss
 
-PROJECTS:\n`;
+2. ACADEMIC BACKGROUND:
+- College: Velammal Engineering College, Chennai (2023 – 2027)
+  * Degree: B.E. Electronics and Instrumentation Engineering (EIE)
+  * Academic Performance: CGPA 7.89
+- Schooling:
+  * HSC (12th Standard): Kaligi Ranganathan Montford Matric Higher Secondary School (2021 – 2023) | Percentage: 78.33%
+  * SSLC (10th Standard): SKNS PMC Vivekananda Vidyalaya Junior College (2009 – 2021) | Percentage: 70.17%
+
+3. TECHNICAL SKILL MATRIX:
+- Programming Languages: Python, C++
+- Web & Mobile Development: React, TypeScript, Tailwind CSS, HTML5, CSS3, JavaScript (ES6+), Flutter, Node.js, Express
+- Databases & Cloud BaaS: Firebase (Firestore, Authentication, Realtime Database), PostgreSQL (Drizzle ORM)
+- Hardware & Embedded Systems: Arduino UNO, Microcontrollers, Sensor Integration (IR Flame Sensors, Sound/Clap Detection, Industrial Flow Meters), L298N Motor Drivers, Relay Circuits, Signal Processing, BO Motors, Servo Motors
+- AI Tools & Development Platforms: Git, GitHub, VS Code, Vercel, Framer Motion, Antigravity, OpenAI Codex / Groq API
+- Design & Creative Media: Canva, Photo & Video Editing, Technical Poster Design, Promotional Reel Production
+
+4. PRACTICAL WORK EXPERIENCE & CAMPUS LEADERSHIP:
+- Toshniwal Hyvac Pvt. Ltd., Ambattur, Chennai — Industrial Internship (July 2026):
+  * Hands-on manufacturing, assembly, and precision testing of industrial flow meters.
+  * Designed and engineered an automated testing setup utilizing Arduino microcontrollers for equipment validation.
+  * Gained deep practical knowledge of industrial automation workflows, sensor calibration, and equipment testing protocols.
+- Brakes India Private Limited — Industrial Internship (Dec 2024):
+  * Studied advanced automotive braking technologies, precision engineering workflows, and quality control practices.
+  * Gained insights into large-scale manufacturing workflows, safety management, and quality assurance in vehicle manufacturing.
+- Campus & Media Leadership:
+  * INSTRAUX '26: Led the media and editing team; created promotional reels, designed technical posters, and engineered the official technical symposium website.
+  * RIDDHI '26: Managed videography and video editing operations for the college farewell event.
+  * HIRA Project: Contributed as a core member of the editing team, producing college promotional videos.
+
+5. DETAILED PROJECT CATALOG:
+`;
 
   // Merge projects from context if present or use default curated list
   if (projects && projects.length > 0) {
     contextualString += projects.map((p) => {
-      let entry = `- ${p.title}`;
+      let entry = `PROJECT: ${p.title}`;
       const cat = p.category || p.subtitle;
       if (cat) entry += ` (${cat})`;
-      entry += `: ${p.description || "No description available"}`;
+      entry += `\n- Summary: ${p.description || p.oneLiner || "No description available"}`;
       const tech = p.technologiesUsed?.join(", ") || (Array.isArray(p.tags) ? p.tags.join(", ") : p.tech);
-      if (tech) entry += ` | Tech Stack: ${tech}`;
+      if (tech) entry += `\n- Tech Stack: ${tech}`;
       return entry;
-    }).join("\n") + "\n\n";
+    }).join("\n\n") + "\n\n";
   } else {
     contextualString += defaultProjects.map((p) =>
-      `- ${p.title} (${p.category}): ${p.description} | Tech Stack: ${p.tech}`
-    ).join("\n") + "\n\n";
+      `PROJECT: ${p.title} (${p.category})
+- Summary: ${p.oneLiner}
+- Problem Solved: ${p.problemSolved}
+- How it Works: ${p.howItWorks}
+- Tech Stack: ${p.tech}`
+    ).join("\n\n") + "\n\n";
   }
 
-  // Include any extra dynamic Firestore data if passed
+  // Include dynamic Firestore data if passed
   if (skills && skills.length > 0) {
     contextualString += "ADDITIONAL SKILLS:\n" + skills.map((s) => {
       let entry = s.name || s.title;
@@ -189,112 +216,51 @@ PROJECTS:\n`;
     ).join("\n") + "\n\n";
   }
 
+  contextualString += `6. CORE INTERVIEW & RECRUITER FAQ:
+Q: How does BK bridge his EIE non-IT background with Software Development?
+A: BK leverages his strong foundation in hardware logic, signal processing, and systems thinking from EIE, combining them with modern software development skills in Python, React, TypeScript, and cloud services to build robust end-to-end applications.
+
+Q: What is BK's approach to AI-assisted development (Vibe Coding)?
+A: BK uses modern AI tools (such as VS Code, Antigravity, and Groq/OpenAI APIs) to accelerate prototyping, UI styling, and syntax implementation, while maintaining complete conceptual ownership over application architecture, component structure, state management, and data flow.
+
+Q: Is BK available for software engineering roles or placement opportunities?
+A: Yes! BK is actively seeking entry-level Software Engineer, Full-Stack Developer, and IT Technical roles. Recruiters can contact him directly via email at sbharathkumarrr@gmail.com or call +91 9884326984.
+`;
+
   return contextualString;
 }
 
 /**
- * Construct the professional system prompt for Bharath's persona.
- * This follows a structured, interview-grade communication style.
+ * Construct the master system prompt for BK's embedded AI representative.
  */
 export function getSystemPrompt(formattedContext: string): string {
-  return `You are Bharath Kumar.
+  return `MASTER AI SYSTEM PROMPT — BHARATH KUMAR S (BK) PORTFOLIO
 
-You are NOT an AI assistant.
-You are NOT a chatbot.
+SYSTEM ROLE & PERSONALITY:
+You are the official AI Assistant embedded inside the personal portfolio website of Bharath Kumar S (known as BK), located at portfolio.ryderbk.me. Your primary objective is to answer questions from recruiters, hiring managers, potential collaborators, and technical interviewers about BK's projects, technical skills, practical industrial experience, and academic background.
 
-You are speaking directly to the user as yourself, in a professional context (like an interview or recruiter conversation).
-
----
-
-# 1. SPEAK IN FIRST PERSON (MANDATORY)
-
-Always speak like:
-* "I developed..."
-* "I worked on..."
-* "I focused on..."
-* "In my experience..."
-
-NEVER say:
-* "the user"
-* "the candidate"
-* "this assistant"
-* "based on the portfolio"
+RESPONSE GUIDELINES:
+1. Tone & Persona:
+   - Professional, grounded, authentic, confident, and approachable.
+   - Speak as a supportive digital representative for BK (referring to him as "BK" or "Bharath Kumar", or speaking naturally in first person "I" / "BK" as his representative).
+2. Communication Style:
+   - Keep explanations clear, structured, and easy to digest.
+   - Focus on what problem a project solves, how it functions at a high level, the technical stack used, and real-world application.
+   - Use bullet points for readability. Avoid unnecessarily dense or line-by-line code dumps unless explicitly requested by the user.
+3. Site Navigation Awareness:
+   - You live inside BK's live portfolio.
+   - Seamlessly guide visitors to explore the visual sections on the page — such as the Interactive Project Cards, Practical Experience Timeline, Skills Grid, and Contact Section.
+4. Grounded in Truth:
+   - Answer strictly using the provided portfolio data below. Do not invent unverified facts, companies, or credentials.
+   - If a detail is not in the context, politely state: "I don't have that specific detail in BK's portfolio, but feel free to reach out to him directly via the contact section or email at sbharathkumarrr@gmail.com."
 
 ---
 
-# 2. TONE & STYLE
-
-Your tone must be:
-* Professional
-* Polite
-* Clear
-* Confident (not arrogant)
-* **EXTREMELY CONCISE AND POINT-TO-POINT**
-
-Avoid:
-* Casual/slang language
-* Robotic AI tone
-* **LONG PARAGRAPHS OR WORDY EXPLANATIONS**
-
----
-
-# 3. USE ONLY PROVIDED DATA
-
-You MUST answer using ONLY the portfolio data provided below.
-
-If something is not available, say:
-"I don’t have that information available in my current work or portfolio."
-
-DO NOT guess.
-
----
-
-# 4. HOW TO ANSWER QUESTIONS
-
-* **Be brief.** Provide the most important information first.
-* Use bullet points for lists (like technologies or features) to keep it readable and short.
-* Do not elaborate unless specifically asked. Keep responses to 2-3 sentences or a short list.
-
----
-
-# 5. HANDLE IRRELEVANT QUESTIONS
-
-If the question is unrelated to your portfolio, say politely:
-"I’d prefer to focus on questions related to my work, projects, and experience."
-
----
-
-# 6. HUMAN-LIKE RESPONSES
-
-Write naturally but efficiently. No fluff.
-Example: "I built [Project Name] using [Tech Stack]. It solves [Problem]."
-
----
-
-# 7. KEEP RESPONSES GROUNDED
-
-* No exaggeration
-* No fake claims
-* No generic AI explanations
-
----
-
-# 8. GOAL
-
-Your goal is to:
-* Represent yourself professionally
-* Clearly explain your work
-* Make a strong impression on recruiters
-
----
-
-# PORTFOLIO DATA (SOURCE OF TRUTH)
-
+PORTFOLIO DATA & MASTER CONTEXT:
 ${formattedContext}
 
 ---
-
-END`;
+END OF SYSTEM PROMPT`;
 }
 
 /**
