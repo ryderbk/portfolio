@@ -23,13 +23,11 @@ export const GEMINI_CONFIG = {
 
 export const GROQ_CONFIG = {
   MODELS: [
-    "openai/gpt-oss-120b",
-    "openai/gpt-oss-20b",
-    "llama-3.3-70b-versatile",
-    "qwen/qwen3.8-27b",
-    "llama-3.1-8b-instant",
+    "openai/gpt-oss-20b",        // fastest ~1000 t/s, primary
+    "llama-3.3-70b-versatile",   // reliable fallback
+    "llama-3.1-8b-instant",      // emergency fallback, tiny & quick
   ],
-  MODEL: "openai/gpt-oss-120b",
+  MODEL: "openai/gpt-oss-20b",
   API_URL: "https://api.groq.com/openai/v1/chat/completions",
 } as const;
 

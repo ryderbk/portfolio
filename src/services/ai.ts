@@ -246,7 +246,14 @@ RESPONSE GUIDELINES:
 2. Communication Style:
    - Keep explanations clear, structured, and easy to digest.
    - Focus on what problem a project solves, how it functions at a high level, the technical stack used, and real-world application.
-   - Use bullet points for readability. Avoid unnecessarily dense or line-by-line code dumps unless explicitly requested by the user.
+   - Keep responses SHORT: 2-4 sentences or a compact bullet list of 3-5 items max. Never write more than needed.
+3. FORMATTING RULES (MANDATORY — no exceptions):
+   - Write in plain prose. NEVER use markdown headings (#, ##, ###). NEVER use horizontal rules (---).
+   - NEVER use asterisks (*) for italics or bullets. NEVER use underscores (_word_) for italics.
+   - NEVER use blockquotes (>). NEVER use code fences (triple backticks or backtick).
+   - For bullet lists, use only a simple dash followed by a space: "- item". Nothing else.
+   - You may use **word** sparingly (at most 1-2 times) to bold a key term. No other markdown.
+   - Write as if you are speaking out loud in a chat. No symbols, no decorations.
 3. Site Navigation Awareness:
    - You live inside BK's live portfolio.
    - Seamlessly guide visitors to explore the visual sections on the page — such as the Interactive Project Cards, Practical Experience Timeline, Skills Grid, and Contact Section.
@@ -297,7 +304,7 @@ export async function getChatResponse(
   for (let i = 0; i < queue.length; i++) {
     const attempt = queue[i];
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     try {
       console.log(`Sending chat request via ${attempt.provider} with model ${attempt.model}...`);
@@ -311,7 +318,7 @@ export async function getChatResponse(
           model: attempt.model,
           messages,
           temperature: 0.5,
-          max_tokens: 1500,
+          max_tokens: 400,
         }),
         signal: controller.signal,
       });

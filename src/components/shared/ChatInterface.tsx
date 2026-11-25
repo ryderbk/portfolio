@@ -8,24 +8,44 @@ interface Message {
 
 /**
  * Formats AI response text into rendered React nodes.
- * Supports: **bold**, hyperlinks, newlines, and bullet points.
+ * Strips markdown symbols (#, >, ---) and renders **bold**, URLs, bullets.
  */
 function formatMessage(content: string): React.ReactNode {
   const lines = content.split("\n");
   const elements: React.ReactNode[] = [];
 
   for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-    const line = lines[lineIndex];
-    
+    let line = lines[lineIndex];
+
     // Skip empty lines but add spacing
     if (line.trim() === "") {
       if (lineIndex > 0) elements.push(<div key={`sp-${lineIndex}`} className="h-2" />);
       continue;
     }
 
-    // Detect bullet points
-    const isBullet = /^\s*[-•*]\s+/.test(line);
-    const cleanLine = isBullet ? line.replace(/^\s*[-•*]\s+/, "") : line;
+    // Strip horizontal rules
+    if (/^\s*---+\s*$/.test(line) || /^\s*===+\s*$/.test(line)) continue;
+
+    // Strip markdown headings (#, ##, ###) → treat as bold prose
+    const headingMatch = line.match(/^#{1,6}\s+(.+)/);
+    if (headingMatch) {
+      line = `**${headingMatch[1]}**`;
+    }
+
+    // Strip blockquote prefix (> )
+    line = line.replace(/^\s*>\s?/, "");
+
+    // Detect bullet points (- item or * item or • item or numbered 1. item)
+    const isBullet = /^\s*[-•]\s+/.test(line) || /^\s*\d+\.\s+/.test(line);
+    let cleanLine = line;
+    if (isBullet) {
+      cleanLine = line.replace(/^\s*[-•]\s+/, "").replace(/^\s*\d+\.\s+/, "");
+    }
+
+    // Strip lone * or _ used for italic (not part of **)
+    // e.g.  *word* → word,  _word_ → word
+    cleanLine = cleanLine.replace(/(?<!\*)\*(?!\*)([^*]+?)(?<!\*)\*(?!\*)/g, "$1");
+    cleanLine = cleanLine.replace(/_([^_]+?)_/g, "$1");
 
     // Parse inline formatting: **bold** and URLs
     const parts: React.ReactNode[] = [];
@@ -40,22 +60,27 @@ function formatMessage(content: string): React.ReactNode {
       }
 
       if (match[1]) {
+        // URL
         parts.push(
           <a
             key={`${lineIndex}-${keyIndex++}`}
             href={match[1]}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent underline underline-offset-2 hover:opacity-80 transition-opacity"
+            style={{ color: "var(--acc)", textDecoration: "underline", textUnderlineOffset: "2px" }}
           >
             {match[1]}
           </a>
         );
       } else if (match[2]) {
+        // Bold
         parts.push(
-          <span key={`${lineIndex}-${keyIndex++}`} className="font-semibold text-foreground">
+          <strong
+            key={`${lineIndex}-${keyIndex++}`}
+            style={{ fontWeight: 600, color: "var(--fg)" }}
+          >
             {match[2]}
-          </span>
+          </strong>
         );
       }
 
@@ -69,7 +94,7 @@ function formatMessage(content: string): React.ReactNode {
     if (isBullet) {
       elements.push(
         <div key={`line-${lineIndex}`} className="flex gap-2 items-start pl-1">
-          <span className="text-accent mt-1.5 text-[6px] flex-shrink-0">●</span>
+          <span style={{ color: "var(--acc)", marginTop: "6px", fontSize: "6px", flexShrink: 0 }}>●</span>
           <span>{parts}</span>
         </div>
       );
