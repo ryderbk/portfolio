@@ -18,7 +18,12 @@ function CaseStudy({ project, onClose }: { project: any; onClose: () => void }) 
     <motion.div className="c-modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} role="dialog" aria-modal="true" aria-label={project.title}>
       <motion.div className="c-modal-card c-modal-card-expanded" data-lenis-prevent initial={{ y: 60, scale: 0.97 }} animate={{ y: 0, scale: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} onClick={(e) => e.stopPropagation()}>
         <button className="c-close" onClick={onClose} aria-label="Close">✕</button>
-        <img className="c-modal-img" src={imgOf(project)} alt={project.title} />
+        <img
+          className="c-modal-img"
+          src={imgOf(project)}
+          alt={project.title}
+          decoding="async"
+        />
         <div className="c-modal-expanded-header">
           <h3 className="c-modal-title">{project.title}</h3>
         </div>
@@ -80,7 +85,13 @@ export function Projects() {
           {projects.map((p, i) => (
             <article key={p.id || p.title} className="c-panel">
               <div className="c-panel-media" data-cursor="Expand" onClick={() => setOpen(p)}>
-                <img src={imgOf(p)} alt={`${p.title} preview`} loading="lazy" />
+                <img
+                  src={imgOf(p)}
+                  alt={`${p.title} preview`}
+                  loading={i < 2 ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={i === 0 ? "high" : "auto"}
+                />
                 <span className="c-panel-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                 {p.year && <span className="c-panel-year mono">{p.year}</span>}
               </div>

@@ -72,7 +72,13 @@ export function About() {
           <div className="c-portrait-wrap">
             <div className="c-portrait-glow" />
             <div className="c-portrait">
-              <img src="/images/profile.png" alt="Portrait of Bharath Kumar S" loading="lazy" />
+              <img
+                src="/images/profile.png"
+                alt="Portrait of Bharath Kumar S"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
               <span className="c-portrait-tag mono">Bharath Kumar S — Chennai</span>
             </div>
           </div>
