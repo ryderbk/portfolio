@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useTypewriter } from "@/hooks/useTypewriter";
 
 interface Message {
   role: "user" | "assistant";
@@ -46,6 +47,17 @@ function formatMessage(content: string): React.ReactNode {
     // e.g.  *word* → word,  _word_ → word
     cleanLine = cleanLine.replace(/(?<!\*)\*(?!\*)([^*]+?)(?<!\*)\*(?!\*)/g, "$1");
     cleanLine = cleanLine.replace(/_([^_]+?)_/g, "$1");
+
+    // Protect against half-open markdown during typing animation:
+    // If an unclosed ** exists at the end of string (e.g. "**word" without closing "**"),
+    // strip the leading "**" so literal asterisks never flicker.
+    const starMatches = cleanLine.match(/\*\*/g);
+    if (starMatches && starMatches.length % 2 !== 0) {
+      const lastDoubleStar = cleanLine.lastIndexOf("**");
+      cleanLine = cleanLine.slice(0, lastDoubleStar) + cleanLine.slice(lastDoubleStar + 2);
+    }
+    // Also strip trailing single asterisk or bracket if cut mid-token
+    cleanLine = cleanLine.replace(/\*$/, "").replace(/\[$/, "");
 
     // Parse inline formatting: **bold** and URLs
     const parts: React.ReactNode[] = [];
@@ -108,6 +120,81 @@ function formatMessage(content: string): React.ReactNode {
   return <div className="flex flex-col gap-1">{elements}</div>;
 }
 
+// ---------------------------------------------------------------------------
+// AnimatedAssistantMessage
+// Wraps useTypewriter so each message is its own component instance.
+// The hook runs exactly once per mount — old messages never re-type.
+// ---------------------------------------------------------------------------
+interface AnimatedAssistantMessageProps {
+  content: string;
+  /** true only for the latest message that just arrived */
+  isNew: boolean;
+  /** called by parent so a new send can complete typing */
+  onSkipRef?: React.MutableRefObject<(() => void) | null>;
+  /** whether the scroll container is manually scrolled up */
+  isUserScrolledRef: React.MutableRefObject<boolean>;
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+function AnimatedAssistantMessage({
+  content,
+  isNew,
+  onSkipRef,
+  isUserScrolledRef,
+  scrollContainerRef,
+}: AnimatedAssistantMessageProps) {
+  const { displayed, isTyping, skip } = useTypewriter(content, {
+    speed: 12,
+    enabled: isNew,
+  });
+
+  // Register skip fn with parent so sending a new message can complete this one
+  useEffect(() => {
+    if (onSkipRef && isNew) {
+      onSkipRef.current = skip;
+      return () => {
+        if (onSkipRef.current === skip) onSkipRef.current = null;
+      };
+    }
+    return undefined;
+  }, [skip, onSkipRef, isNew]);
+
+  // Auto-scroll while typing (stop if user has scrolled up)
+  useEffect(() => {
+    if (!isTyping || isUserScrolledRef.current) return;
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    }
+  }, [displayed, isTyping, isUserScrolledRef, scrollContainerRef]);
+
+  // Escape key → skip
+  useEffect(() => {
+    if (!isTyping) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") skip();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isTyping, skip]);
+
+  return (
+    <div
+      onClick={() => { if (isTyping) skip(); }}
+      style={{ cursor: isTyping ? "pointer" : "default" }}
+      className="relative"
+    >
+      {formatMessage(displayed)}
+      {isNew && (
+        <span
+          className={`tw-caret${isTyping ? "" : " tw-caret--done"}`}
+          aria-hidden="true"
+        />
+      )}
+    </div>
+  );
+}
+
 /* Suggested quick-action prompts for visitors */
 const QUICK_PROMPTS = [
   "Say Hi!",
@@ -133,6 +220,13 @@ export function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
+  // Track which message indices have already been animated (never re-animate)
+  const animatedIndicesRef = useRef<Set<number>>(new Set());
+  // Ref to the skip() fn of the currently-typing reply
+  const activeSkipRef = useRef<(() => void) | null>(null);
+  // Track whether the user has manually scrolled up during typing
+  const isUserScrolledRef = useRef(false);
+
   // Auto-focus logic: Focus input when typing starts
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
@@ -149,6 +243,19 @@ export function ChatInterface({
     };
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, []);
+
+  // Detect manual scroll-up so typewriter auto-scroll can stop
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const onScroll = () => {
+      const atBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight < 40;
+      isUserScrolledRef.current = !atBottom;
+    };
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => container.removeEventListener("scroll", onScroll);
   }, []);
 
   // Listen for virtual keyboard events (clicks)
@@ -217,6 +324,14 @@ export function ChatInterface({
     if (e) e.preventDefault();
     const messageToSend = overrideMessage || input.trim();
     if (!messageToSend || isLoading) return;
+
+    // Complete any reply still being typed before sending the next message
+    if (activeSkipRef.current) {
+      activeSkipRef.current();
+      activeSkipRef.current = null;
+    }
+    // Reset user-scroll flag for the new exchange
+    isUserScrolledRef.current = false;
 
     setInput("");
     
@@ -346,27 +461,50 @@ export function ChatInterface({
         )}
 
         {/* Message items */}
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            ref={idx === messages.length - 1 ? lastMessageRef : null}
-            className={`flex flex-col ${
-              msg.role === "user" ? "items-end" : "items-start"
-            } chat-message-enter`}
-            style={{ animationDelay: `${idx * 0.05}s` }}
-          >
-            <span className="c-open-role">
-              {msg.role === "user" ? "YOU" : "BK-AI"}
-            </span>
+        {messages.map((msg, idx) => {
+          const isLastMsg = idx === messages.length - 1;
+          // A message is "new" (plays typewriter) only if it's assistant,
+          // it's the last message, and it hasn't been animated before.
+          const isNew =
+            msg.role === "assistant" &&
+            isLastMsg &&
+            !animatedIndicesRef.current.has(idx);
+
+          // Mark this index as animated so it won't play again
+          if (isNew) animatedIndicesRef.current.add(idx);
+
+          return (
             <div
-              className={`max-w-[90%] ${
-                msg.role === "user" ? "c-open-msg-user" : "c-open-msg-assistant"
-              }`}
+              key={idx}
+              ref={isLastMsg ? lastMessageRef : null}
+              className={`flex flex-col ${
+                msg.role === "user" ? "items-end" : "items-start"
+              } chat-message-enter`}
+              style={{ animationDelay: `${idx * 0.05}s` }}
             >
-              {formatMessage(msg.content)}
+              <span className="c-open-role">
+                {msg.role === "user" ? "YOU" : "BK-AI"}
+              </span>
+              <div
+                className={`max-w-[90%] ${
+                  msg.role === "user" ? "c-open-msg-user" : "c-open-msg-assistant"
+                }`}
+              >
+                {msg.role === "assistant" ? (
+                  <AnimatedAssistantMessage
+                    content={msg.content}
+                    isNew={isNew}
+                    onSkipRef={isNew ? activeSkipRef : undefined}
+                    isUserScrolledRef={isUserScrolledRef}
+                    scrollContainerRef={scrollContainerRef}
+                  />
+                ) : (
+                  formatMessage(msg.content)
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {/* Typing indicator */}
         {isLoading && (
