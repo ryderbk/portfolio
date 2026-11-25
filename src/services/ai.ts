@@ -163,7 +163,7 @@ PROJECTS:\n`;
       return entry;
     }).join("\n") + "\n\n";
   } else {
-    contextualString += defaultProjects.map((p) => 
+    contextualString += defaultProjects.map((p) =>
       `- ${p.title} (${p.category}): ${p.description} | Tech Stack: ${p.tech}`
     ).join("\n") + "\n\n";
   }
@@ -303,7 +303,7 @@ END`;
  * Iterates through candidate providers/models with automatic fallback.
  */
 export async function getChatResponse(
-  message: string, 
+  message: string,
   context: PortfolioContext,
   conversationHistory: ConversationMessage[] = []
 ): Promise<string> {
@@ -366,7 +366,7 @@ export async function getChatResponse(
 
       const data = await response.json();
       const content = data?.choices?.[0]?.message?.content;
-      
+
       if (!content) {
         if (i < queue.length - 1) continue;
         return "I don't have a response at this moment. Please try again.";
