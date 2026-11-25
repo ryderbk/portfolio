@@ -15,10 +15,10 @@ export function KeyboardSection() {
         <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 max-w-6xl mx-auto">
           {/* Chat Column */}
           <motion.div
-            initial={{ opacity: 0, x: -20, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="c-fit-chat h-[460px] w-full lg:w-[400px] shrink-0 relative z-20 order-2 lg:order-1"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="c-fit-chat h-[560px] w-full lg:w-[440px] shrink-0 relative z-20 order-2 lg:order-1 flex flex-col justify-center"
           >
             <ChatInterface isInline />
           </motion.div>
