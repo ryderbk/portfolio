@@ -85,10 +85,7 @@ function formatMessage(content: string): React.ReactNode {
 
 /* Suggested quick-action prompts for visitors */
 const QUICK_PROMPTS = [
-  "What projects have you worked on?",
-  "What technologies do you use?",
-  "Tell me about your experience",
-  "Are you available for work?",
+  "Say Hi!",
 ];
 
 interface ChatInterfaceProps {
