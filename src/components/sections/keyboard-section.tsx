@@ -10,7 +10,6 @@ export function KeyboardSection() {
         <div className="c-tactile-head" data-reveal>
           <span className="mono c-eyebrow">AI — Interaction</span>
           <h2 className="c-h2" data-split>The <em className="acc">tactile</em> interface</h2>
-          <p className="c-panel-desc" style={{ margin: 0 }}>Type on the keyboard and talk to my portfolio assistant.</p>
         </div>
 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 max-w-6xl mx-auto">
