@@ -245,53 +245,59 @@ export function ChatInterface({
   return (
     <div
       data-lenis-prevent
-      className={`flex flex-col overflow-hidden ${isInline
-          ? "w-full h-full rounded-2xl bg-card/40 border border-border/60 backdrop-blur-2xl backdrop-saturate-150 [box-shadow:var(--base-shadow)]"
-          : "h-full z-50"
-        } ${className}`}
+      className={`c-chat-shell flex flex-col ${
+        isInline ? "w-full h-full" : "h-full z-50"
+      } ${className}`}
     >
-      {/* Header — Professional gradient bar */}
-      <div className="chat-header px-5 py-4 border-b border-border/30 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <h3 className="font-display font-semibold text-base text-foreground leading-none">
-            Ask Anything
-          </h3>
+      <div className="c-chat-glow" aria-hidden="true" />
+
+      {/* Header — Console Style */}
+      <div className="chat-header flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-2.5">
+          <span className="chat-status-dot" aria-hidden="true" />
+          <h3 className="c-chat-title">Ask Anything</h3>
         </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/5 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Close chat"
-          >
-            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          <span className="c-chat-tag">BK / AI</span>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-[rgba(var(--fg-rgb),0.08)] text-[var(--mute)] hover:text-[var(--fg)] transition-colors"
+              aria-label="Close chat"
+            >
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Messages */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto p-5 space-y-4 chat-messages-scroll relative flex flex-col"
+        className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4 chat-messages-scroll relative z-[1] flex flex-col"
       >
         {/* Welcome state */}
         {messages.length === 0 && !isLoading && (
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-4 chat-welcome-fade gap-4">
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-[240px]">
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-4 chat-welcome-fade gap-5">
+            <p
+              className="text-[14px] leading-relaxed max-w-[240px]"
+              style={{ color: "var(--mute)", fontFamily: "var(--f-body)" }}
+            >
               Ask me anything about my projects or experience.
             </p>
-            
+
             {/* Quick prompts */}
-            <div className="flex flex-col gap-2 w-full max-w-[280px]">
+            <div className="flex flex-col items-center gap-2 w-full">
               {QUICK_PROMPTS.map((prompt) => (
                 <button
                   key={prompt}
                   onClick={() => handleSendMessage(undefined, "Hi")}
-                  className="text-left px-4 py-3 rounded-xl text-sm font-medium text-foreground/80 bg-accent/10 border border-accent/20 hover:border-accent/40 hover:bg-accent/20 hover:text-accent transition-all duration-200 group"
+                  className="c-chat-pill group"
                 >
-                  <span className="opacity-50 group-hover:opacity-80 mr-1.5 transition-opacity">→</span>
-                  {prompt}
+                  <span className="c-chat-pill-arrow mr-0.5">→</span>
+                  <span>{prompt}</span>
                 </button>
               ))}
             </div>
@@ -303,14 +309,19 @@ export function ChatInterface({
           <div
             key={idx}
             ref={idx === messages.length - 1 ? lastMessageRef : null}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} chat-message-enter`}
+            className={`flex flex-col ${
+              msg.role === "user" ? "items-end" : "items-start"
+            } chat-message-enter`}
             style={{ animationDelay: `${idx * 0.05}s` }}
           >
+            <span className="chat-message-role">
+              {msg.role === "user" ? "YOU" : "BK-AI"}
+            </span>
             <div
-              className={`max-w-[85%] px-5 py-4 text-base leading-relaxed ${msg.role === "user"
-                  ? "chat-bubble-user rounded-2xl rounded-br-md"
-                  : "chat-bubble-assistant rounded-2xl rounded-bl-md"
-                }`}
+              className={`max-w-[85%] px-4 py-3 text-[14.5px] leading-relaxed ${
+                msg.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant"
+              }`}
+              style={{ fontFamily: "var(--f-body)" }}
             >
               {formatMessage(msg.content)}
             </div>
@@ -319,12 +330,13 @@ export function ChatInterface({
 
         {/* Typing indicator */}
         {isLoading && (
-          <div className="flex justify-start chat-message-enter">
-            <div className="chat-bubble-assistant px-5 py-4 rounded-2xl rounded-bl-md">
-              <div className="flex gap-1.5 items-center h-5">
-                <div className="w-1.5 h-1.5 bg-accent/60 rounded-full chat-typing-dot" style={{ animationDelay: "0s" }} />
-                <div className="w-1.5 h-1.5 bg-accent/60 rounded-full chat-typing-dot" style={{ animationDelay: "0.15s" }} />
-                <div className="w-1.5 h-1.5 bg-accent/60 rounded-full chat-typing-dot" style={{ animationDelay: "0.3s" }} />
+          <div className="flex flex-col items-start chat-message-enter">
+            <span className="chat-message-role">BK-AI</span>
+            <div className="chat-bubble-assistant px-4 py-3">
+              <div className="flex gap-1.5 items-center h-4">
+                <div className="w-1.5 h-1.5 rounded-full chat-typing-dot" style={{ animationDelay: "0s" }} />
+                <div className="w-1.5 h-1.5 rounded-full chat-typing-dot" style={{ animationDelay: "0.15s" }} />
+                <div className="w-1.5 h-1.5 rounded-full chat-typing-dot" style={{ animationDelay: "0.3s" }} />
               </div>
             </div>
           </div>
@@ -335,30 +347,31 @@ export function ChatInterface({
       {/* Input Area */}
       <form
         onSubmit={handleSendMessage}
-        className="p-4 border-t border-border/30 flex-shrink-0 chat-input-area"
+        className="chat-input-area"
       >
-        <div className="flex gap-2.5 items-end">
+        <div className="flex gap-2.5 items-center">
           <input
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about my work..."
-            className="flex-1 px-5 py-4 rounded-xl bg-foreground/[0.06] border border-border/50 focus:border-accent/40 focus:bg-foreground/[0.08] outline-none text-base font-medium transition-all duration-200 placeholder:text-muted-foreground/60"
+            className="flex-1 c-chat-input"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="w-11 h-11 flex items-center justify-center rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200 active:scale-95 group/send flex-shrink-0"
+            className="c-chat-send group/send"
             aria-label="Send message"
           >
             <svg
               viewBox="0 0 24 24"
-              className={`w-[18px] h-[18px] fill-current transition-transform duration-300 ${isLoading
+              className={`w-4 h-4 fill-current transition-transform duration-300 ${
+                isLoading
                   ? "animate-pulse"
                   : "group-hover/send:translate-x-0.5 group-hover/send:-translate-y-0.5"
-                }`}
+              }`}
             >
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
             </svg>
