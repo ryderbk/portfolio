@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { gsap, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { useData } from "@/context/DataContext";
 import { getLenis, lockScroll } from "@/lib/smooth-scroll";
 import { Arrow } from "./hero";
 
-const imgOf = (p: any): string => p.image || p.images?.[0] || "/images/project-01.png";
+const imgOf = (p: any): string => p.image || p.images?.[0] || "/images/project-01.webp";
 
 function CaseStudy({ project, onClose }: { project: any; onClose: () => void }) {
   useEffect(() => {
@@ -46,7 +46,16 @@ export function Projects() {
         const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
         const tween = gsap.to(track, {
           x: () => -dist(), ease: "none",
-          scrollTrigger: { trigger: ".c-work-pin", pin: true, scrub: 0.6, start: "top top", end: () => "+=" + dist(), invalidateOnRefresh: true, anticipatePin: 1 },
+          scrollTrigger: {
+            trigger: ".c-work-pin",
+            pin: true,
+            scrub: true,
+            start: "top top",
+            end: () => "+=" + dist(),
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+            onToggle: (self) => document.querySelector(".cin")?.classList.toggle("work-pinned", self.isActive),
+          },
         });
         gsap.utils.toArray<HTMLElement>(".c-panel-media").forEach((m) => {
           gsap.fromTo(m.querySelector("img"), { xPercent: -7 }, {
@@ -66,13 +75,6 @@ export function Projects() {
     return () => { mm.revert(); ctx.revert(); };
   }, [projects.length]);
 
-  // layout shifts when images land
-  useEffect(() => {
-    const imgs = root.current?.querySelectorAll("img") ?? [];
-    const r = () => ScrollTrigger.refresh();
-    imgs.forEach((i) => !i.complete && i.addEventListener("load", r, { once: true }));
-  }, [projects.length]);
-
   return (
     <section ref={root} id="work" className="c-work" aria-label="Selected work">
       <div className="c-work-pin">
@@ -88,7 +90,7 @@ export function Projects() {
                 <img
                   src={imgOf(p)}
                   alt={`${p.title} preview`}
-                  loading={i < 2 ? "eager" : "lazy"}
+                  loading="eager"
                   decoding="async"
                   fetchPriority={i === 0 ? "high" : "auto"}
                 />

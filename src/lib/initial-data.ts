@@ -2,7 +2,7 @@ export const initialProjects = [
   {
     title: "MARKIFY",
     subtitle: "WEB APPLICATION — ACADEMIC ANALYTICS",
-    images: ["/images/project-01.png"],
+    images: ["/images/project-01.webp"],
     description: "A full-stack academic web app built to calculate internal marks, predict GPAs, and project target scores through instant, data-driven insights.",
     problem: "Students lacked a unified tool to predict exam performance and understand their academic standing. Manual calculations were time-consuming and error-prone.",
     approach: "Built a full-stack web application leveraging modern development tools for rapid iteration. Engineered algorithms to calculate internal marks from assignments, CIE scores, and practicals.",
@@ -13,7 +13,7 @@ export const initialProjects = [
   {
     title: "INSTRUAX",
     subtitle: "WEB APPLICATION — SYMPOSIUM WEBSITE",
-    images: ["/images/project-01.png"],
+    images: ["/images/project-01.webp"],
     description: "A modern symposium website built to centralize event details, schedules, and registrations through an interactive and visually engaging interface.",
     problem: "Event organizers needed a centralized, responsive hub for symposium participants to view schedules, discover technical/non-technical events, and register online.",
     approach: "Developed an interactive web platform with smooth animations, organized event categorization, and mobile-friendly registration flows.",
@@ -24,7 +24,7 @@ export const initialProjects = [
   {
     title: "FIRE FIGHTING ROBOT",
     subtitle: "HARDWARE — ROBOTICS & SAFETY SYSTEMS",
-    images: ["/images/project-02.png"],
+    images: ["/images/project-02.webp"],
     description: "An autonomous safety system engineered to detect and extinguish flames using sensor-based navigation for safe, human-free fire suppression.",
     problem: "Manual fire response is slow and dangerous in confined or complex environments. Early detection and response are critical for safety.",
     approach: "Engineered a fully autonomous robot using Arduino microcontroller, flame sensors, DC motors, servo mechanism for directional control, and automated water pump activation.",
@@ -35,7 +35,7 @@ export const initialProjects = [
   {
     title: "SOUND-ACTIVATED CONTROL",
     subtitle: "HARDWARE — HOME AUTOMATION",
-    images: ["/images/project-03.png"],
+    images: ["/images/project-03.webp"],
     description: "A hands-free automation system designed to control a fan using clap detection through simple audio signal processing and efficient electronic circuitry.",
     problem: "Traditional physical switches require manual interaction and lack hands-free accessibility for convenience or mobility constraints.",
     approach: "Designed a microcontroller-based home automation system using sound recognition (clap detection) via microphone, signal processing, and relay circuit control.",
@@ -46,7 +46,7 @@ export const initialProjects = [
   {
     title: "SWEETALK",
     subtitle: "WEB APPLICATION — MESSAGING APP",
-    images: ["/images/project-01.png"],
+    images: ["/images/project-01.webp"],
     description: "A real-time web messaging app that combines live personal chatting with synchronized interactive mini-games and custom visual themes.",
     problem: "Standard messaging tools focus purely on text without interactive shared activities or playful engagement during conversations.",
     approach: "Built a progressive web app leveraging Firebase real-time listeners for instant chat synchronization alongside multiplayer mini-games and dynamic theming.",
