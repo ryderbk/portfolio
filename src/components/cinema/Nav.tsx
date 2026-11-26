@@ -34,12 +34,16 @@ export function Nav({ ready }: { ready: boolean }) {
         onToggle: (self) => self.isActive && setActive(l.id),
       })
     );
+    let lastDirection = 0;
     const hide = ScrollTrigger.create({
       start: 120,
       end: "max",
       onUpdate: (self) => {
         if (!ready || document.body.dataset.menu === "open") return;
-        gsap.to(nav.current, { yPercent: self.direction === 1 ? -120 : 0, duration: 0.6, ease: "power3.out", overwrite: "auto" });
+        if (self.direction !== lastDirection) {
+          lastDirection = self.direction;
+          gsap.to(nav.current, { yPercent: self.direction === 1 ? -120 : 0, duration: 0.6, ease: "power3.out", overwrite: "auto" });
+        }
       },
     });
     const top = ScrollTrigger.create({ start: 0, end: 120, onToggle: (s) => !s.isActive || setActive("") });

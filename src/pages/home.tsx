@@ -40,6 +40,15 @@ export default function Home() {
   const onExitStart = useCallback(() => setReady(true), []);
   const onDone = useCallback(() => { setLoaded(true); lockScroll(false); ScrollTrigger.refresh(); }, []);
 
+  // Re-sync ScrollTrigger after late layout / theme / font scale changes (debounced ~200ms)
+  useEffect(() => {
+    if (reduced || !loaded) return;
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [config, resolvedTheme, reduced, loaded]);
+
   // Global reveals: [data-split] headings and [data-reveal] blocks
   useEffect(() => {
     const el = root.current!;

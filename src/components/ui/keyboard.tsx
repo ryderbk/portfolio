@@ -284,9 +284,29 @@ const KeyboardProvider = ({
   const [lastPressedKey, setLastPressedKey] = useState<string | null>(null);
   const [soundLoaded, setSoundLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [nearViewport, setNearViewport] = useState(false);
+
+  // Lazy-load sound file only when approaching the keyboard section
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element || nearViewport) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNearViewport(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "800px 0px" },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [containerRef, nearViewport]);
 
   useEffect(() => {
-    if (!enableSound) return;
+    if (!enableSound || !nearViewport) return;
 
     // Initialize AudioContext and load sound file
     const initAudio = async () => {
@@ -311,7 +331,7 @@ const KeyboardProvider = ({
     return () => {
       audioContextRef.current?.close();
     };
-  }, [enableSound]);
+  }, [enableSound, nearViewport]);
 
   const playSoundDown = useCallback(
     (keyCode: string) => {

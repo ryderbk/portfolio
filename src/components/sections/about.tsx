@@ -73,7 +73,7 @@ export function About() {
             <div className="c-portrait-glow" />
             <div className="c-portrait">
               <img
-                src="/images/profile.png"
+                src="/images/profile.webp"
                 alt="Portrait of Bharath Kumar S"
                 loading="eager"
                 decoding="async"

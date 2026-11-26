@@ -96,9 +96,12 @@ export function Hero({ ready }: { ready: boolean }) {
       gsap.to(".c-hero-grid", { yPercent: 18, ease: "none", scrollTrigger: scrub });
     }, root);
     const a = root.current!.querySelector<HTMLElement>(".c-orb.a")!;
+    const quickX = gsap.quickTo(a, "x", { duration: 1.4, ease: "power3.out" });
+    const quickY = gsap.quickTo(a, "y", { duration: 1.4, ease: "power3.out" });
     const move = (e: MouseEvent) => {
       const x = (e.clientX / innerWidth - 0.5) * 2, y = (e.clientY / innerHeight - 0.5) * 2;
-      gsap.to(a, { x: x * -50, y: y * -40, duration: 1.4, ease: "power3.out" });
+      quickX(x * -50);
+      quickY(y * -40);
     };
     window.addEventListener("mousemove", move);
     return () => { ctx.revert(); window.removeEventListener("mousemove", move); };

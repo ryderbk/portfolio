@@ -15,12 +15,16 @@ export function Cursor() {
     const dx = gsap.quickTo(dot, "x", { duration: 0.08 });
     const dy = gsap.quickTo(dot, "y", { duration: 0.08 });
     gsap.set(el, { opacity: 0 });
+    let shown = false;
 
     const move = (e: MouseEvent) => {
       x(e.clientX); y(e.clientY);
       // dot stays near-instant by counter-offsetting the ring's easing
       dx(0); dy(0);
-      gsap.to(el, { opacity: 1, duration: 0.3, overwrite: "auto" });
+      if (!shown) {
+        shown = true;
+        gsap.to(el, { opacity: 1, duration: 0.3, overwrite: "auto" });
+      }
     };
     const over = (e: MouseEvent) => {
       const t = (e.target as HTMLElement).closest?.("[data-cursor], a, button, input, textarea") as HTMLElement | null;
@@ -30,7 +34,10 @@ export function Cursor() {
       if (kind && kind !== "hover" && label.current) label.current.textContent = kind;
       if (kind === "hover") el.classList.add("is-hover");
     };
-    const leave = () => gsap.to(el, { opacity: 0, duration: 0.3 });
+    const leave = () => {
+      shown = false;
+      gsap.to(el, { opacity: 0, duration: 0.3 });
+    };
     window.addEventListener("mousemove", move);
     window.addEventListener("mouseover", over);
     document.documentElement.addEventListener("mouseleave", leave);

@@ -25,6 +25,9 @@ export function Marquee() {
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const loop = gsap.to(track.current, { xPercent: -50, ease: "none", duration: 38, repeat: -1 });
+    const quickTimeScale = gsap.quickTo(loop, "timeScale", { duration: 0.25 });
+    let resetTimer: ReturnType<typeof setTimeout> | null = null;
+
     const st = ScrollTrigger.create({
       trigger: root.current,
       start: "top bottom",
@@ -32,11 +35,19 @@ export function Marquee() {
       onUpdate: (self) => {
         const v = self.getVelocity();
         const dir = self.direction;
-        gsap.to(loop, { timeScale: dir * (1 + Math.min(Math.abs(v) / 250, 7)), duration: 0.25, overwrite: true });
-        gsap.to(loop, { timeScale: dir, duration: 1.2, delay: 0.25, overwrite: false });
+        quickTimeScale(dir * (1 + Math.min(Math.abs(v) / 250, 7)));
+
+        if (resetTimer) clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          gsap.to(loop, { timeScale: dir, duration: 1.2, overwrite: "auto" });
+        }, 250);
       },
     });
-    return () => { st.kill(); loop.kill(); };
+    return () => {
+      if (resetTimer) clearTimeout(resetTimer);
+      st.kill();
+      loop.kill();
+    };
   }, []);
 
   const renderGroup = (isClone = false) => (

@@ -149,9 +149,10 @@ html.lenis, html.lenis body { height: auto; }
 /* ---------- hero ---------- */
 .c-hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 8rem 0 clamp(7rem, 15vh, 9rem); }
 .c-hero-bg { position: absolute; inset: 0; pointer-events: none; }
-.c-hero-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 72px 72px; opacity: 0.45; mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%); }
+.c-hero-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 72px 72px; opacity: 0.45; mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%); will-change: transform; }
+.c-hero-content { will-change: transform; }
 .c-orb { position: absolute; border-radius: 50%; filter: blur(80px); will-change: transform; }
-.c-orb.a { width: 46vw; height: 46vw; max-width: 720px; max-height: 720px; right: -8%; top: 4%; background: radial-gradient(circle, rgba(var(--acc-rgb),0.30), transparent 68%); animation: c-float 14s ease-in-out infinite; }
+.c-orb.a { width: 46vw; height: 46vw; max-width: 720px; max-height: 720px; right: -8%; top: 4%; background: radial-gradient(circle, rgba(var(--acc-rgb),0.30), transparent 68%); animation: c-float 14s ease-in-out infinite; will-change: transform; }
 .c-orb.b { width: 34vw; height: 34vw; max-width: 520px; max-height: 520px; left: -10%; bottom: -6%; background: radial-gradient(circle, rgba(var(--orb2-rgb),0.28), transparent 68%); animation: c-float 18s ease-in-out infinite reverse; }
 @keyframes c-float { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-4%, 6%, 0) scale(1.1); } }
 .c-hero-meta { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: clamp(2rem, 6vh, 4.5rem); }
