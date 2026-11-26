@@ -46,20 +46,11 @@ export function Projects() {
         const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
         const tween = gsap.to(track, {
           x: () => -dist(), ease: "none",
-          scrollTrigger: {
-            trigger: ".c-work-pin",
-            pin: true,
-            scrub: 1,
-            start: "top top",
-            end: () => "+=" + dist(),
-            invalidateOnRefresh: true,
-            anticipatePin: 0,
-            fastScrollEnd: true,
-          },
+          scrollTrigger: { trigger: ".c-work-pin", pin: true, scrub: 0.6, start: "top top", end: () => "+=" + dist(), invalidateOnRefresh: true, anticipatePin: 1 },
         });
         gsap.utils.toArray<HTMLElement>(".c-panel-media").forEach((m) => {
-          gsap.fromTo(m.querySelector("img"), { xPercent: -5 }, {
-            xPercent: 5, ease: "none",
+          gsap.fromTo(m.querySelector("img"), { xPercent: -7 }, {
+            xPercent: 7, ease: "none",
             scrollTrigger: { trigger: m, containerAnimation: tween, start: "left right", end: "right left", scrub: true },
           });
         });
